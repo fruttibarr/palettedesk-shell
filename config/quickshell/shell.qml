@@ -40,4 +40,7 @@ ShellRoot {
     SettingsPanel {}
     TermDrawPreview {}
     LyricsViewer {}
+    Cheatsheet {}
+    HotCorners {}
+    DesktopWidgets {}
 }

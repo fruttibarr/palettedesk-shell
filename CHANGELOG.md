@@ -6,6 +6,13 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Drag-and-drop bar layout editor** (Settings > Bar): a mini bar with Left / Center / Right zones and a "Not in bar" tray. Drag modules to move or reorder them, click one to jump to its settings; keyboard works too (arrows, Delete).
+- **Custom bar modules**: show any shell command's output as a bar chip (interval or live stream, optional JSON with icon and colour, click / right / middle / scroll actions, test button, templates). IPC: `qs ipc call custommodule list|refresh <id>`.
+- **Hot corners** (Settings > Behavior): run an action (overview, launcher, control center, dashboard, scratchpad, lock, your own command...) by resting the pointer in a screen corner; delay, size and fullscreen behaviour are configurable.
+- **Keybind cheatsheet** (SUPER + /, `qs ipc call cheatsheet toggle`): every shortcut with your current combos, filterable.
+- **Desktop widgets** (Settings > Desktop widgets): clock, calendar, now playing, CPU & RAM, weather, note, lyrics and command output on the wallpaper. Edit mode (`qs ipc call desktop edit`) to drag and resize; glass / outline / plain styles. IPC: `desktop edit|add <type>|list|clear`.
+- **Automation** (Settings > Automation): rules that change settings, theme, power profile or Do Not Disturb while a condition holds (on battery, fullscreen window, app focused, time of day, extra monitor) and restore them afterwards; your own changes made meanwhile are kept. IPC: `profiles list|active|enable|disable|simulate`.
+
 - **Random theme** button (Settings > Themes, or `qs ipc call themes random [glass|neon|soft|minimal|brutal|synth]`): rolls a designed look,
   not random settings. A style fixes combinations known to work together; one corner radius drives every radius; opacities keep a readable
   floor; always dark; the wallpaper is picked by brightness and saturation to suit the style. The look from before the first roll is kept as "Previous look".

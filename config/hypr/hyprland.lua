@@ -283,7 +283,7 @@ hl.layer_rule({
 hl.layer_rule({
     -- these popups have their own QML zoom/slide animations
     name    = "quickshell-popups-no-anim",
-    match   = { namespace = "^(rice-(launcher|wallpaper-picker|control-center|notifications|osd|power|polkit|equalizer|clipboard|settings|termdraw|lyrics)|quickshell-.*)$" },
+    match   = { namespace = "^(rice-(launcher|wallpaper-picker|control-center|notifications|osd|power|polkit|equalizer|clipboard|settings|termdraw|lyrics|cheatsheet|hotcorner|deskedit|deskwidget)|quickshell-.*)$" },
     no_anim = true,
 })
 
@@ -350,6 +350,7 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("qs ipc call clipboard toggle"))
+hl.bind(mainMod .. " + SLASH", hl.dsp.exec_cmd("qs ipc call cheatsheet toggle"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 

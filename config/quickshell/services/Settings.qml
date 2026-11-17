@@ -74,6 +74,14 @@ Singleton {
         "barSheen": true,
         "chipStyle": "filled",
         "chipShape": "pill",
+        "customModules": [],
+        "desktopWidgets": [],
+        "autoRules": [{"id":"rule-battery","name":"Battery saver","enabled":false,"trigger":{"type":"battery","below":0},"action":{"settings":{"blurEnabled":false,"shadowEnabled":false,"animScale":0.5},"power":"power-saver"}},{"id":"rule-gaming","name":"Fullscreen / gaming","enabled":false,"trigger":{"type":"fullscreen"},"action":{"settings":{"blurEnabled":false},"dnd":true,"power":"performance"}},{"id":"rule-night","name":"Night light at night","enabled":false,"trigger":{"type":"time","from":"21:00","to":"06:00"},"action":{"settings":{"nightLight":true}}}],
+        "hotCornersEnabled": false,
+        "hotCornerDelay": 250,
+        "hotCornerSize": 3,
+        "hotCornersFullscreen": false,
+        "hotCorners": {"tl": {"action": "none", "command": ""}, "tr": {"action": "none", "command": ""}, "bl": {"action": "none", "command": ""}, "br": {"action": "none", "command": ""}},
         "barLayout": {"left": ["workspaces", "media"], "center": ["clock"], "right": ["tray", "stats", "status"]},
         "wsCount": 5,
         "wsStyle": "numbers",
@@ -686,6 +694,22 @@ Singleton {
     // ---- Keybinds (Keybinds page) ----
     // Rebindable actions. `def` must match the bind in hyprland.lua; `lua` is the
     // Hyprland action expression; `opts` an optional Lua options table.
+    // Every bar module the layout editor can place (custom modules are appended by the panel).
+    readonly property var barModuleCatalog: [
+        { id: "workspaces", icon: "󰍹", short: "Workspaces", name: "Workspaces" },
+        { id: "title",      icon: "󰖯", short: "Window title", name: "Window title" },
+        { id: "media",      icon: "󰎆", short: "Now playing", name: "Now playing" },
+        { id: "lyrics",     icon: "󰎈", short: "Lyrics", name: "Live lyrics" },
+        { id: "record",     icon: "󰑊", short: "Rec timer", name: "Recording timer (only while recording)" },
+        { id: "clock",      icon: "󰥔", short: "Clock", name: "Clock" },
+        { id: "tray",       icon: "󰀻", short: "Tray", name: "System tray" },
+        { id: "stats",      icon: "󰍛", short: "CPU & RAM", name: "CPU & RAM" },
+        { id: "kbd",        icon: "󰌌", short: "Keyboard", name: "Keyboard layout (only with several layouts)" },
+        { id: "status",     icon: "󰂚", short: "Status", name: "Status (control center)" },
+        { id: "launcher",   icon: "󰣇", short: "Launcher", name: "Launcher button" },
+        { id: "power",      icon: "󰐥", short: "Power", name: "Power button" },
+    ]
+
     readonly property var bindActions: [
         { id: "terminal",      group: "Apps", label: "Terminal",                    def: "SUPER + RETURN",       lua: 'hl.dsp.exec_cmd("kitty")' },
         { id: "terminal2",     group: "Apps", label: "Terminal (second key)",       def: "SUPER + T",            lua: 'hl.dsp.exec_cmd("kitty")' },
@@ -700,6 +724,7 @@ Singleton {
         { id: "controlCenter", group: "Shell", label: "Control center",             def: "SUPER + A",            lua: 'hl.dsp.exec_cmd("qs ipc call controlcenter toggle")' },
         { id: "equalizer",     group: "Shell", label: "Equalizer",                  def: "SUPER + SHIFT + A",    lua: 'hl.dsp.exec_cmd("qs ipc call equalizer toggle")' },
         { id: "settings",      group: "Shell", label: "Settings",                   def: "SUPER + COMMA",        lua: 'hl.dsp.exec_cmd("qs ipc call settings toggle")' },
+        { id: "cheatsheet",    group: "Shell", label: "Keybind cheatsheet",         def: "SUPER + SLASH",        lua: 'hl.dsp.exec_cmd("qs ipc call cheatsheet toggle")' },
         { id: "clipboard",     group: "Shell", label: "Clipboard history",          def: "SUPER + V",            lua: 'hl.dsp.exec_cmd("qs ipc call clipboard toggle")' },
         { id: "lock",          group: "Shell", label: "Lock screen",                def: "SUPER + L",            lua: 'hl.dsp.exec_cmd("qs ipc call lock lock")' },
         { id: "power",         group: "Shell", label: "Power menu",                 def: "SUPER + SHIFT + E",    lua: 'hl.dsp.exec_cmd("qs ipc call power toggle")' },
@@ -1042,6 +1067,14 @@ Singleton {
             property bool barSheen: true
             property string chipStyle: "filled"
             property string chipShape: "pill"
+            property var customModules: ([])
+            property var desktopWidgets: ([])
+            property var autoRules: ([{"id":"rule-battery","name":"Battery saver","enabled":false,"trigger":{"type":"battery","below":0},"action":{"settings":{"blurEnabled":false,"shadowEnabled":false,"animScale":0.5},"power":"power-saver"}},{"id":"rule-gaming","name":"Fullscreen / gaming","enabled":false,"trigger":{"type":"fullscreen"},"action":{"settings":{"blurEnabled":false},"dnd":true,"power":"performance"}},{"id":"rule-night","name":"Night light at night","enabled":false,"trigger":{"type":"time","from":"21:00","to":"06:00"},"action":{"settings":{"nightLight":true}}}])
+            property bool hotCornersEnabled: false
+            property int hotCornerDelay: 250
+            property int hotCornerSize: 3
+            property bool hotCornersFullscreen: false
+            property var hotCorners: ({"tl": {"action": "none", "command": ""}, "tr": {"action": "none", "command": ""}, "bl": {"action": "none", "command": ""}, "br": {"action": "none", "command": ""}})
             property var barLayout: ({"left": ["workspaces", "media"], "center": ["clock"], "right": ["tray", "stats", "status"]})
             property int wsCount: 5
             property string wsStyle: "numbers"

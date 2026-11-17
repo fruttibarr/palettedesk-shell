@@ -14,6 +14,7 @@ Singleton {
     property bool overviewOpen: false
     property bool settingsOpen: false
     property bool lyricsOpen: false
+    property bool deskEdit: false     // desktop widgets edit mode (system/DesktopWidgets.qml)
     property real lyricsAnchorX: -1   // screen x the lyrics viewer drops from (set by the chip)
     property bool keepAwake: false
     property bool locked: false

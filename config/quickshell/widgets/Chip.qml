@@ -24,6 +24,10 @@ Rectangle {
     readonly property string effect: Settings.s.chipEffect
     readonly property string hoverMode: Settings.s.chipHover
     signal clicked()
+    property int acceptedButtons: Qt.LeftButton   // set to Qt.AllButtons to also get buttonClicked()
+    property bool wheelEnabled: false             // true: wheeled() fires and the chip takes the scroll wheel
+    signal buttonClicked(int button)
+    signal wheeled(int delta)
 
     readonly property real densityK: ({ compact: 0.7, spacious: 1.35 })[Settings.s.barDensity] ?? 1
     readonly property real heightAdj: ({ compact: -4, spacious: 4 })[Settings.s.barDensity] ?? 0
@@ -180,7 +184,9 @@ Rectangle {
         enabled: chip.clickable
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: chip.clicked()
+        acceptedButtons: chip.acceptedButtons
+        onClicked: m => { if (m.button === Qt.LeftButton) chip.clicked(); chip.buttonClicked(m.button); }
+        onWheel: w => { if (chip.wheelEnabled) { chip.wheeled(w.angleDelta.y); w.accepted = true; } else w.accepted = false; }
     }
 
     Row {

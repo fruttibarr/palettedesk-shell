@@ -387,6 +387,12 @@ PanelWindow {
         tray: SystemTray.items.values.length > 0,
     })
 
+    function isShown(id) {
+        if (id.startsWith("custom:")) return CustomModules.shown(id);
+        return hasContent[id] !== false;
+    }
+    Component { id: customModule; CustomChip {} }
+
     readonly property real densityK: ({ compact: 0.7, spacious: 1.35 })[Settings.s.barDensity] ?? 1
     readonly property string divider: Settings.s.barDivider
 
@@ -397,7 +403,7 @@ PanelWindow {
         property int delayBase: 0
         property real posBase: 0
         property real posSpan: 0.33
-        readonly property var shown: ids.filter(id => bar.hasContent[id] !== false)
+        readonly property var shown: ids.filter(id => bar.isShown(id))
         readonly property real gap: 8 * bar.densityK
         spacing: bar.divider === "none" ? gap : 0
         Repeater {
@@ -438,8 +444,9 @@ PanelWindow {
                 }
                 Loader {
                     anchors.verticalCenter: parent.verticalCenter
-                    sourceComponent: bar.modules[cell.modelData] ?? null
+                    sourceComponent: bar.modules[cell.modelData] ?? (cell.modelData.startsWith("custom:") ? customModule : null)
                     onLoaded: if (item) {
+                        if ("moduleId" in item) item.moduleId = cell.modelData;
                         if ("appearDelay" in item) item.appearDelay = zone.delayBase + cell.index * 70;
                         if ("accentPos" in item) item.accentPos = zone.posBase + zone.posSpan * (zone.shown.length > 1 ? cell.index / (zone.shown.length - 1) : 0.5);
                     }

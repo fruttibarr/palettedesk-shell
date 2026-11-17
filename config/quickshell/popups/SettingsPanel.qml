@@ -31,6 +31,8 @@ Scope {
         { icon: "󰆽", name: "Cursor & Gestures",   component: cursorPage },
         { icon: "󰒓", name: "Behavior",            component: behaviorPage },
         { icon: "󰒲", name: "Idle & Lock",         component: idlePage },
+        { icon: "󱐋", name: "Automation",          component: automationPage },
+        { icon: "󰖲", name: "Desktop widgets",     component: deskPage },
         { icon: "󰂚", name: "Notifications & OSD", component: notifPage },
         { icon: "󰑊", name: "Screen Recording",    component: recordingPage },
         { icon: "󰏆", name: "Popups & Panels",     component: panelsPage },
@@ -1146,43 +1148,13 @@ Scope {
     }
 
     // ---- bar layout helpers ----
-    readonly property var barModules: [
-        { id: "workspaces", icon: "󰍹", name: "Workspaces" },
-        { id: "title",      icon: "󰖯", name: "Window title" },
-        { id: "media",      icon: "󰎆", name: "Now playing" },
-        { id: "lyrics",     icon: "󰎈", name: "Live lyrics" },
-        { id: "record",     icon: "󰑊", name: "Recording timer (only while recording)" },
-        { id: "clock",      icon: "󰥔", name: "Clock" },
-        { id: "tray",       icon: "󰀻", name: "System tray" },
-        { id: "stats",      icon: "󰍛", name: "CPU & RAM" },
-        { id: "kbd",        icon: "󰌌", name: "Keyboard layout (only with several layouts)" },
-        { id: "status",     icon: "󰂚", name: "Status (control center)" },
-        { id: "launcher",   icon: "󰣇", name: "Launcher button" },
-        { id: "power",      icon: "󰐥", name: "Power button" },
-    ]
-    function cloneLayout() {
-        const L = cfg.barLayout ?? {};
-        return { left: [...(L.left ?? [])], center: [...(L.center ?? [])], right: [...(L.right ?? [])] };
-    }
-    function zoneOf(id) {
-        const L = cfg.barLayout ?? {};
-        for (const z of ["left", "center", "right"]) if ((L[z] ?? []).includes(id)) return z;
-        return "hidden";
-    }
-    function moveModule(id, zone) {
-        const L = cloneLayout();
-        for (const z of ["left", "center", "right"]) L[z] = L[z].filter(x => x !== id);
-        if (zone !== "hidden") L[zone].push(id);
-        Settings.set("barLayout", L);
-    }
-    function shiftModule(id, dir) {
-        const L = cloneLayout();
-        const z = zoneOf(id);
-        if (z === "hidden") return;
-        const arr = L[z], i = arr.indexOf(id), j = i + dir;
-        if (j < 0 || j >= arr.length) return;
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-        Settings.set("barLayout", L);
+    function openModuleSettings(id) {
+        const q = ({ workspaces: "workspaces", clock: "clock", media: "media", lyrics: "lyrics", record: "recording",
+                     stats: "cpu", tray: "tray", status: "status", launcher: "launcher", power: "power", title: "title", kbd: "keyboard" })[id];
+        if (!q) return;
+        root.query = q;
+        const r = root.results[0];
+        if (r) root.openResult(r);
     }
 
     Component {
@@ -1386,58 +1358,16 @@ Scope {
 
             SettingSection {
                 title: "Layout"
-                Text {
+                BarLayoutEditor {
                     Layout.fillWidth: true
-                    text: "Pick where each module goes. Arrows change the order inside its zone."
-                    wrapMode: Text.Wrap
-                    color: Theme.subtext
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize - 2
-                }
-                Repeater {
-                    model: root.barModules
-                    RowLayout {
-                        id: modRow
-                        required property var modelData
-                        readonly property string zone: root.zoneOf(modelData.id)
-                        readonly property var zoneList: (root.cfg.barLayout ?? {})[zone] ?? []
-                        Layout.fillWidth: true
-                        spacing: 10
-                        Text {
-                            text: modRow.modelData.icon
-                            color: modRow.zone === "hidden" ? Theme.outline : Theme.primary
-                            font.family: Theme.font
-                            font.pixelSize: 16
-                        }
-                        Text {
-                            Layout.fillWidth: true
-                            text: modRow.modelData.name
-                            elide: Text.ElideRight
-                            color: modRow.zone === "hidden" ? Theme.subtext : Theme.text
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize - 1
-                        }
-                        MiniButton {
-                            icon: "󰁍"
-                            visible: modRow.zone !== "hidden"
-                            enabledState: modRow.zoneList.indexOf(modRow.modelData.id) > 0
-                            onClicked: root.shiftModule(modRow.modelData.id, -1)
-                        }
-                        MiniButton {
-                            icon: "󰁔"
-                            visible: modRow.zone !== "hidden"
-                            enabledState: modRow.zoneList.indexOf(modRow.modelData.id) < modRow.zoneList.length - 1
-                            onClicked: root.shiftModule(modRow.modelData.id, 1)
-                        }
-                        Segmented {
-                            current: modRow.zone
-                            onPicked: v => root.moveModule(modRow.modelData.id, v)
-                            options: [{ label: "Left", value: "left" }, { label: "Center", value: "center" },
-                                      { label: "Right", value: "right" }, { label: "Off", value: "hidden" }]
-                        }
-                    }
+                    catalog: Settings.barModuleCatalog.concat((Settings.s.customModules ?? []).map(m => ({ id: m.id, icon: m.icon || "󰘳", short: m.name, name: m.name })))
+                    layout: root.cfg.barLayout ?? ({})
+                    onLayoutEdited: L => Settings.set("barLayout", L)
+                    onModuleClicked: id => root.openModuleSettings(id)
                 }
             }
+
+            CustomModulesSection {}
 
             SettingSection {
                 title: "Workspaces"
@@ -2071,6 +2001,14 @@ Scope {
         RulesPage {}
     }
     Component {
+        id: automationPage
+        AutomationPage {}
+    }
+    Component {
+        id: deskPage
+        DeskWidgetsPage {}
+    }
+    Component {
         id: behaviorPage
         ColumnLayout {
             spacing: 16
@@ -2167,6 +2105,7 @@ Scope {
                     Toggle { checked: root.cfg.exitRetainsFullscreen; onToggled: v => Settings.set("exitRetainsFullscreen", v) }
                 }
             }
+            HotCornersSection {}
             SettingSection {
                 title: "Terminal swallowing"
                 SettingRow {

@@ -5,6 +5,9 @@ import QtQuick
 
 // IPC used by the hardware keys in hyprland.lua.
 Scope {
+    // singletons load lazily: touch the ones that must run (and answer IPC) from startup
+    Component.onCompleted: { CustomModules.modules; Profiles.rules; }
+
     IpcHandler {
         target: "brightness"
         function up(): void { Brightness.set(Brightness.value + 0.05); }
