@@ -104,7 +104,10 @@ def load_manifest():
 
 
 def git(repo, *args):
-    r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True)
+    try:
+        r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True)
+    except FileNotFoundError:   # git is optional: only `update` really needs it
+        return 127, "", "git is not installed"
     return r.returncode, r.stdout.strip(), r.stderr.strip()
 
 

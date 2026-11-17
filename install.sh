@@ -78,11 +78,20 @@ backup() {  # move an existing path into the backup folder, keeping its path und
   run mkdir -p "$BACKUP/$(dirname "$rel")"; run mv "$t" "$BACKUP/$rel"; BACKED=1
   [ "$DRY" = 1 ] || printf '%s\n' "$rel" >> "$BACKUP/.items"   # what `palettedesk restore` puts back
 }
+# Is <a> identical to <b> (file or directory tree)? Uses checksums, not diff: minimal Arch images have no diffutils.
+tree_sum() {
+  if [ -d "$1" ]; then (cd "$1" && find . -type f -print0 | LC_ALL=C sort -z | xargs -0 -r sha256sum | sha256sum)
+  else sha256sum < "$1"; fi
+}
+same() {
+  if [ -d "$1" ] && [ -d "$2" ]; then :; elif [ -f "$1" ] && [ -f "$2" ]; then :; else return 1; fi
+  [ "$(tree_sum "$1")" = "$(tree_sum "$2")" ]
+}
 install_path() {  # install_path <source> <destination> [keep-existing]
   local s="$1" d="$2" keep="${3:-}"
   if [ -e "$d" ] || [ -L "$d" ]; then
     [ "$keep" = keep ] && { say "keeping your existing ${d/#$HOME/~}"; return; }
-    if diff -rq "$s" "$d" >/dev/null 2>&1; then note "$d"; return; fi
+    if same "$s" "$d"; then note "$d"; return; fi
     say "backing up ${d/#$HOME/~}"; backup "$d"
   fi
   say "installing ${d/#$HOME/~}"
