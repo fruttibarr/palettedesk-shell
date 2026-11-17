@@ -367,7 +367,7 @@ Singleton {
     // settings stored as bool/number that Hyprland wants in another shape
     readonly property var hyprTransform: ({
             "shadowOffsetY": v => "0 " + Math.round(v),
-            "screenShader": v => adjusting ? composedFile : (v ? home + "/.config/hypr/shaders/" + String(v).replace(/[^A-Za-z0-9_-]/g, "") + ".frag" : ""),
+            "screenShader": v => adjusting ? readyShader : (v ? home + "/.config/hypr/shaders/" + String(v).replace(/[^A-Za-z0-9_-]/g, "") + ".frag" : ""),
             "wsBackAndForth": v => v ? 1 : 0,
             "cursorWarpOnWs": v => v ? 1 : 0,
             "exitRetainsFullscreen": v => v ? 1 : 0,
@@ -385,11 +385,23 @@ Singleton {
     function sigHash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
     readonly property string composedFile: home + "/.local/state/rice/shaders/c-" + sigHash(adjSig) + ".frag"
     function recomposeThenApply() { if (adjusting) composeTimer.restart(); else hyprTimer.restart(); }
-    Timer { id: composeTimer; interval: 200; onTriggered: composeProc.running = true }
+    // Hyprland is only ever pointed at a shader file that exists: `readyShader` is set once the generator has finished.
+    property string readyShader: ""
+    property string composing: ""
+    Timer { id: composeTimer; interval: 200; onTriggered: root.startCompose() }
+    function startCompose() {
+        if (composeProc.running) return;      // onExited re-checks and starts again if the settings moved meanwhile
+        composing = composedFile;
+        composeProc.command = [Quickshell.shellDir + "/scripts/compose-shader.py", composing, adapter.screenShader || "-"].concat(adjKeys.map(k => String(adapter[k])));
+        composeProc.running = true;
+    }
     Process {
         id: composeProc
-        command: [Quickshell.shellDir + "/scripts/compose-shader.py", root.composedFile, adapter.screenShader || "-"].concat(root.adjKeys.map(k => String(adapter[k])))
-        onExited: hyprTimer.restart()
+        onExited: code => {
+            if (code === 0) root.readyShader = root.composing;
+            if (root.composing !== root.composedFile) root.startCompose();   // settings changed while generating
+            else hyprTimer.restart();
+        }
     }
 
     function set(key, value) {
