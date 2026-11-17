@@ -6,11 +6,13 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Settings > Displays**: per-monitor resolution and refresh rate, position, scale, rotation and on/off. Changes apply
+  live and revert after 15 seconds unless you press Keep. Stored in the `monitors` setting.
 - `tests/multimonitor.sh`: regression test for popups, notifications, OSD, workspace buttons and the lock screen on two monitors.
 - `tests/soak.sh`: cycles wallpapers and popups while sampling the shell's memory. A 100-iteration run (images,
   GIFs, MP4, WebM, 300 popup toggles) showed no leak: memory, threads and file handles stayed flat after warm-up.
 - Shell watchdog (`qs-watchdog.sh`, started with Hyprland): warns with a notification and a **Restart shell**
-  button when the shell's memory gets very high (default 900 MB; Settings > Behavior > Shell health; 0 = off).
+  button when the shell's memory gets very high (default 1500 MB; Settings > Behavior > Shell health; 0 = off).
   It never restarts anything by itself.
 - `palettedesk` command (installed to `~/.local/bin`): `version`, `doctor`, `update`, `uninstall`, `restore`, `mem`.
   `install.sh` now records a manifest, so `palettedesk uninstall` removes exactly what was installed, keeps files

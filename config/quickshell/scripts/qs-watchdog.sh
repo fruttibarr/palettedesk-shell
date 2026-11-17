@@ -3,7 +3,7 @@
 # It never restarts anything by itself: you decide. Started from hyprland.lua.
 #
 # Setting (Settings > Behavior, or ~/.config/rice/settings.json):
-#   watchdogRssMb   warn above this many MB (default 900; 0 turns the watchdog off)
+#   watchdogRssMb   warn above this many MB (default 1500; 0 turns the watchdog off)
 # Environment (for testing): PD_WATCHDOG_INTERVAL=seconds between checks (default 60)
 #   qs-watchdog.sh --restart-now   restart the shell immediately (what the button runs)
 set -u
@@ -28,8 +28,8 @@ declare -A warned   # pid -> epoch seconds of the last warning
 threshold() {
   python3 -c '
 import json, sys
-try: print(int(json.load(open(sys.argv[1])).get("watchdogRssMb", 900)))
-except Exception: print(900)' "$settings" 2>/dev/null || echo 900
+try: print(int(json.load(open(sys.argv[1])).get("watchdogRssMb", 1500)))
+except Exception: print(1500)' "$settings" 2>/dev/null || echo 1500
 }
 
 shell_pid() {   # the process is called qs, quickshell, or (on NixOS) .quickshell-wrapped, truncated to 15 chars

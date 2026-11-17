@@ -31,6 +31,8 @@ if [ "${#M[@]}" -lt 2 ]; then hyprctl output create headless >/dev/null 2>&1; sl
 [ "${#M[@]}" -ge 2 ] || { echo "could not get a second monitor"; exit 2; }
 A="${M[0]}"; B="${M[1]}"
 echo "monitors: $A and $B"
+# the memory watchdog posts a never-expiring warning if the shell is big, which would pin the toast window
+timeout 10 qs ipc call settings set watchdogRssMb 0 >/dev/null 2>&1; pkill -x notify-send; sleep 1
 
 # start from a known state: unlocked, nothing open
 echo "popups (control center)"
@@ -75,6 +77,17 @@ else
   echo "  (skipped: ydotool not available)"
 fi
 focus "$A"
+
+echo "display layout (Settings > Displays writes the monitors setting; Hyprland must apply it, and a reset must undo it)"
+scale_of() { hyprctl monitors -j | python3 -c "
+import json, sys
+print([m['scale'] for m in json.load(sys.stdin) if m['name'] == '$1'][0])"; }
+setmon() { enc="$(python3 -c 'import json,sys;print(json.dumps(sys.argv[1]))' "$1")"; timeout 10 qs ipc call settings set monitors "$enc" >/dev/null 2>&1; sleep 3; }
+orig="$(scale_of "$B")"
+setmon "{\"$B\":{\"enabled\":true,\"scale\":1.5,\"transform\":0}}"
+check "scale for $B applies from the monitors setting" "$(scale_of "$B")" "1.5"
+setmon '{}'
+check "removing the entry resets $B to the default" "$(scale_of "$B")" "$orig"
 
 echo "lock screen (covers every monitor; unlocking must clear the shell's locked flag)"
 wall() { timeout 10 qs ipc call shell wallState 2>/dev/null | grep '^\[{' | python3 -c "

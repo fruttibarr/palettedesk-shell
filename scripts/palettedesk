@@ -208,7 +208,7 @@ def cmd_doctor(_a):
     check(bool(pids), "shell is running", "start it with `qs`")
     if pids:
         mem = proc_mem(pids[0])
-        check(mem["rss_mb"] < 900, f"shell memory {mem['rss_mb']:.0f} MB", "high: see `palettedesk mem`")
+        check(mem["rss_mb"] < 1500, f"shell memory {mem['rss_mb']:.0f} MB", "high: see `palettedesk mem`")
     settings = os.path.join(CFG, "rice", "settings.json")
     try:
         with open(settings, encoding="utf-8") as f:

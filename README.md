@@ -155,7 +155,7 @@ palettedesk restore            # list the backups the installer made
 ```
 
 If the shell ever uses a lot of memory, a notification with a **Restart shell** button appears (limit in
-Settings > Behavior > Shell health, default 900 MB, 0 turns it off). Nothing restarts without you.
+Settings > Behavior > Shell health, default 1500 MB, 0 turns it off). Nothing restarts without you.
 If a wallpaper isn't animating, `qs ipc call shell wallState` says why.
 
 ## Uninstall

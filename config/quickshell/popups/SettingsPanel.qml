@@ -21,6 +21,7 @@ Scope {
         { icon: "󰖲", name: "Windows",             component: windowsPage },
         { icon: "󰕴", name: "Layouts",             component: layoutsPage },
         { icon: "󰕨", name: "Animations",          component: animationsPage },
+        { icon: "󰍹", name: "Displays",            component: displaysPage },
         { icon: "󰍜", name: "Bar",                 component: barPage },
         { icon: "󰀻", name: "Launcher",            component: launcherPage },
         { icon: "󰌌", name: "Input",               component: inputPage },
@@ -1651,6 +1652,10 @@ Scope {
         }
     }
 
+    Component {
+        id: displaysPage
+        DisplaysPage {}
+    }
     Component {
         id: behaviorPage
         ColumnLayout {

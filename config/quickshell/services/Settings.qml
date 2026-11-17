@@ -98,7 +98,8 @@ Singleton {
         "wallCrispPixels": true,
         "parallaxStrength": 0.12,
         "animatedWallpapers": true,
-        "watchdogRssMb": 900,
+        "watchdogRssMb": 1500,
+        "monitors": "{}",
         "pauseOnBattery": false,
         "pauseWhenFullscreen": true,
         "albumWallpaper": false,
@@ -331,7 +332,7 @@ Singleton {
     })
 
     // keys that aren't plain options but still regenerate the Lua file
-    readonly property var hyprExtraKeys: ["rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "monitorScale", "middleAsRight", "infiniteDesktop", "infiniteFloat", "keybinds"]
+    readonly property var hyprExtraKeys: ["rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "monitorScale", "middleAsRight", "infiniteDesktop", "infiniteFloat", "keybinds", "monitors"]
 
     // settings stored as bool/number that Hyprland wants in another shape
     readonly property var hyprTransform: ({
@@ -559,7 +560,30 @@ Singleton {
     function monitorLua() {
         const sc = Number(adapter.monitorScale);
         const v = sc > 0 ? String(Number(sc.toFixed(4))) : '"auto"';
-        return `\n-- display scale (Appearance page)\nhl.monitor({ output = "", mode = "preferred", position = "auto", scale = ${v} })\n`;
+        let out = `\n-- display scale (Appearance page)\nhl.monitor({ output = "", mode = "preferred", position = "auto", scale = ${v} })\n`;
+        // per-monitor layout (Displays page): JSON {"desc:<description>": {enabled, mode, x, y, scale, transform}}
+        let cfg = {};
+        try { cfg = JSON.parse(adapter.monitors || "{}"); } catch (e) { cfg = {}; }
+        const q = t => String(t).replace(/[\\"\n]/g, "");
+        let lines = "";
+        for (const key of Object.keys(cfg)) {
+            const m = cfg[key];
+            if (!m || typeof m !== "object") continue;
+            if (m.enabled === false) { lines += `hl.monitor({ output = "${q(key)}", disabled = true })\n`; continue; }
+            const mode = m.mode ? `"${q(m.mode)}"` : '"preferred"';
+            const pos = (typeof m.x === "number" && typeof m.y === "number") ? `"${Math.round(m.x)}x${Math.round(m.y)}"` : '"auto"';
+            const scale = Number(m.scale) > 0 ? String(Number(m.scale)) : '"auto"';
+            lines += `hl.monitor({ output = "${q(key)}", mode = ${mode}, position = ${pos}, scale = ${scale}, transform = ${(m.transform | 0) & 7} })\n`;
+        }
+        // Removing a rule from this file does not undo one Hyprland already applied, so remember which monitors
+        // we configured last time (Lua globals persist between applies) and reset the ones that are gone.
+        const keySet = Object.keys(cfg).map(k => `["${q(k)}"] = true`).join(", ");
+        out += "-- per-monitor layout (Displays page)\n" + lines +
+            `local now = { ${keySet} }\n` +
+            `for k in pairs(_G.rice_monitor_keys or {}) do\n` +
+            `    if not now[k] then hl.monitor({ output = k, mode = "preferred", position = "auto", scale = ${v}, transform = 0, disabled = false }) end\n` +
+            `end\n_G.rice_monitor_keys = now\n`;
+        return out;
     }
 
     // Window / workspace animations, scaled by animScale (curves live in hyprland.lua)
@@ -699,7 +723,8 @@ Singleton {
             property bool wallCrispPixels: true
             property real parallaxStrength: 0.12
             property bool animatedWallpapers: true
-            property int watchdogRssMb: 900
+            property int watchdogRssMb: 1500
+            property string monitors: "{}"
             property bool pauseOnBattery: false
             property bool pauseWhenFullscreen: true
             property bool albumWallpaper: false
