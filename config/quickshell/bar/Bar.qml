@@ -171,6 +171,8 @@ PanelWindow {
         id: statsModule
         Chip {
             spacing: 12
+            clickable: true
+            onClicked: { Globals.popupFrom(bar.screen?.name); Globals.sysmonOpen = !Globals.sysmonOpen; }
             component Gauge: Row {
                 property real value
                 property color tint

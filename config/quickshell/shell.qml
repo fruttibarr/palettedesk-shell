@@ -32,6 +32,7 @@ ShellRoot {
     Osd {}
     Equalizer {}
     Mixer {}
+    SystemMonitor {}
     NightLight {}
     Clipboard {}
     SettingsPanel {}

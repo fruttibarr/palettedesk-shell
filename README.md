@@ -2,7 +2,7 @@
 
 A Hyprland + Quickshell rice. A Hyprland (Lua config) desktop with a custom Quickshell shell: bar, launcher, control center,
 notifications, lock screen, settings panel with themes and keybind editor, 32-band equalizer,
-live lyrics, wallpaper picker with search, album-cover wallpapers with a visualizer, and screen
+live lyrics, an audio mixer, a system monitor, night light, per-monitor wallpapers and display settings, wallpaper picker with search, album-cover wallpapers with a visualizer, and screen
 recording. Colors follow the wallpaper through matugen (kitty, GTK, Qt, fish, Hyprland, Firefox).
 
 ![Desktop](docs/screenshots/desktop.jpg)

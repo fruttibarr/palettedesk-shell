@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **System monitor** (click the CPU/RAM chip in the bar, or `qs ipc call sysmon toggle`): live CPU graph with per-core bars,
+  memory, GPU (AMD), network, disks, temperatures and the busiest processes. The sampler only runs while it is open.
 - **Night light** (control center tile, Settings > Behavior, `qs ipc call nightlight on|off|toggle|temp N`) using `hyprsunset`,
   which is now a required package on Arch and NixOS.
 - **Audio mixer** (control center button, or `qs ipc call mixer toggle`): output and input devices, master and microphone
