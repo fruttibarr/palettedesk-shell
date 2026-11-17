@@ -36,7 +36,7 @@ Nine built-in themes (Settings → Themes), each a full look: wallpaper, colors,
 ## Install
 
 ```sh
-git clone https://github.com/<you>/palettedesk-shell && cd palettedesk-shell
+git clone https://github.com/Fruttibar/palettedesk-shell && cd palettedesk-shell
 ./install.sh --dry-run      # see exactly what it would do
 ./install.sh                # for real
 ```
