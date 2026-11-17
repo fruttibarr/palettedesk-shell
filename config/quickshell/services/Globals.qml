@@ -7,6 +7,7 @@ Singleton {
     property bool controlCenterOpen: false
     property bool powerMenuOpen: false
     property bool equalizerOpen: false
+    property bool mixerOpen: false
     property bool settingsOpen: false
     property bool lyricsOpen: false
     property real lyricsAnchorX: -1   // screen x the lyrics viewer drops from (set by the chip)

@@ -276,6 +276,21 @@ Scope {
                     onMoved: v => { if (root.sink?.audio) root.sink.audio.volume = v; }
                     onIconClicked: if (root.sink?.audio) root.sink.audio.muted = !root.sink.audio.muted
                 }
+                    // Mixer button
+                    Rectangle {
+                        implicitWidth: 38
+                        implicitHeight: 38
+                        radius: 19
+                        color: mixMouse.containsMouse ? Theme.alpha(Theme.primaryContainer, 0.9) : Theme.alpha(Theme.surfaceContainerHigh, 0.6)
+                        Text { anchors.centerIn: parent; text: "󰓃"; color: Theme.primary; font.family: Theme.font; font.pixelSize: 17 }
+                        MouseArea {
+                            id: mixMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: { Globals.controlCenterOpen = false; Globals.mixerOpen = true; }
+                        }
+                    }
                     // Equalizer button
                     Rectangle {
                         implicitWidth: 38

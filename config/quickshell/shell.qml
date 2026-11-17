@@ -31,6 +31,7 @@ ShellRoot {
     PowerMenu {}
     Osd {}
     Equalizer {}
+    Mixer {}
     Clipboard {}
     SettingsPanel {}
     TermDrawPreview {}

@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Audio mixer** (control center button, or `qs ipc call mixer toggle`): output and input devices, master and microphone
+  volume, and a volume + mute for every app that is playing or recording. `mixer micToggle` and `mixer sinkNext` for keybinds.
 - **Per-monitor wallpapers**: pick a monitor in the wallpaper picker (or `set-wallpaper.sh --monitor NAME FILE`). Colours
   stay tied to the global wallpaper. `--all FILE` sets one wallpaper everywhere again.
 - **Settings > Displays**: per-monitor resolution and refresh rate, position, scale, rotation and on/off. Changes apply
