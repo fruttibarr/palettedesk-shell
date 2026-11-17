@@ -33,6 +33,7 @@ ShellRoot {
     Equalizer {}
     Mixer {}
     SystemMonitor {}
+    Dashboard {}
     NightLight {}
     Clipboard {}
     SettingsPanel {}

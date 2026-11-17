@@ -39,6 +39,7 @@
     quickshell matugen cava hyprsunset cliphist wl-clipboard grim slurp wf-recorder ffmpeg
     kitty fish xfce.thunar qt6Packages.qt6ct libnotify python3 git curl
     ladspaPlugins   # the equalizer's real limiter (fast lookahead limiter)
+    hyprpicker tesseract satty   # color picker, copy-text-from-screen, screenshot annotation (optional features)
     qt6.qtmultimedia
   ];
 

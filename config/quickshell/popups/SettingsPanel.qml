@@ -1694,7 +1694,7 @@ Scope {
                 subtitle: "Focus, workspaces, fullscreen, terminal swallowing and display."
                 keys: ["focusOnActivate", "middleClickPaste", "enableSwallow", "swallowRegex", "closeSpecialOnEmpty", "hideSpecialOnWsChange",
                        "wsBackAndForth", "allowWsCycles", "onFocusUnderFullscreen", "exitRetainsFullscreen", "mouseWakes", "keyWakes",
-                       "vrr", "directScanout", "xwaylandZeroScaling", "watchdogRssMb", "nightLight", "nightTemp"]
+                       "vrr", "directScanout", "xwaylandZeroScaling", "watchdogRssMb", "nightLight", "nightTemp", "weatherEnabled", "weatherLat", "weatherLon", "weatherPlace", "weatherUnit"]
             }
             SettingSection {
                 title: "Focus"
@@ -1728,6 +1728,33 @@ Scope {
                 SettingRow {
                     label: "Hide scratchpad when switching workspace"
                     Toggle { checked: root.cfg.hideSpecialOnWsChange; onToggled: v => Settings.set("hideSpecialOnWsChange", v) }
+                }
+            }
+            SettingSection {
+                title: "Weather (dashboard)"
+                SettingRow {
+                    label: "Show weather"; keywords: "forecast temperature open-meteo dashboard"
+                    description: "Off by default. When on, your coordinates are sent to open-meteo.com (no account) about every 30 minutes."
+                    Toggle { checked: root.cfg.weatherEnabled; onToggled: v => Settings.set("weatherEnabled", v) }
+                }
+                SettingRow {
+                    label: "Place"; description: "Just a label for the dashboard"
+                    SettingText { text: root.cfg.weatherPlace; placeholder: "Home"; onSubmitted: t => Settings.set("weatherPlace", t) }
+                }
+                SettingRow {
+                    label: "Latitude"; description: "e.g. 51.5072 (north is positive)"
+                    SettingText { text: String(root.cfg.weatherLat); placeholder: "51.5072"
+                                  onSubmitted: t => { const v = parseFloat(t); if (!isNaN(v)) Settings.set("weatherLat", Math.max(-90, Math.min(90, v))); } }
+                }
+                SettingRow {
+                    label: "Longitude"; description: "e.g. -0.1276 (east is positive)"
+                    SettingText { text: String(root.cfg.weatherLon); placeholder: "-0.1276"
+                                  onSubmitted: t => { const v = parseFloat(t); if (!isNaN(v)) Settings.set("weatherLon", Math.max(-180, Math.min(180, v))); } }
+                }
+                SettingRow {
+                    label: "Units"
+                    Segmented { current: root.cfg.weatherUnit; onPicked: v => Settings.set("weatherUnit", v)
+                                options: [{ label: "°C  km/h", value: "metric" }, { label: "°F  mph", value: "imperial" }] }
                 }
             }
             SettingSection {

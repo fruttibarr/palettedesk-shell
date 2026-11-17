@@ -101,6 +101,11 @@ Singleton {
         "watchdogRssMb": 1500,
         "monitors": "{}",
         "screenShader": "",
+        "weatherEnabled": false,
+        "weatherLat": 0,
+        "weatherLon": 0,
+        "weatherPlace": "",
+        "weatherUnit": "metric",
         "nightLight": false,
         "nightTemp": 4000,
         "pauseOnBattery": false,
@@ -505,6 +510,9 @@ Singleton {
 
         { id: "shotRegion",    group: "Screenshots", label: "Screenshot a region",  def: "Print",                lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh region")' },
         { id: "shotFull",      group: "Screenshots", label: "Screenshot the screen", def: "SHIFT + Print",       lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh full")' },
+        { id: "shotEdit",      group: "Screenshots", label: "Screenshot and annotate", def: "ALT + Print",       lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh edit")' },
+        { id: "colorPick",     group: "Screenshots", label: "Pick a color",        def: "SUPER + SHIFT + C",    lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/colorpick.sh")' },
+        { id: "ocr",           group: "Screenshots", label: "Copy text from the screen", def: "SUPER + SHIFT + O", lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/ocr.sh")' },
         { id: "shotWindow",    group: "Screenshots", label: "Screenshot a window",  def: "SUPER + Print",        lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh window")' },
 
         { id: "recToggle",     group: "Screen recording", label: "Start / stop recording",       def: "CTRL + Print",   lua: 'hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenrec.sh toggle")' },
@@ -738,6 +746,11 @@ Singleton {
             property int watchdogRssMb: 1500
             property string monitors: "{}"
             property string screenShader: ""
+            property bool weatherEnabled: false
+            property real weatherLat: 0
+            property real weatherLon: 0
+            property string weatherPlace: ""
+            property string weatherUnit: "metric"
             property bool nightLight: false
             property int nightTemp: 4000
             property bool pauseOnBattery: false

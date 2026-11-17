@@ -149,7 +149,7 @@ PanelWindow {
     }
     Component {
         id: clockModule
-        Chip { Clock {} }
+        Chip { clickable: true; onClicked: { Globals.popupFrom(bar.screen?.name); Globals.dashboardOpen = !Globals.dashboardOpen; } Clock {} }
     }
     Component {
         id: kbdModule

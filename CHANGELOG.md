@@ -6,6 +6,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Dashboard** (click the clock, or `qs ipc call dashboard toggle`): month calendar, weather and timers. Weather is off by default,
+  uses Open-Meteo with a location you enter yourself (Settings > Behavior > Weather) and nothing is guessed from your IP.
+  Timers (5/10/25/45/60 min presets, Pomodoro) survive restarts and notify when done: `qs ipc call timer start 25 Pomodoro`.
+- **Screen utilities** (optional packages): color picker (`SUPER+SHIFT+C`, hyprpicker), copy text from the screen
+  (`SUPER+SHIFT+O`, tesseract) and annotate a screenshot (`ALT+Print`, satty).
 - **Full-screen effects** (Settings > Blur > Screen effect, `qs ipc call shader set|off|cycle|list`): Grayscale, Sepia, Vibrant, Retro CRT,
   Invert and a red-green color-blind aid, as Hyprland screen shaders in `~/.config/hypr/shaders`.
 - **Keyboard layout chip** (bar module `kbd`, shown when several layouts are set): live layout name, click to switch.
