@@ -59,6 +59,18 @@ Singleton {
     // distance from the bar's screen edge to just past the bar
     readonly property int barReserved: barMarginPx + barHeight + 8
 
+    // Per-monitor wallpapers: {"<monitor name>": "/path"} (scripts/set-wallpaper.sh --monitor). Kept apart from
+    // colors.json because matugen rewrites that file on every change.
+    property var walls: ({})
+    function wallpaperFor(monitorName) { return (walls && walls[monitorName]) || wallpaper; }
+    FileView {
+        path: root.stateDir + "/walls.json"
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: { try { root.walls = JSON.parse(text()); } catch (e) { root.walls = ({}); } }
+        onLoadFailed: root.walls = ({})
+    }
+
     FileView {
         path: root.stateDir + "/colors.json"
         watchChanges: true

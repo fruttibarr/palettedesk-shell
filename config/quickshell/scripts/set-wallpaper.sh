@@ -8,6 +8,26 @@
 # album-wallpaper.sh): the wallpaper they replace stays remembered as "base" in
 # colors.json, and colors come from the cover itself rather than its backdrop.
 set -euo pipefail
+
+# Per-monitor wallpapers live in their own file: matugen rewrites colors.json on every global change.
+#   set-wallpaper.sh --monitor NAME FILE   wallpaper for one monitor only (colors stay as they are)
+#   set-wallpaper.sh --monitor NAME        remove that monitor's own wallpaper
+#   set-wallpaper.sh --all [FILE]          forget every per-monitor wallpaper, then set FILE everywhere
+walls="${XDG_STATE_HOME:-$HOME/.local/state}/rice/walls.json"
+if [ "${1:-}" = "--monitor" ]; then
+  mkdir -p "$(dirname "$walls")"
+  python3 - "$walls" "${2:?monitor name}" "${3:-}" <<'PY'
+import json, os, sys
+p, mon, f = sys.argv[1:4]
+try: d = json.load(open(p))
+except Exception: d = {}
+if f: d[mon] = os.path.realpath(f)
+else: d.pop(mon, None)
+tmp = p + ".tmp"; json.dump(d, open(tmp, "w"), indent=2); os.replace(tmp, p)
+PY
+  exit 0
+fi
+if [ "${1:-}" = "--all" ]; then rm -f "$walls"; shift; [ $# -gt 0 ] || set -- ""; fi
 dir="$HOME/Pictures/Wallpapers"
 cache="$HOME/.cache/rice"
 state="$HOME/.local/state/rice/colors.json"

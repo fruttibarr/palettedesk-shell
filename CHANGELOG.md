@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Per-monitor wallpapers**: pick a monitor in the wallpaper picker (or `set-wallpaper.sh --monitor NAME FILE`). Colours
+  stay tied to the global wallpaper. `--all FILE` sets one wallpaper everywhere again.
 - **Settings > Displays**: per-monitor resolution and refresh rate, position, scale, rotation and on/off. Changes apply
   live and revert after 15 seconds unless you press Keep. Stored in the `monitors` setting.
 - `tests/multimonitor.sh`: regression test for popups, notifications, OSD, workspace buttons and the lock screen on two monitors.

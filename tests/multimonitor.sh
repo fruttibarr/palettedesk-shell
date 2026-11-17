@@ -56,7 +56,9 @@ done
 echo "volume OSD"
 for m in "$A" "$B"; do
   wait_none rice-osd; focus "$m"
-  wpctl set-volume @DEFAULT_AUDIO_SINK@ "$((30 + RANDOM % 50))%" 2>/dev/null
+  cur="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{printf "%d", $2 * 100}')"
+  new=$(( cur > 50 ? 30 : 70 ))   # always a different value: the OSD only shows when the volume changes
+  wpctl set-volume @DEFAULT_AUDIO_SINK@ "${new}%" 2>/dev/null
   seen=none; for _ in $(seq 1 15); do seen="$(on_screen rice-osd)"; [ "$seen" != none ] && break; sleep 0.2; done   # it shows briefly
   check "OSD appears on the focused monitor ($m)" "$seen" "$m"
 done
@@ -88,6 +90,24 @@ setmon "{\"$B\":{\"enabled\":true,\"scale\":1.5,\"transform\":0}}"
 check "scale for $B applies from the monitors setting" "$(scale_of "$B")" "1.5"
 setmon '{}'
 check "removing the entry resets $B to the default" "$(scale_of "$B")" "$orig"
+
+echo "per-monitor wallpapers"
+wfile() { timeout 10 qs ipc call shell wallState 2>/dev/null | grep '^\[{' | python3 -c "
+import json, sys
+print([d['file'] for d in json.load(sys.stdin) if d['screen'] == '$1'][0])"; }
+setter="$HOME/.config/quickshell/scripts/set-wallpaper.sh"
+pics=("$HOME"/Pictures/Wallpapers/*/*/*.png "$HOME"/Pictures/Wallpapers/*/*.png)
+if [ -f "${pics[0]}" ] && [ -f "${pics[1]}" ]; then
+  "$setter" --all "${pics[0]}" >/dev/null 2>&1; sleep 6
+  check "both monitors show the global wallpaper" "$(wfile "$A")/$(wfile "$B")" "$(basename "${pics[0]}")/$(basename "${pics[0]}")"
+  "$setter" --monitor "$B" "${pics[1]}"; sleep 5
+  check "$B shows its own wallpaper" "$(wfile "$B")" "$(basename "${pics[1]}")"
+  check "$A keeps the global one" "$(wfile "$A")" "$(basename "${pics[0]}")"
+  "$setter" --monitor "$B"; sleep 5
+  check "removing the override puts $B back on the global wallpaper" "$(wfile "$B")" "$(basename "${pics[0]}")"
+else
+  echo "  (skipped: needs two image wallpapers in ~/Pictures/Wallpapers)"
+fi
 
 echo "lock screen (covers every monitor; unlocking must clear the shell's locked flag)"
 wall() { timeout 10 qs ipc call shell wallState 2>/dev/null | grep '^\[{' | python3 -c "

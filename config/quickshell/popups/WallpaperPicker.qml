@@ -176,9 +176,13 @@ Scope {
         grid.currentIndex = 0;
     }
 
+    // "" = every monitor; otherwise only that monitor gets the wallpaper (colors stay as they are)
+    property string targetMonitor: ""
+    readonly property bool multiMonitor: Quickshell.screens.length > 1
     function apply(path) {
         if (!path) return;
-        Quickshell.execDetached([setter, path]);
+        if (multiMonitor && targetMonitor !== "") Quickshell.execDetached([setter, "--monitor", targetMonitor, path]);
+        else Quickshell.execDetached([setter, "--all", path]);
         open = false;
     }
 
@@ -189,6 +193,8 @@ Scope {
         // e.g.  qs ipc call wallpaper search "dark blue 4k"   (returns the match count)
         function search(text: string): void { root.open = true; Qt.callLater(() => search.text = text); }
         function count(): int { return root.shown.length; }
+        // qs ipc call wallpaper setFor <monitor|all> <file>
+        function setFor(monitor: string, file: string): void { root.targetMonitor = monitor === "all" ? "" : monitor; root.apply(file); }
     }
 
     Process {
@@ -334,6 +340,23 @@ Scope {
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: { root.kindFilter = chipF.modelData.v; grid.currentIndex = 0; }
                             }
+                        }
+                    }
+
+                    // which monitor the next pick is for (only with more than one monitor)
+                    Repeater {
+                        model: root.multiMonitor ? [{ v: "", l: "󰍹  All monitors" }].concat(Quickshell.screens.map(sc => ({ v: sc.name, l: sc.name }))) : []
+                        Rectangle {
+                            id: chipM
+                            required property var modelData
+                            readonly property bool sel: root.targetMonitor === modelData.v
+                            implicitWidth: mText.implicitWidth + 24
+                            implicitHeight: 28
+                            radius: 14
+                            color: sel ? Theme.secondary : Theme.alpha(Theme.surfaceContainerHigh, 0.6)
+                            Text { id: mText; anchors.centerIn: parent; text: chipM.modelData.l
+                                   color: chipM.sel ? Theme.surface : Theme.text; font.family: Theme.font; font.pixelSize: Theme.fontSize - 2 }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.targetMonitor = chipM.modelData.v }
                         }
                     }
 

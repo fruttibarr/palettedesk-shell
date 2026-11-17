@@ -61,7 +61,7 @@ PanelWindow {
     // ---- crossfade between layers ----
     property var front: layerA
     property var incoming: null
-    readonly property string target: Theme.wallpaper
+    readonly property string target: Theme.wallpaperFor(win.screen?.name ?? "")
 
     onTargetChanged: swap()
     Component.onCompleted: { layerA.path = target; Globals.wallWindows = Globals.wallWindows.concat([win]); }
