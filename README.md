@@ -10,14 +10,34 @@ recording. Colors follow the wallpaper through matugen (kitty, GTK, Qt, fish, Hy
 | Launcher | Control center |
 | --- | --- |
 | ![Launcher](docs/screenshots/launcher.jpg) | ![Control center](docs/screenshots/control-center.jpg) |
-| **Settings** | **Wallpaper picker** |
+| **Settings: Themes** | **Wallpaper picker** |
 | ![Settings](docs/screenshots/settings.jpg) | ![Wallpaper picker](docs/screenshots/wallpaper-picker.jpg) |
-| **32-band equalizer** | |
-| ![Equalizer](docs/screenshots/equalizer.jpg) | |
+| **Dashboard** (calendar, weather, timers) | **Keybind cheatsheet** (`Super + /`) |
+| ![Dashboard](docs/screenshots/dashboard.jpg) | ![Cheatsheet](docs/screenshots/cheatsheet.jpg) |
+| **32-band equalizer** | **Desktop widgets** |
+| ![Equalizer](docs/screenshots/equalizer.jpg) | ![Desktop widgets](docs/screenshots/desktop-widgets.jpg) |
+
+## Highlights
+
+- **29 built-in themes** plus a random-theme roller (pin a style and a color), your own saved themes, and shareable `.pdtheme` packs.
+- **Drag-and-drop bar layout editor**, custom bar modules (any shell command as a chip), bar at the top or bottom, floating / attached / islands styles.
+- **Color pickers** for every hex color setting (seed color, tint, accent override, custom borders and glow), and a fixed-seed mode that ignores the wallpaper.
+- **Desktop widgets** (clock, calendar, now playing, CPU & RAM, weather, notes, lyrics, command output) with an on-screen edit mode.
+- **Automation rules**: change theme, power profile or Do Not Disturb while on battery, in a fullscreen app, at a time of day or with an extra monitor, then restore.
+- **Hot corners**, a keybind cheatsheet, a window switcher and workspace overview, a dashboard with timers, and a fully rebindable keymap.
+- **Live lyrics**, album-cover wallpapers with a visualizer, a 32-band equalizer, an audio mixer, and screen recording.
+- A global switch to stop themes from changing the screen shader (Themes → Theme options).
+
+| **Color pickers** | **Bar layout editor** |
+| --- | --- |
+| ![Color picker](docs/screenshots/color-picker.jpg) | ![Bar layout editor](docs/screenshots/bar-layout-editor.jpg) |
+| **Automation rules** | |
+| ![Automation](docs/screenshots/automation.jpg) | |
 
 ## Themes
 
-28 built-in themes (Settings → Themes), each a full look: wallpaper, colors, bar style, gaps, blur and animations. You can save your own too. The screenshots below show the first nine; newer ones include Shinigami (Death Note), Backrooms, Poolrooms, Dreamcore, Midnight Seance, Tokyo Night, Dracula, Solarized Dark and Kanagawa. A global switch (Themes → Theme options) stops themes from setting a screen shader.
+29 built-in themes (Settings → Themes), each a full look: wallpaper, colors, bar style, gaps, blur and animations. You can save your own too,
+or roll a random one (`qs ipc call themes random [style] [color]`). The screenshots show the first nine and the newest nine.
 
 | **Frosted Glass** | **Mocha Islands** | **Gruvbox Workshop** |
 | --- | --- | --- |
@@ -26,6 +46,14 @@ recording. Colors follow the wallpaper through matugen (kitty, GTK, Qt, fish, Hy
 | ![Nordic Taskbar](docs/screenshots/themes/nordic-taskbar.jpg) | ![Everforest Zen](docs/screenshots/themes/everforest-zen.jpg) | ![Rosé Pine Soft](docs/screenshots/themes/rose-pine-soft.jpg) |
 | **Pixel Den** | **Mono Focus** | **Neon Transit** |
 | ![Pixel Den](docs/screenshots/themes/pixel-den.jpg) | ![Mono Focus](docs/screenshots/themes/mono-focus.jpg) | ![Neon Transit](docs/screenshots/themes/neon-transit.jpg) |
+| **Shinigami** (Death Note) | **Backrooms** | **Poolrooms** |
+| ![Shinigami](docs/screenshots/themes/shinigami.jpg) | ![Backrooms](docs/screenshots/themes/backrooms.jpg) | ![Poolrooms](docs/screenshots/themes/poolrooms.jpg) |
+| **Dreamcore** | **Midnight Seance** | **Tokyo Night** |
+| ![Dreamcore](docs/screenshots/themes/dreamcore.jpg) | ![Midnight Seance](docs/screenshots/themes/midnight-seance.jpg) | ![Tokyo Night](docs/screenshots/themes/tokyo-night.jpg) |
+| **Dracula** | **Solarized Dark** | **Kanagawa** |
+| ![Dracula](docs/screenshots/themes/dracula.jpg) | ![Solarized Dark](docs/screenshots/themes/solarized-dark.jpg) | ![Kanagawa](docs/screenshots/themes/kanagawa.jpg) |
+
+Also built in: Neon Cyberpunk, Glass Aurora, Paper Light, Terminal Mono, Sakura Zen, Synthwave Sunset, Brutalist, Deep Ocean, Retro CRT, Minimal Dock and Silksong.
 
 ## Requirements
 
@@ -88,7 +116,7 @@ nixpkgs' Quickshell does not bundle.
 
 1. Log in to the Hyprland session, or from a TTY run `start-hyprland` (don't launch the bare `Hyprland` binary).
 2. Wallpapers: put images in `~/Pictures/Wallpapers`, or run `./install.sh --wallpapers` / `scripts/fetch-wallpapers.sh` to download just the 18 wallpapers the
-   built-in themes use (about 37 MB, one file each straight from its author's GitHub repo). They belong to their
+   built-in themes use (about 75 MB, one file each straight from its author's GitHub repo or wallhaven.cc). They belong to their
    authors and are not included in this repository; check each repo's license before reusing them.
 3. Optional: `sudo pacman -S swh-plugins` for the equalizer's real limiter.
 4. Optional: Settings → Input → "Middle click acts as right click" runs a one-time ydotool setup (asks for your password).
@@ -116,14 +144,14 @@ The shell works offline, but a few features talk to the internet. All of them ar
   (results are cached in `~/.cache/rice/lyrics`). Remove `lyrics` from the bar layout to stop this.
 - **Album-cover wallpaper** downloads the cover image from the URL your media player provides.
 - **Launcher web search** (`?` prefix) opens your chosen search engine in your browser.
-- **Installer:** `pacman` downloads packages; `--wallpapers` downloads 9 files from `raw.githubusercontent.com`.
+- **Installer:** `pacman` downloads packages; `--wallpapers` downloads 18 files from `raw.githubusercontent.com` and `w.wallhaven.cc`.
 
 Nothing is sent anywhere else, and there is no telemetry.
 
 ## Tested on
 
 - Arch Linux in a clean virtual machine (QEMU/KVM, software rendering, 1920x1080) with Hyprland 0.57.2
-  and Quickshell 0.3.2: install, a second run, all nine themes, the launcher, control center, equalizer,
+  and Quickshell 0.3.2: install, a second run, the first nine themes, the launcher, control center, equalizer,
   settings, wallpaper picker, lock screen, keybinds, notifications, and the equalizer's limiter.
 - NixOS (unstable) in a clean VM: the module builds, `install-nixos.sh` and its `--profile` option run,
   Hyprland starts with no config errors, the equalizer runs with its limiter, GIF and video wallpapers animate.
