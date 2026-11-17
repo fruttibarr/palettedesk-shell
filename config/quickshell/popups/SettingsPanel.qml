@@ -22,6 +22,7 @@ Scope {
         { icon: "󰕴", name: "Layouts",             component: layoutsPage },
         { icon: "󰕨", name: "Animations",          component: animationsPage },
         { icon: "󰍹", name: "Displays",            component: displaysPage },
+        { icon: "󰖲", name: "Window rules",        component: rulesPage },
         { icon: "󰍜", name: "Bar",                 component: barPage },
         { icon: "󰀻", name: "Launcher",            component: launcherPage },
         { icon: "󰌌", name: "Input",               component: inputPage },
@@ -1684,6 +1685,10 @@ Scope {
     Component {
         id: displaysPage
         DisplaysPage {}
+    }
+    Component {
+        id: rulesPage
+        RulesPage {}
     }
     Component {
         id: behaviorPage

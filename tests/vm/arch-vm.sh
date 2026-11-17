@@ -63,7 +63,7 @@ for ch in sys.argv[2].encode().decode("unicode_escape"):
 PY
 }
 running() { [ -f "$DIR/qemu.pid" ] && kill -0 "$(cat "$DIR/qemu.pid")" 2>/dev/null; }
-env_prefix() { echo 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-1 HYPRLAND_INSTANCE_SIGNATURE=$(ls /run/user/1000/hypr | head -1);'; }
+env_prefix() { echo 'export XDG_RUNTIME_DIR=/run/user/1000 WAYLAND_DISPLAY=wayland-1 HYPRLAND_INSTANCE_SIGNATURE=$(ls -t /run/user/1000/hypr | head -1);'; }
 
 cmd="${1:-help}"; shift || true
 case "$cmd" in

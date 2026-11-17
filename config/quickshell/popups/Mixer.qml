@@ -22,8 +22,9 @@ Scope {
     readonly property var playing: all.filter(n => n.audio && cls(n) === "Stream/Output/Audio" && !isEq(n))
     readonly property var recording: all.filter(n => n.audio && cls(n) === "Stream/Input/Audio" && !isEq(n))
 
-    readonly property var defSink: Pipewire.preferredDefaultAudioSink
-    readonly property var defSource: Pipewire.preferredDefaultAudioSource
+    // the node PipeWire actually uses now (the "preferred" ones are only set once you pick a device here)
+    readonly property var defSink: Pipewire.defaultAudioSink
+    readonly property var defSource: Pipewire.defaultAudioSource
     readonly property bool viaEq: String(Pipewire.defaultAudioSink?.name ?? "").startsWith("eq32")
 
     function label(n) { return n.nickname || n.description || n.name; }

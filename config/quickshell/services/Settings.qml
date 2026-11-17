@@ -100,6 +100,9 @@ Singleton {
         "animatedWallpapers": true,
         "watchdogRssMb": 1500,
         "monitors": "{}",
+        "windowRules": "[]",
+        "workspaceRules": "[]",
+        "autostart": "[]",
         "screenShader": "",
         "weatherEnabled": false,
         "weatherLat": 0,
@@ -348,7 +351,7 @@ Singleton {
     })
 
     // keys that aren't plain options but still regenerate the Lua file
-    readonly property var hyprExtraKeys: ["rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "monitorScale", "middleAsRight", "infiniteDesktop", "infiniteFloat", "keybinds", "monitors"]
+    readonly property var hyprExtraKeys: ["rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "monitorScale", "middleAsRight", "infiniteDesktop", "infiniteFloat", "keybinds", "monitors", "windowRules", "workspaceRules", "autostart"]
 
     // settings stored as bool/number that Hyprland wants in another shape
     readonly property var hyprTransform: ({
@@ -434,6 +437,7 @@ Singleton {
              + `hl.animation({ leaf = "borderangle", enabled = ${adapter.rotatingBorder}, speed = ${Math.max(1, Math.min(100, Math.round(adapter.borderRotateSpeed)))}, bezier = "linear", style = "loop" })\n`
              + animationLua()
              + monitorLua()
+             + rulesLua()
              + middleClickLua()
              + infiniteLua()
              + keybindLua();
@@ -606,6 +610,47 @@ Singleton {
         return out;
     }
 
+    // Window rules, workspace rules and autostart (Window rules page). Rules are kept as handles that are disabled and
+    // recreated on every apply, so repeated applies never stack; autostart commands only run at Hyprland's own startup.
+    function rulesLua() {
+        const parse = t => { try { const v = JSON.parse(t || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+        const q = t => String(t ?? "").replace(/[\\"\n\r]/g, "");
+        let out = "\n-- window / workspace rules and autostart (Window rules page)\n"
+            + "for _, h in ipairs(_G.rice_rules or {}) do h:set_enabled(false) end\n_G.rice_rules = {}\n"
+            + "local function keep(h) if h and h.set_enabled then table.insert(_G.rice_rules, h) end end\n";
+        let n = 0;
+        for (const r of parse(adapter.windowRules)) {
+            if (r.enabled === false) continue;
+            const match = [];
+            if (r.class) match.push(`class = "${q(r.class)}"`);
+            if (r.title) match.push(`title = "${q(r.title)}"`);
+            if (!match.length) continue;                 // a rule that matches every window is almost surely a mistake
+            const props = [];
+            if (r.float) props.push("float = true");
+            if (r.pin) props.push("pin = true");
+            if (r.noBlur) props.push("no_blur = true");
+            if (r.noInitialFocus) props.push("no_initial_focus = true");
+            if (r.workspace) props.push(`workspace = "${q(r.workspace)}"`);
+            if (r.opacity) props.push(`opacity = "${q(r.opacity)}"`);
+            if (r.size) props.push(`size = "${q(r.size)}"`);
+            if (!props.length) continue;
+            out += `keep(hl.window_rule({ name = "rice-win-${++n}", match = { ${match.join(", ")} }, ${props.join(", ")} }))\n`;
+        }
+        for (const w of parse(adapter.workspaceRules)) {
+            if (!w.workspace) continue;
+            const props = [`workspace = "${q(w.workspace)}"`];
+            if (w.monitor) props.push(`monitor = "${q(w.monitor)}"`);
+            if (w.default) props.push("default = true");
+            if (w.persistent) props.push("persistent = true");
+            out += `keep(hl.workspace_rule({ ${props.join(", ")} }))\n`;
+        }
+        const cmds = parse(adapter.autostart).filter(c => typeof c === "string" && c.trim() !== "").map(c => `"${q(c)}"`);
+        out += `_G.rice_autostart = { ${cmds.join(", ")} }\n`
+            + "if not _G.rice_autostart_hooked then\n    _G.rice_autostart_hooked = true\n"
+            + "    hl.on(\"hyprland.start\", function() for _, c in ipairs(_G.rice_autostart or {}) do hl.exec_cmd(c) end end)\nend\n";
+        return out;
+    }
+
     // Window / workspace animations, scaled by animScale (curves live in hyprland.lua)
     readonly property var windowStyles: ["popin 80%", "popin 50%", "slide", "gnomed"]
     readonly property var wsStyles: ["slidefade 12%", "slide", "slidevert", "slidefadevert 15%", "fade"]
@@ -745,6 +790,9 @@ Singleton {
             property bool animatedWallpapers: true
             property int watchdogRssMb: 1500
             property string monitors: "{}"
+            property string windowRules: "[]"
+            property string workspaceRules: "[]"
+            property string autostart: "[]"
             property string screenShader: ""
             property bool weatherEnabled: false
             property real weatherLat: 0

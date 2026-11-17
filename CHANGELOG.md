@@ -6,6 +6,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Settings > Window rules**: per-app rules (float, pin, no blur, no focus on open, open on a workspace, opacity, size) with a
+  one-click "rule for an open app", workspace rules (monitor, default, persistent) and autostart commands. Rules never stack
+  when settings are re-applied, and autostart only runs at Hyprland's own startup.
 - **Dashboard** (click the clock, or `qs ipc call dashboard toggle`): month calendar, weather and timers. Weather is off by default,
   uses Open-Meteo with a location you enter yourself (Settings > Behavior > Weather) and nothing is guessed from your IP.
   Timers (5/10/25/45/60 min presets, Pomodoro) survive restarts and notify when done: `qs ipc call timer start 25 Pomodoro`.
