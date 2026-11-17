@@ -46,6 +46,12 @@ Singleton {
 
     // Bar glass: how opaque the bar background is (0 = invisible, 1 = solid)
     readonly property real barOpacity: Settings.s.barOpacity
+    // 0 = plain surface colour, 1 = the bar is drawn mostly in the accent colour
+    readonly property real barVibrancy: Settings.s.barVibrancy
+    readonly property color barColor: {
+        const t = barVibrancy * 0.7, a = surface, b = primaryContainer;
+        return Qt.rgba(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t, barOpacity);
+    }
     readonly property real panelOpacity: Settings.s.panelOpacity
 
     function alpha(col, a) { return Qt.rgba(col.r, col.g, col.b, a); }

@@ -43,7 +43,7 @@ PanelWindow {
         width: parent.width
         height: bar.barHeight
         radius: Theme.barAttached ? 0 : Theme.radius + 2
-        color: Theme.alpha(Theme.surface, Theme.barOpacity)
+        color: Theme.barColor
         border.width: Settings.s.barBorder && !Theme.barAttached ? 1 : 0
         border.color: Theme.alpha(Theme.primary, 0.2)
         Behavior on color { ColorAnimation { duration: 400 } }

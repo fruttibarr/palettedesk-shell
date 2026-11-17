@@ -1075,7 +1075,7 @@ Scope {
             PageHeader {
                 title: "Bar"
                 subtitle: "Position, style, layout and every module. Changes show live."
-                keys: ["barPosition", "barStyle", "barHeight", "barFollowGaps", "barMargin", "barOpacity",
+                keys: ["barPosition", "barStyle", "barHeight", "barFollowGaps", "barMargin", "barOpacity", "barVibrancy",
                        "barBorder", "barShadow", "barSheen", "chipStyle", "chipShape", "barLayout",
                        "wsCount", "wsStyle", "wsShowEmpty", "wsOpacity", "wsActiveOpacity", "clock24h", "clockSeconds", "showDate", "dateFormat", "clockIcon",
                        "statusBell", "statusNetwork", "statusBluetooth", "statusVolume", "statusBattery", "statusPercent",
@@ -1121,6 +1121,11 @@ Scope {
                 SettingRow {
                     label: "Background opacity"
                     ValueSlider { from: 0.05; to: 1; stepSize: 0.05; displayScale: 100; suffix: "%"; value: root.cfg.barOpacity; onMoved: v => Settings.set("barOpacity", v) }
+                }
+                SettingRow {
+                    label: "Vibrancy"; keywords: "bar vibrancy vibrant color tint accent saturation"
+                    description: "Tints the bar toward your wallpaper's accent color. 0% is the plain dark surface."
+                    ValueSlider { from: 0; to: 1; stepSize: 0.05; displayScale: 100; suffix: "%"; value: root.cfg.barVibrancy; onMoved: v => Settings.set("barVibrancy", v) }
                 }
                 SettingRow {
                     label: "Border"

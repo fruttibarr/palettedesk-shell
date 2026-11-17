@@ -6,6 +6,7 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Bar vibrancy** slider (Bar page): tints the top bar toward the wallpaper's accent colour. Saved with themes.
 - **Optional SDDM login theme** (`palettedesk sddm install|sync|uninstall|status`): a login screen with your colours and a blurred copy of your wallpaper.
   Colours reach it through a tiny root helper run via pkexec that takes no file paths, validates a fixed-format message and never decodes the image.
   Recovery from a TTY: `sudo palettedesk sddm uninstall`.

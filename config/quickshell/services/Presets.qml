@@ -14,7 +14,7 @@ Singleton {
 
     // Every setting a theme owns. Input, keybinds, display scale, idle etc. are never touched.
     readonly property var lookKeys: [
-        "colorScheme", "barOpacity", "panelOpacity", "terminalOpacity", "shellRadius",
+        "colorScheme", "barOpacity", "barVibrancy", "panelOpacity", "terminalOpacity", "shellRadius",
         "blurEnabled", "blurSize", "blurPasses", "blurBrightness", "blurVibrancy", "blurNoise", "blurContrast", "blurXray",
         "layout", "gapsIn", "gapsOut", "borderSize", "rounding", "roundingPower",
         "activeOpacity", "inactiveOpacity", "dimInactive", "dimStrength", "shadowEnabled", "shadowRange",
@@ -26,7 +26,7 @@ Singleton {
 
     // Built-in themes start from this, so the result never depends on what was set before.
     readonly property var base: ({
-        "colorScheme": "scheme-tonal-spot", "barOpacity": 0.35, "panelOpacity": 0.5, "terminalOpacity": 0.72, "shellRadius": 12,
+        "colorScheme": "scheme-tonal-spot", "barOpacity": 0.35, "barVibrancy": 0, "panelOpacity": 0.5, "terminalOpacity": 0.72, "shellRadius": 12,
         "blurEnabled": true, "blurSize": 8, "blurPasses": 3, "blurBrightness": 0.9, "blurVibrancy": 0.25, "blurNoise": 0.015,
         "blurContrast": 1.0, "blurXray": false,
         "layout": "dwindle", "gapsIn": 5, "gapsOut": 10, "borderSize": 2, "rounding": 12, "roundingPower": 2.0,

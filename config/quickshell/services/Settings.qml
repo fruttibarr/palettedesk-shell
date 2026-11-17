@@ -16,6 +16,7 @@ Singleton {
 
     readonly property var defaults: ({
             "barOpacity": 0.35,
+            "barVibrancy": 0,
             "panelOpacity": 0.5,
             "shellRadius": 12,
             "fontSize": 13,
@@ -718,6 +719,7 @@ Singleton {
         JsonAdapter {
             id: adapter
             property real barOpacity: 0.35
+            property real barVibrancy: 0
             property real panelOpacity: 0.5
             property int shellRadius: 12
             property int fontSize: 13
