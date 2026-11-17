@@ -16,7 +16,7 @@ jobs:
       - name: shellcheck
         run: shellcheck -S warning install.sh nixos/install-nixos.sh scripts/*.sh tests/vm/*.sh config/quickshell/scripts/*.sh
       - name: Python syntax
-        run: python3 -m py_compile config/quickshell/scripts/*.py tests/*.py
+        run: python3 -m py_compile config/quickshell/scripts/*.py tests/*.py scripts/palettedesk
       - name: Lua syntax
         run: luac5.4 -p config/hypr/hyprland.lua
 
@@ -38,6 +38,11 @@ jobs:
         run: |
           su - tester -c 'cd palettedesk-shell && ./install.sh --yes' | tee /tmp/second.log
           ! grep -E 'installing /home|backing up' /tmp/second.log
+      - name: palettedesk works and uninstall leaves nothing behind
+        run: |
+          su - tester -c 'PATH=$HOME/.local/bin:$PATH palettedesk version && palettedesk doctor || true'
+          su - tester -c 'PATH=$HOME/.local/bin:$PATH palettedesk uninstall --purge --yes'
+          ! su - tester -c 'test -e ~/.config/quickshell -o -e ~/.config/rice -o -e ~/.config/hypr/hyprland.lua'
 
   nixos-eval:
     runs-on: ubuntu-latest

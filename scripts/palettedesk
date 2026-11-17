@@ -1,0 +1,488 @@
+#!/usr/bin/env python3
+"""palettedesk: manage a PaletteDesk Shell install.
+
+  palettedesk version              installed version, commit and repo
+  palettedesk doctor               check that everything the rice needs is in place
+  palettedesk update [--check]     git pull the repo you installed from, then re-run its installer
+  palettedesk uninstall [options]  remove what install.sh put down (see below)
+  palettedesk restore [STAMP]      list backups, or put one back
+  palettedesk mem [--log|--watch]  memory use of the shell (find leaks)
+
+uninstall:
+  Files whose checksum is unchanged since install are removed. Files you edited are moved to a new
+  backup instead of being deleted. Your previous config (from the install-time backup) is restored.
+  --purge       also delete your settings, saved themes, state and caches (asks first unless --yes)
+  --system      also print (or with --yes, run) the sudo commands that undo the one-time ydotool setup
+  --dry-run     show what would happen
+"""
+import argparse
+import glob
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+
+HOME = os.path.expanduser("~")
+CFG = os.environ.get("XDG_CONFIG_HOME") or os.path.join(HOME, ".config")
+STATE = os.environ.get("XDG_STATE_HOME") or os.path.join(HOME, ".local", "state")
+CACHE = os.environ.get("XDG_CACHE_HOME") or os.path.join(HOME, ".cache")
+INST = os.path.join(STATE, "rice-install")
+MANIFEST = os.path.join(INST, "manifest.json")
+
+# Files the shell generates itself (matugen, gen-eq.py, the settings panel). Removed on uninstall.
+GENERATED = [
+    os.path.join(CFG, "pipewire", "pipewire.conf.d", "eq32.conf"),
+    os.path.join(CFG, "hypr", "colors.lua"),
+    os.path.join(CFG, "hypr", "rice-settings.lua"),
+    os.path.join(CFG, "kitty", "colors.conf"),
+    os.path.join(CFG, "fish", "conf.d", "rice-colors.fish"),
+    os.path.join(CFG, "qt6ct", "colors", "matugen.conf"),
+]
+# Written by matugen but a user may have their own: only removed if matugen wrote it.
+GENERATED_IF_MARKED = [os.path.join(CFG, "gtk-3.0", "gtk.css"), os.path.join(CFG, "gtk-4.0", "gtk.css")]
+GENERATED_GLOBS = [
+    os.path.join(CFG, "mozilla", "firefox", "*", "chrome", "rice-colors.css"),
+    os.path.join(HOME, ".mozilla", "firefox", "*", "chrome", "rice-colors.css"),
+]
+PURGE_DIRS = [os.path.join(CFG, "rice"), os.path.join(STATE, "rice"), os.path.join(CACHE, "rice")]
+SYSTEM_FILES = ["/etc/modules-load.d/uinput.conf", "/etc/udev/rules.d/80-uinput-uaccess.rules"]
+
+
+def say(msg):
+    print(f"\033[1;34m::\033[0m {msg}")
+
+
+def warn(msg):
+    print(f"\033[1;33mwarn:\033[0m {msg}", file=sys.stderr)
+
+
+def die(msg, code=1):
+    print(f"\033[1;31merror:\033[0m {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def home_rel(p):
+    return os.path.relpath(p, HOME) if p.startswith(HOME + os.sep) else p
+
+
+def sha_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def sha_path(path):
+    """Checksum of a file, or of a whole directory tree (relative names + file checksums)."""
+    if os.path.islink(path) or not os.path.exists(path):
+        return None
+    if os.path.isfile(path):
+        return sha_file(path)
+    h = hashlib.sha256()
+    for root, dirs, files in os.walk(path):
+        dirs.sort()
+        for name in sorted(files):
+            p = os.path.join(root, name)
+            if os.path.islink(p):
+                continue
+            h.update(os.path.relpath(p, path).encode() + b"\0" + sha_file(p).encode() + b"\n")
+    return h.hexdigest()
+
+
+def load_manifest():
+    try:
+        with open(MANIFEST, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return None
+    except json.JSONDecodeError as e:
+        die(f"{MANIFEST} is corrupt ({e}); remove it and re-run install.sh")
+
+
+def git(repo, *args):
+    r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True)
+    return r.returncode, r.stdout.strip(), r.stderr.strip()
+
+
+def repo_version(repo):
+    try:
+        with open(os.path.join(repo, "VERSION"), encoding="utf-8") as f:
+            return f.read().strip()
+    except OSError:
+        return "unknown"
+
+
+# --------------------------------------------------------------------------- record (called by install.sh)
+def cmd_record(a):
+    """install.sh calls this at the end with the list of paths it installed."""
+    with open(a.list, encoding="utf-8") as f:
+        dests = [l.strip() for l in f if l.strip()]
+    existing = load_manifest()
+    known = {e["path"]: e for e in (existing or {}).get("files", [])}
+    for d in dests:   # new or updated entries replace old ones
+        known[d] = {"path": d, "type": "dir" if os.path.isdir(d) else "file", "sha": sha_path(d)}
+    rc, commit, _ = git(a.repo, "rev-parse", "--short", "HEAD")
+    data = {
+        "version": repo_version(a.repo), "commit": commit if rc == 0 else "",
+        "repo": a.repo, "installed": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        # the backup of YOUR original config is the first one; later updates must not replace it
+        "backup": existing.get("backup", "") if existing else a.backup,
+        "files": [known[k] for k in sorted(known)],
+    }
+    os.makedirs(INST, exist_ok=True)
+    tmp = MANIFEST + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    os.replace(tmp, MANIFEST)
+
+
+# --------------------------------------------------------------------------- version
+def cmd_version(_a):
+    m = load_manifest()
+    if not m:
+        print("PaletteDesk Shell: not installed by install.sh (no manifest)")
+        return 1
+    print(f"PaletteDesk Shell {m['version']} ({m['commit'] or 'no commit'}), installed {m['installed']}")
+    print(f"repo: {m['repo']}")
+    if os.path.isdir(os.path.join(m["repo"], ".git")):
+        rc, cur, _ = git(m["repo"], "rev-parse", "--short", "HEAD")
+        if rc == 0 and cur != m["commit"]:
+            print(f"repo is at {cur}: run `palettedesk update` to apply it")
+    return 0
+
+
+# --------------------------------------------------------------------------- doctor
+def find_shell_pids():
+    pids = []
+    for comm in glob.glob("/proc/[0-9]*/comm"):
+        try:
+            with open(comm, encoding="utf-8") as f:
+                if f.read().strip() in ("qs", "quickshell", ".quickshell-wrapped"):
+                    pids.append(int(comm.split("/")[2]))
+        except OSError:
+            pass
+    return sorted(pids)
+
+
+def proc_mem(pid):
+    out = {"rss_mb": 0.0, "pss_mb": 0.0, "threads": 0, "fds": 0}
+    try:
+        with open(f"/proc/{pid}/smaps_rollup", encoding="utf-8") as f:
+            for line in f:
+                k, _, v = line.partition(":")
+                if k in ("Rss", "Pss"):
+                    out[k.lower() + "_mb"] = int(v.split()[0]) / 1024
+        with open(f"/proc/{pid}/status", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("Threads:"):
+                    out["threads"] = int(line.split()[1])
+        out["fds"] = len(os.listdir(f"/proc/{pid}/fd"))
+    except OSError:
+        pass
+    return out
+
+
+def cmd_doctor(_a):
+    bad = 0
+
+    def check(ok, label, hint=""):
+        nonlocal bad
+        print(f"  {'ok  ' if ok else 'FAIL'} {label}" + ("" if ok else f"  ({hint})" if hint else ""))
+        bad += 0 if ok else 1
+
+    m = load_manifest()
+    print("install")
+    check(m is not None, "install manifest present", "run install.sh")
+    if m:
+        changed = [home_rel(e["path"]) for e in m["files"] if sha_path(e["path"]) != e["sha"]]
+        check(not changed, "installed files unmodified", "edited: " + ", ".join(changed[:4]) if changed else "")
+    print("commands")
+    for c in ("qs", "hyprctl", "matugen", "python3", "ffmpeg", "wpctl", "grim", "slurp", "wl-copy", "cliphist", "kitty"):
+        check(shutil.which(c) is not None, c, "not installed")
+    print("session")
+    pids = find_shell_pids()
+    check(bool(pids), "shell is running", "start it with `qs`")
+    if pids:
+        mem = proc_mem(pids[0])
+        check(mem["rss_mb"] < 900, f"shell memory {mem['rss_mb']:.0f} MB", "high: see `palettedesk mem`")
+    settings = os.path.join(CFG, "rice", "settings.json")
+    try:
+        with open(settings, encoding="utf-8") as f:
+            json.load(f)
+        check(True, "settings.json is valid")
+    except FileNotFoundError:
+        check(True, "settings.json not created yet (defaults in use)")
+    except json.JSONDecodeError:
+        check(False, "settings.json is valid", "corrupt JSON; move it aside to reset")
+    if shutil.which("hyprctl") and os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
+        r = subprocess.run(["hyprctl", "configerrors"], capture_output=True, text=True)
+        errs = [l for l in r.stdout.splitlines() if l.strip()]
+        check(not errs, "Hyprland config has no errors", errs[0] if errs else "")
+    eq = os.path.join(CFG, "pipewire", "pipewire.conf.d", "eq32.conf")
+    check(os.path.exists(eq), "equalizer config generated", "run scripts/gen-eq.py")
+    print("services")
+    for svc in ("NetworkManager", "bluetooth"):
+        r = subprocess.run(["systemctl", "is-active", "-q", svc])
+        check(r.returncode == 0, f"{svc} running", f"sudo systemctl enable --now {svc}")
+    print(f"\n{'all good' if not bad else str(bad) + ' problem(s)'}")
+    return 1 if bad else 0
+
+
+# --------------------------------------------------------------------------- mem
+def cmd_mem(a):
+    def sample():
+        pids = find_shell_pids()
+        if not pids:
+            return None
+        m = proc_mem(pids[0])
+        return f"{time.strftime('%Y-%m-%dT%H:%M:%S')} pid={pids[0]} rss={m['rss_mb']:.0f}MB pss={m['pss_mb']:.0f}MB " \
+               f"threads={m['threads']} fds={m['fds']}"
+    log = os.path.join(STATE, "rice", "mem.log")
+    if a.watch:
+        os.makedirs(os.path.dirname(log), exist_ok=True)
+        say(f"logging to {log} every {a.interval}s (Ctrl+C to stop)")
+        try:
+            while True:
+                line = sample()
+                if line:
+                    with open(log, "a", encoding="utf-8") as f:
+                        f.write(line + "\n")
+                time.sleep(a.interval)
+        except KeyboardInterrupt:
+            return 0
+    line = sample()
+    if not line:
+        die("the shell is not running")
+    print(line)
+    if a.log:
+        os.makedirs(os.path.dirname(log), exist_ok=True)
+        with open(log, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    return 0
+
+
+# --------------------------------------------------------------------------- update
+def cmd_update(a):
+    m = load_manifest()
+    if not m:
+        die("no install manifest; run install.sh from your clone first")
+    repo = m["repo"]
+    if not os.path.isdir(os.path.join(repo, ".git")):
+        die(f"{repo} is not a git clone; update it manually and re-run install.sh")
+    rc, old, err = git(repo, "rev-parse", "HEAD")
+    if rc:
+        die(err)
+    say(f"fetching updates for {repo}")
+    rc, _, err = git(repo, "fetch", "--quiet")
+    if rc:
+        die("git fetch failed: " + err)
+    rc, behind, _ = git(repo, "rev-list", "--count", "HEAD..@{u}")
+    if rc == 0 and behind == "0":
+        say("already up to date")
+        if not a.force:
+            return 0
+    elif rc == 0:
+        _, log, _ = git(repo, "log", "--oneline", "HEAD..@{u}")
+        print(log)
+    if a.check:
+        return 0
+    rc, _, err = git(repo, "pull", "--ff-only", "--quiet")
+    if rc:
+        die("git pull --ff-only failed (local changes?): " + err)
+    _, new, _ = git(repo, "rev-parse", "HEAD")
+    installer = os.path.join(repo, "install.sh")
+    say("re-running the installer (your settings are kept; replaced files are backed up)")
+    r = subprocess.run([installer, "--yes"] + ([] if not a.no_packages else ["--no-packages"]))
+    if r.returncode:
+        return r.returncode
+    if os.path.exists("/etc/NIXOS") and old != new:
+        rc, changed, _ = git(repo, "diff", "--name-only", old, new, "--", "nixos/")
+        if changed:
+            print("\nNixOS: nixos/ changed. Rebuild to pick it up: sudo nixos-rebuild switch")
+    print("\nRestart the shell to load the update:  qs kill; qs &   (or log out and back in)")
+    return 0
+
+
+# --------------------------------------------------------------------------- backups / restore
+def backups():
+    return sorted(glob.glob(os.path.join(INST, "backup-*")) + glob.glob(os.path.join(INST, "uninstall-*")))
+
+
+def restore_backup(path, dry):
+    items_file = os.path.join(path, ".items")
+    if not os.path.exists(items_file):
+        warn(f"{os.path.basename(path)} has no item list (made by an older installer); restore it by hand")
+        return 0
+    with open(items_file, encoding="utf-8") as f:
+        items = [l.strip() for l in f if l.strip()]
+    n = 0
+    for rel in items:
+        src, dst = os.path.join(path, rel), os.path.join(HOME, rel)
+        if not os.path.exists(src):
+            continue
+        if not dry and (os.path.exists(dst) or os.path.islink(dst)):
+            warn(f"{rel}: exists already, leaving it (backup copy stays in {path})")
+            continue
+        say(f"restoring ~/{rel}" + (" [dry-run]" if dry else ""))
+        n += 1
+        if not dry:
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.move(src, dst)
+    return n
+
+
+def cmd_restore(a):
+    bs = backups()
+    if not a.stamp:
+        if not bs:
+            print("no backups")
+            return 0
+        for b in bs:
+            print(os.path.basename(b))
+        return 0
+    match = [b for b in bs if a.stamp in os.path.basename(b)]
+    if len(match) != 1:
+        die(f"'{a.stamp}' matches {len(match)} backups (run `palettedesk restore` to list them)")
+    restore_backup(match[0], a.dry_run)
+    return 0
+
+
+# --------------------------------------------------------------------------- uninstall
+def cmd_uninstall(a):
+    m = load_manifest()
+    if not m:
+        die("no install manifest; nothing known to uninstall (was this installed by install.sh?)")
+    dry = a.dry_run
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    keep = os.path.join(INST, f"uninstall-{stamp}")
+    kept_items, removed = [], 0
+
+    def act(msg, fn):
+        say(msg + (" [dry-run]" if dry else ""))
+        if not dry:
+            fn()
+
+    def rm(p):
+        if os.path.isdir(p) and not os.path.islink(p):
+            shutil.rmtree(p)
+        else:
+            os.remove(p)
+
+    protected = {HOME, CFG, STATE, CACHE, os.path.join(HOME, ".local"), os.path.join(HOME, "Pictures"),
+                 os.path.join(HOME, ".local", "bin"), os.path.join(HOME, ".local", "share")}
+
+    def prune_empty(p):   # remove directories we emptied, but never your home or the standard XDG folders
+        for _ in range(3):
+            p = os.path.dirname(p)
+            if p in protected:
+                break
+            try:
+                os.rmdir(p)
+            except OSError:
+                break
+
+    for e in m["files"]:
+        p = e["path"]
+        if not os.path.lexists(p):
+            continue
+        if sha_path(p) == e["sha"]:
+            act(f"removing {home_rel(p)}", lambda p=p: (rm(p), prune_empty(p)))
+            removed += 1
+        else:
+            rel = home_rel(p)
+            kept_items.append(rel)
+            def move(p=p, rel=rel):
+                os.makedirs(os.path.dirname(os.path.join(keep, rel)), exist_ok=True)
+                shutil.move(p, os.path.join(keep, rel))
+                prune_empty(p)
+            act(f"{rel} was edited since install: moving it to {os.path.basename(keep)}", move)
+
+    for p in GENERATED + [g for pat in GENERATED_GLOBS for g in glob.glob(pat)]:
+        if os.path.lexists(p):
+            act(f"removing generated {home_rel(p)}", lambda p=p: (rm(p), prune_empty(p)))
+    for p in GENERATED_IF_MARKED:
+        try:
+            with open(p, encoding="utf-8") as f:
+                marked = "matugen" in f.read(300).lower()
+        except OSError:
+            continue
+        if marked:
+            act(f"removing generated {home_rel(p)}", lambda p=p: rm(p))
+
+    if kept_items and not dry:
+        with open(os.path.join(keep, ".items"), "w", encoding="utf-8") as f:
+            f.write("\n".join(kept_items) + "\n")
+
+    b = m.get("backup")
+    if b and os.path.isdir(b):
+        restore_backup(b, dry)
+    else:
+        say("no install-time backup to restore (nothing was replaced when you installed)")
+
+    if a.purge:
+        present = [d for d in PURGE_DIRS if os.path.exists(d)]
+        if present and not a.yes and not dry:
+            print("\n--purge deletes your settings and saved themes:\n  " + "\n  ".join(present))
+            if input("Delete them? [y/N] ").strip().lower() != "y":
+                present = []
+        for d in present:
+            act(f"deleting {home_rel(d)}", lambda d=d: shutil.rmtree(d, ignore_errors=True))
+
+    sysfiles = [p for p in SYSTEM_FILES if os.path.exists(p)]
+    if a.system and sysfiles:
+        cmds = ["sudo rm -f " + " ".join(sysfiles), "sudo udevadm control --reload-rules"]
+        if a.yes and not dry:
+            for c in cmds:
+                subprocess.run(c, shell=True, check=False)
+        else:
+            print("\nTo undo the one-time ydotool setup, run:\n  " + "\n  ".join(cmds))
+    elif sysfiles:
+        print("\nSystem files from the ydotool setup remain (use --system to undo them): " + " ".join(sysfiles))
+
+    if not dry:
+        for p in (MANIFEST,):
+            if os.path.exists(p):
+                os.remove(p)
+    if os.path.exists("/etc/NIXOS"):
+        print("\nNixOS: also remove the nixos/module.nix import from your configuration and rebuild.")
+    print(f"\nDone: {removed} item(s) removed. Log out or run `qs kill` to stop the shell. "
+          f"Backups are in {INST}.")
+    return 0
+
+
+def main():
+    ap = argparse.ArgumentParser(prog="palettedesk", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("version")
+    sub.add_parser("doctor")
+    p = sub.add_parser("update")
+    p.add_argument("--check", action="store_true", help="only show what would change")
+    p.add_argument("--force", action="store_true", help="re-run the installer even if up to date")
+    p.add_argument("--no-packages", action="store_true")
+    p = sub.add_parser("uninstall")
+    p.add_argument("--purge", action="store_true")
+    p.add_argument("--system", action="store_true")
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--yes", "-y", action="store_true")
+    p = sub.add_parser("restore")
+    p.add_argument("stamp", nargs="?")
+    p.add_argument("--dry-run", action="store_true")
+    p = sub.add_parser("mem")
+    p.add_argument("--log", action="store_true", help="append the sample to ~/.local/state/rice/mem.log")
+    p.add_argument("--watch", action="store_true", help="sample forever")
+    p.add_argument("--interval", type=int, default=60)
+    p = sub.add_parser("record")   # internal: install.sh
+    p.add_argument("--list", required=True)
+    p.add_argument("--backup", default="")
+    p.add_argument("--repo", required=True)
+    a = ap.parse_args()
+    sys.exit({"version": cmd_version, "doctor": cmd_doctor, "update": cmd_update, "uninstall": cmd_uninstall,
+              "restore": cmd_restore, "mem": cmd_mem, "record": cmd_record}[a.cmd](a) or 0)
+
+
+if __name__ == "__main__":
+    main()

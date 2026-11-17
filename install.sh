@@ -69,19 +69,25 @@ fi
 
 # ---------------------------------------------------------------- files
 BACKED=0
+# Everything installed is listed here, then handed to `palettedesk record` so that
+# `palettedesk uninstall` knows exactly what to remove (and whether you edited it since).
+MANIFEST_LIST="$(mktemp)"; trap 'rm -f "$MANIFEST_LIST"' EXIT
+note() { [ "$DRY" = 1 ] || printf '%s\n' "$1" >> "$MANIFEST_LIST"; }
 backup() {  # move an existing path into the backup folder, keeping its path under $HOME
-  local t="$1" rel="${1#$HOME/}"
+  local t="$1" rel="${1#"$HOME"/}"
   run mkdir -p "$BACKUP/$(dirname "$rel")"; run mv "$t" "$BACKUP/$rel"; BACKED=1
+  [ "$DRY" = 1 ] || printf '%s\n' "$rel" >> "$BACKUP/.items"   # what `palettedesk restore` puts back
 }
 install_path() {  # install_path <source> <destination> [keep-existing]
   local s="$1" d="$2" keep="${3:-}"
   if [ -e "$d" ] || [ -L "$d" ]; then
     [ "$keep" = keep ] && { say "keeping your existing ${d/#$HOME/~}"; return; }
-    if diff -rq "$s" "$d" >/dev/null 2>&1; then return; fi
+    if diff -rq "$s" "$d" >/dev/null 2>&1; then note "$d"; return; fi
     say "backing up ${d/#$HOME/~}"; backup "$d"
   fi
   say "installing ${d/#$HOME/~}"
   run mkdir -p "$(dirname "$d")"; run cp -a "$s" "$d"
+  [ "$keep" = keep ] || note "$d"   # your settings file is yours: never recorded, never removed by uninstall
 }
 
 C="$SRC/config"
@@ -93,6 +99,8 @@ install_path "$C/kitty/kitty.conf"           "$CFG/kitty/kitty.conf"
 install_path "$C/fish/config.fish"           "$CFG/fish/config.fish"
 install_path "$C/fish/functions/fish_prompt.fish" "$CFG/fish/functions/fish_prompt.fish"
 install_path "$C/rice/settings.json"         "$CFG/rice/settings.json" keep   # your settings are never overwritten
+install_path "$SRC/scripts/palettedesk"        "$HOME/.local/bin/palettedesk"   # manage the install: palettedesk --help
+case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) warn "add ~/.local/bin to your PATH to use the palettedesk command" ;; esac
 
 # qt6ct.conf needs an absolute path to the generated palette
 if [ "$DRY" = 0 ]; then
@@ -126,7 +134,7 @@ if [ "$DRY" = 0 ]; then
     say "no wallpapers found; making a default one (add your own, or re-run with --wallpapers)"
     mkdir -p "$WALLS/Default"
     ffmpeg -loglevel error -y -f lavfi -i "gradients=s=1920x1080:c0=0x1d2b53:c1=0x7e2553:c2=0x2a9d8f:n=3:seed=7:duration=1" \
-      -frames:v 1 "$WALLS/Default/rice-default.png" || warn "could not generate a default wallpaper"
+      -frames:v 1 "$WALLS/Default/rice-default.png" && note "$WALLS/Default/rice-default.png" || warn "could not generate a default wallpaper"
   fi
   # matugen overwrites the GTK stylesheets; keep any hand-written ones
   for f in "$CFG/gtk-3.0/gtk.css" "$CFG/gtk-4.0/gtk.css"; do
@@ -146,6 +154,12 @@ if [ "$DRY" = 0 ]; then
   python3 -I "$CFG/quickshell/scripts/gen-eq.py" || warn "equalizer config failed (the rest still works)"
 else
   say "would pick a wallpaper, run matugen and generate the equalizer config"
+fi
+
+# ---------------------------------------------------------------- manifest
+if [ "$DRY" = 0 ]; then
+  python3 -I "$SRC/scripts/palettedesk" record --list "$MANIFEST_LIST" --repo "$SRC" \
+    --backup "$([ "$BACKED" = 1 ] && echo "$BACKUP" || true)" || warn "could not write the install manifest (palettedesk uninstall will not work)"
 fi
 
 # ---------------------------------------------------------------- notes
