@@ -286,7 +286,7 @@ Scope {
             PageHeader {
                 title: "Color & Display"
                 subtitle: "Adjust how the whole screen looks, like a monitor's picture menu. Applies live to everything, including games and videos."
-                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "screenShader", "nightLight", "nightTemp"]
+                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "adjBlack", "screenShader", "nightLight", "nightTemp"]
             }
             SettingSection {
                 title: "Picture"
@@ -294,6 +294,11 @@ Scope {
                     label: "Brightness"; keywords: "brightness light dark exposure"
                     description: "Lifts or lowers everything on screen."
                     ValueSlider { from: -0.3; to: 0.3; stepSize: 0.01; displayScale: 100; suffix: ""; value: root.cfg.adjBrightness; onMoved: v => Settings.set("adjBrightness", v) }
+                }
+                SettingRow {
+                    label: "Black level"; keywords: "black level blacks oled deep blacks crush shadows dark tones black point"
+                    description: "Higher pushes dark tones to pure black, like an OLED screen. Lower lifts the blacks to gray."
+                    ValueSlider { from: -0.1; to: 0.3; stepSize: 0.01; displayScale: 100; suffix: "%"; value: root.cfg.adjBlack; onMoved: v => Settings.set("adjBlack", v) }
                 }
                 SettingRow {
                     label: "Contrast"; keywords: "contrast punch"

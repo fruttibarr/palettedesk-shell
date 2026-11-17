@@ -6,6 +6,7 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Black level** slider on the Color & Display page: crush dark tones to pure black (an OLED look) or lift them.
 - **Black light** strength slider on the Color & Display page: a UV-lamp look with violet shadows and glowing neon colours.
 - **Color & Display** settings page: brightness, contrast, saturation, vibrance, gamma, hue shift and red/green/blue balance for the whole screen, live.
   Combines with the special effects (grayscale, sepia, CRT...). Night light and the effect picker moved here from Behavior and Blur.

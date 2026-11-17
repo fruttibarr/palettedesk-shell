@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build a full-screen shader that applies colour adjustments, optionally on top of one of the shipped effects.
 
-  compose-shader.py OUT.frag EFFECT|- brightness contrast saturation vibrance gamma hue red green blue blacklight
+  compose-shader.py OUT.frag EFFECT|- brightness contrast saturation vibrance gamma hue red green blue blacklight black
 
 The output name is chosen by the shell (it contains a hash of the settings, so Hyprland always loads fresh content).
 Values are clamped here; nothing user-provided is pasted into the shader as text. Standard library only."""
@@ -12,7 +12,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHADERS = os.path.join(os.path.expanduser("~"), ".config", "hypr", "shaders")
-LIMITS = [(-0.5, 0.5), (0.3, 2.0), (0.0, 3.0), (0.0, 1.0), (0.3, 3.0), (-180, 180), (0.3, 2.0), (0.3, 2.0), (0.3, 2.0), (0.0, 1.0)]
+LIMITS = [(-0.5, 0.5), (0.3, 2.0), (0.0, 3.0), (0.0, 1.0), (0.3, 3.0), (-180, 180), (0.3, 2.0), (0.3, 2.0), (0.3, 2.0), (0.0, 1.0), (-0.15, 0.4)]
 
 HEAD = """#version 300 es
 precision highp float;
@@ -24,8 +24,8 @@ BASE = "void presetMain() { fragColor = texture(tex, v_texcoord); }\n"
 
 
 def main():
-    if len(sys.argv) != 13:
-        sys.exit("usage: compose-shader.py OUT EFFECT|- 10 numbers")
+    if len(sys.argv) != 14:
+        sys.exit("usage: compose-shader.py OUT EFFECT|- 11 numbers")
     out, effect = sys.argv[1], sys.argv[2]
     vals = []
     for raw, (lo, hi) in zip(sys.argv[3:], LIMITS):
@@ -33,7 +33,7 @@ def main():
         if not math.isfinite(v):
             sys.exit("bad number")
         vals.append(min(hi, max(lo, v)))
-    br, ct, sat, vib, gam, hue, r, g, b, bl = vals
+    br, ct, sat, vib, gam, hue, r, g, b, bl, blk = vals
     body = BASE
     if effect != "-":
         if not re.fullmatch(r"[A-Za-z0-9_-]+", effect):
@@ -62,6 +62,7 @@ void main() {{
     vec3 c = fragColor.rgb;
     c += {br:.5f};
     c = (c - 0.5) * {ct:.5f} + 0.5;
+    c = (c - {blk:.5f}) / (1.0 - {blk:.5f});                   // black level: above 0 crushes darks to pure black, below 0 lifts them
     c = pow(max(c, vec3(0.0)), vec3(1.0 / {gam:.5f}));
     float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
     float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
