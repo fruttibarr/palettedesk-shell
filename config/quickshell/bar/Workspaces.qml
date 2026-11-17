@@ -10,7 +10,16 @@ Item {
     id: root
 
     readonly property string style: Settings.s.wsStyle
-    readonly property int activeId: Hyprland.focusedMonitor?.activeWorkspace?.id ?? 1
+    // The monitor this bar belongs to (each Bar passes its own); defaults to the focused one.
+    property var monitor: null
+    readonly property var mon: monitor ?? Hyprland.focusedMonitor
+    readonly property int activeId: mon?.activeWorkspace?.id ?? 1
+
+    // Act on THIS bar's monitor, not on whichever one has focus.
+    function go(workspaceExpr) {
+        if (mon && !mon.focused) Hyprland.dispatch(`hl.dsp.focus({ monitor = "${mon.name}" })`);
+        Hyprland.dispatch(`hl.dsp.focus({ workspace = ${workspaceExpr} })`);
+    }
     readonly property var occupied: Hyprland.workspaces.values
         .filter(w => w.id > 0 && w.id < 100 && w.toplevels.values.length > 0)
         .map(w => w.id)
@@ -141,12 +150,12 @@ Item {
                 anchors.margins: -2
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = ${cellItem.wsId} })`)
+                onClicked: root.go(String(cellItem.wsId))
             }
         }
     }
 
     WheelHandler {
-        onWheel: e => Hyprland.dispatch(`hl.dsp.focus({ workspace = "e${e.angleDelta.y > 0 ? "-" : "+"}1" })`)
+        onWheel: e => root.go(`"e${e.angleDelta.y > 0 ? "-" : "+"}1"`)
     }
 }

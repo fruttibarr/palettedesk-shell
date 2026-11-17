@@ -14,6 +14,15 @@ Singleton {
     property bool locked: false
     property var wallWindows: []      // the Wallpaper window of each screen, for `qs ipc call shell wallState`
 
+    // A bar sets this just before opening a popup, so the popup appears on the bar's own screen instead of
+    // wherever focus happens to be. Cleared shortly after (see widgets/Overlay.qml for the consumer).
+    property string popupScreen: ""
+    function popupFrom(screenName: string): void {
+        popupScreen = screenName ?? "";
+        popupScreenClear.restart();
+    }
+    Timer { id: popupScreenClear; interval: 600; onTriggered: Globals.popupScreen = "" }
+
     signal lockRequested()
 
     // Lock first, then suspend once the lock surface is up.

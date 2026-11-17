@@ -32,5 +32,8 @@ Scope {
     IpcHandler {
         target: "shell"
         function wallState(): string { return JSON.stringify(Globals.wallWindows.map(w => w.state())); }
+        // qs ipc call shell popupOn <screen>   (the next popup opens on that screen; for keybinds and tests)
+        function popupOn(screen: string): void { Globals.popupFrom(screen); }
+        function popupScreen(): string { return Globals.popupScreen; }
     }
 }

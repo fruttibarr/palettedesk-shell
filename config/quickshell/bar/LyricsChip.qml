@@ -2,6 +2,7 @@ import Quickshell
 import qs.services
 import qs.widgets
 import QtQuick
+import QtQuick.Window
 
 // Live lyrics: the line being sung right now (LRCLIB, see services/Lyrics.qml).
 // Click pulls down the full lyrics viewer (popups/LyricsViewer.qml).
@@ -24,6 +25,7 @@ Chip {
 
     onClicked: {
         // tell the viewer where to drop from (screen x of the chip's middle)
+        Globals.popupFrom(Window.window?.screen?.name);
         Globals.lyricsAnchorX = chip.mapToItem(null, chip.width / 2, 0).x + Theme.barMarginPx;
         Globals.lyricsOpen = !Globals.lyricsOpen;
     }

@@ -6,6 +6,7 @@
 #   tests/vm/arch-vm.sh install [..]  run ./install.sh --yes [..] in the VM
 #   tests/vm/arch-vm.sh hypr          log in on the VM console and start Hyprland
 #   tests/vm/arch-vm.sh idle-off      stop the VM session from locking / blanking while you test
+#   tests/vm/arch-vm.sh restart-shell kill every shell instance and start exactly one
 #   tests/vm/arch-vm.sh sh 'cmd'      run a command inside the VM's Hyprland session (Wayland env set)
 #   tests/vm/arch-vm.sh ssh 'cmd'     run a plain command in the VM
 #   tests/vm/arch-vm.sh shot out.png  screenshot the VM desktop to a local file
@@ -105,6 +106,8 @@ for k in ('dimAfter','lockAfter','screenOffAfter','suspendAfter'): d[k]=0
 json.dump(d,open(p,'w'),indent=4)
 PY
 echo idle disabled" ;;
+  restart-shell)
+    vmssh "$(env_prefix) for _ in 1 2 3 4 5 6 7 8; do qs kill >/dev/null 2>&1 || break; sleep 0.3; done; sleep 1; setsid qs >/dev/null 2>&1 < /dev/null & sleep 12; echo shell instances: \$(pgrep -xc qs)" ;;
   sh)   vmssh "$(env_prefix) $*" ;;
   ssh)  vmssh "$@" ;;
   shot)

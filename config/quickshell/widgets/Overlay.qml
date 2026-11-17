@@ -24,7 +24,10 @@ PanelWindow {
     signal closeRequested()
 
     visible: open || holder.opacity > 0
-    screen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name) ?? Quickshell.screens[0]
+    // Opens on the screen that asked for it (a bar click) or else the focused monitor, and STAYS there while
+    // open (it used to follow the focused monitor live, so a popup jumped screens when focus moved).
+    ScreenPin { id: pin; frozen: win.open || holder.opacity > 0 }
+    screen: pin.screen
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "rice-" + name

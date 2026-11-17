@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import Quickshell.Services.SystemTray
 import qs.services
 import qs.widgets
@@ -14,6 +15,7 @@ PanelWindow {
     readonly property int barHeight: Theme.barHeight
     readonly property bool top: Theme.barTop
     readonly property var layout: Settings.s.barLayout
+    readonly property var monitor: Hyprland.monitorFor(screen)   // this bar's own monitor
 
     WlrLayershell.namespace: "rice-bar"   // Hyprland blurs + slides this (layer rules)
     anchors { top: bar.top; bottom: !bar.top; left: true; right: true }
@@ -27,7 +29,7 @@ PanelWindow {
     implicitHeight: barHeight + 16        // extra room for the drop shadow
     color: "transparent"
 
-    function toggleControlCenter() { Globals.controlCenterOpen = !Globals.controlCenterOpen; }
+    function toggleControlCenter() { Globals.popupFrom(bar.screen?.name); Globals.controlCenterOpen = !Globals.controlCenterOpen; }
 
     // The bar strip sits at the screen-side edge of the window; the extra
     // 16px is for the shadow, on the inner side.
@@ -105,7 +107,7 @@ PanelWindow {
 
     Component {
         id: workspacesModule
-        Chip { tint: Theme.primaryContainer; alphaOverride: Settings.s.wsOpacity; padding: 4; Workspaces {} }
+        Chip { tint: Theme.primaryContainer; alphaOverride: Settings.s.wsOpacity; padding: 4; Workspaces { monitor: bar.monitor } }
     }
     Component {
         id: mediaModule
@@ -151,7 +153,7 @@ PanelWindow {
     }
     Component {
         id: titleModule
-        WindowTitle {}
+        WindowTitle { monitor: bar.monitor }
     }
     Component {
         id: trayModule
@@ -252,7 +254,7 @@ PanelWindow {
         Chip {
             clickable: true
             padding: 10
-            onClicked: Quickshell.execDetached(["qs", "ipc", "call", "launcher", "toggle"])
+            onClicked: { Globals.popupFrom(bar.screen?.name); Quickshell.execDetached(["qs", "ipc", "call", "launcher", "toggle"]); }
             Text {
                 text: "󰣇"
                 color: Theme.primary
@@ -266,7 +268,7 @@ PanelWindow {
         Chip {
             clickable: true
             padding: 10
-            onClicked: Globals.powerMenuOpen = true
+            onClicked: { Globals.popupFrom(bar.screen?.name); Globals.powerMenuOpen = true; }
             Text {
                 text: "󰐥"
                 color: Theme.error

@@ -8,6 +8,8 @@ import QtQuick
 PanelWindow {
     id: win
     visible: Notifs.popups.length > 0 && !Globals.controlCenterOpen
+    ScreenPin { id: pin; frozen: win.visible; followBars: false }   // the focused monitor when a notification arrives
+    screen: pin.screen
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "rice-notifications"

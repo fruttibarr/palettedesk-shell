@@ -9,7 +9,8 @@
 set -u
 
 restart_shell() {
-  qs kill >/dev/null 2>&1 || true
+  # `qs kill` stops one instance per call: repeat until none is left, so the restart never leaves a duplicate bar behind
+  for _ in 1 2 3 4 5 6 7 8; do qs kill >/dev/null 2>&1 || break; sleep 0.3; done
   sleep 1
   setsid qs >/dev/null 2>&1 < /dev/null &
 }

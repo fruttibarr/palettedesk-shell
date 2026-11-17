@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Pipewire
 import qs.services
+import qs.widgets
 import QtQuick
 import QtQuick.Layouts
 
@@ -56,6 +57,8 @@ Scope {
     PanelWindow {
         id: win
         visible: root.shown || card.opacity > 0
+        ScreenPin { id: pin; frozen: win.visible; followBars: false }
+        screen: pin.screen
         WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "rice-osd"
         exclusionMode: ExclusionMode.Ignore

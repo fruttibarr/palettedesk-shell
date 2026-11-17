@@ -29,6 +29,16 @@ Scope {
         if (sessionLock.locked) return;
         error = "";
         sessionLock.locked = true;
+        Globals.locked = true;
+    }
+
+    // Set Globals.locked ourselves instead of relying on WlSessionLock's change handler: that handler did not
+    // reliably clear the flag after an unlock, so the shell kept believing it was locked. Wallpaper animation,
+    // the OSD and the audio visualizer all pause while Globals.locked is true, so they stayed frozen until the
+    // shell was restarted.
+    function unlock() {
+        sessionLock.locked = false;
+        Globals.locked = false;
     }
 
     function tryUnlock(password) {
@@ -58,7 +68,7 @@ Scope {
         onCompleted: result => {
             root.busy = false;
             if (result === PamResult.Success) {
-                sessionLock.locked = false;
+                root.unlock();
             } else {
                 root.error = "Wrong password";
                 root.failed();
@@ -74,7 +84,7 @@ Scope {
     Timer {
         running: root.testMode && sessionLock.locked
         interval: 15000
-        onTriggered: { sessionLock.locked = false; root.testMode = false; }
+        onTriggered: { root.unlock(); root.testMode = false; }
     }
 
     WlSessionLock {
