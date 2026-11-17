@@ -34,6 +34,7 @@ ShellRoot {
     Mixer {}
     SystemMonitor {}
     Dashboard {}
+    WindowSwitcher {}
     NightLight {}
     Clipboard {}
     SettingsPanel {}

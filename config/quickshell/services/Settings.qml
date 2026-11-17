@@ -493,6 +493,9 @@ Singleton {
         { id: "power",         group: "Shell", label: "Power menu",                 def: "SUPER + SHIFT + E",    lua: 'hl.dsp.exec_cmd("qs ipc call power toggle")' },
 
         { id: "close",         group: "Windows", label: "Close window",             def: "SUPER + Q",            lua: 'hl.dsp.window.close()' },
+        { id: "switcher",      group: "Windows", label: "Switch windows (Alt-Tab)",         def: "ALT + Tab",            lua: 'hl.dsp.exec_cmd("qs ipc call switcher next")' },
+        { id: "switcherPrev",  group: "Windows", label: "Switch windows backwards",         def: "ALT + SHIFT + Tab",    lua: 'hl.dsp.exec_cmd("qs ipc call switcher prev")' },
+        { id: "overview",      group: "Windows", label: "Workspace overview",               def: "SUPER + Tab",          lua: 'hl.dsp.exec_cmd("qs ipc call overview toggle")' },
         { id: "fullscreen",    group: "Windows", label: "Fullscreen",               def: "SUPER + F",            lua: 'hl.dsp.window.fullscreen()' },
         { id: "float",         group: "Windows", label: "Toggle floating",          def: "SUPER + SHIFT + V",    lua: 'hl.dsp.window.float({ action = "toggle" })' },
         { id: "zoomOut",       group: "Windows", label: "Infinite desktop: zoom out",   def: "SUPER + MINUS",  lua: 'hl.dsp.exec_cmd("python3 -I ~/.config/quickshell/scripts/infinite-pan.py zoomout")' },

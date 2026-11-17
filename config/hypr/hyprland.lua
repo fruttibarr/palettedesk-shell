@@ -357,6 +357,9 @@ hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 hl.bind("Print",                 hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh region"))
 hl.bind("SHIFT + Print",         hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh full"))
 hl.bind(mainMod .. " + Print",   hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh window"))
+hl.bind("ALT + Tab",               hl.dsp.exec_cmd("qs ipc call switcher next"))        -- window switcher (release Alt to switch)
+hl.bind("ALT + SHIFT + Tab",       hl.dsp.exec_cmd("qs ipc call switcher prev"))
+hl.bind(mainMod .. " + Tab",       hl.dsp.exec_cmd("qs ipc call overview toggle"))      -- workspace overview
 hl.bind("ALT + Print",             hl.dsp.exec_cmd("~/.config/quickshell/scripts/screenshot.sh edit"))   -- annotate (needs satty)
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("~/.config/quickshell/scripts/colorpick.sh"))      -- color picker (needs hyprpicker)
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("~/.config/quickshell/scripts/ocr.sh"))            -- copy text from the screen (needs tesseract)

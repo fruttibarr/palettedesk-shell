@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Alt-Tab window switcher** (`ALT+Tab` / `ALT+SHIFT+Tab`, most recently used first; release Alt or press Enter to switch, Esc to cancel)
+  and a **workspace overview** (`SUPER+Tab`) listing every workspace with its windows. IPC: `switcher next|prev|commit|cancel|status`, `overview toggle`.
 - **Settings > Window rules**: per-app rules (float, pin, no blur, no focus on open, open on a workspace, opacity, size) with a
   one-click "rule for an open app", workspace rules (monitor, default, persistent) and autostart commands. Rules never stack
   when settings are re-applied, and autostart only runs at Hyprland's own startup.
@@ -45,6 +47,8 @@ versions follow [Semantic Versioning](https://semver.org/).
   (playing flag, cached fullscreen state, lock state, wallpaper kind and readiness).
 
 ### Fixed
+- The installer no longer needs `diff`: on minimal systems every re-run used to reinstall and back up everything. `palettedesk` no longer
+  crashes when `git` is missing. The Mixer now reads the real default output.
 - **Wallpaper animation and the OSD froze after any lock/unlock.** The shell kept believing the session was locked
   after unlocking (`Globals.locked` stayed true), which pauses animated wallpapers, the OSD and the audio visualizer
   until the shell is restarted. Locking and unlocking now set the flag explicitly.
