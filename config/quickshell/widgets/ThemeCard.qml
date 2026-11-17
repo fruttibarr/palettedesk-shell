@@ -75,7 +75,10 @@ Rectangle {
                 readonly property int gap: Math.round(v.gapsOut / 2.5)
                 readonly property int inner: Math.round(v.gapsIn / 2.5) * 2
                 readonly property color ink: tc.p.colors[1] ?? "#ffffff"
-                readonly property color glass: Qt.rgba(0.04, 0.04, 0.06, 0.3 + 0.6 * v.barOpacity)
+                readonly property bool light: (v.colorMode ?? "dark") === "light"
+                readonly property string effect: v.chipEffect ?? "none"
+                readonly property string edge: v.barEdge ?? "none"
+                readonly property color glass: light ? Qt.rgba(0.95, 0.94, 0.92, 0.3 + 0.6 * v.barOpacity) : Qt.rgba(0.04, 0.04, 0.06, 0.3 + 0.6 * v.barOpacity)
                 readonly property var zones: [v.barLayout.left ?? [], v.barLayout.center ?? [], v.barLayout.right ?? []]
 
                 Item {
@@ -92,6 +95,13 @@ Rectangle {
                         border.width: mock.v.barBorder && !mock.attached ? 1 : 0
                         border.color: Qt.rgba(1, 1, 1, 0.18)
                     }
+                    Rectangle {   // accent edge (barEdge)
+                        visible: mock.edge !== "none"
+                        anchors { left: parent.left; right: parent.right; leftMargin: mock.attached ? 0 : 3; rightMargin: mock.attached ? 0 : 3 }
+                        y: mock.atBottom ? 0 : parent.height - height
+                        height: Math.max(1, Math.round((mock.v.barEdgeWidth ?? 2) / 1.5))
+                        color: mock.ink
+                    }
                     Repeater {
                         model: 3
                         Rectangle {
@@ -105,7 +115,17 @@ Rectangle {
                             x: index === 0 ? (mock.islands ? 0 : 3) : index === 1 ? (mockBar.width - width) / 2 : mockBar.width - width - (mock.islands ? 0 : 3)
                             color: mock.islands ? mock.glass : mock.v.chipStyle === "filled" ? Qt.rgba(1, 1, 1, 0.28) : "transparent"
                             border.width: mock.islands || mock.v.chipStyle !== "filled" ? 1 : 0
-                            border.color: Qt.rgba(1, 1, 1, mock.v.chipStyle === "flat" && !mock.islands ? 0.3 : 0.45)
+                            border.color: mock.effect === "neon" || mock.effect === "bracket" ? mock.ink : Qt.rgba(1, 1, 1, mock.v.chipStyle === "flat" && !mock.islands ? 0.3 : 0.45)
+                            Rectangle {   // neon halo / underline effects
+                                visible: mock.effect === "neon" || mock.effect === "underline"
+                                anchors.fill: mock.effect === "neon" ? parent : undefined
+                                anchors.margins: -1
+                                x: 2; width: parent.width - 4; height: 1; y: parent.height - 2
+                                radius: parent.radius
+                                color: mock.effect === "neon" ? "transparent" : mock.ink
+                                border.width: mock.effect === "neon" ? 1 : 0
+                                border.color: Qt.alpha(mock.ink, 0.5)
+                            }
                         }
                     }
                 }
@@ -137,11 +157,27 @@ Rectangle {
                             opacity: index > 0 && mock.v.dimInactive ? 0.75 : 1
                             border.width: Math.max(1, Math.round(mock.v.borderSize / 1.5))
                             border.color: index === 0 ? mock.ink : Qt.rgba(1, 1, 1, 0.22)
+                            Rectangle {   // glow around the focused window
+                                visible: index === 0 && (mock.v.glowEnabled ?? false)
+                                anchors.fill: parent
+                                anchors.margins: -2
+                                radius: parent.radius + 2
+                                color: "transparent"
+                                border.width: 2
+                                border.color: Qt.alpha(mock.ink, 0.35)
+                            }
                         }
                     }
                 }
             }
 
+            Rectangle {   // "new" tag
+                visible: !!tc.p.isNew
+                anchors { top: parent.top; left: parent.left; leftMargin: 6; topMargin: mock.atBottom ? 6 : 18 }
+                width: newLbl.implicitWidth + 10; height: 15; radius: 8
+                color: Theme.alpha(Theme.tertiary, 0.92)
+                Text { id: newLbl; anchors.centerIn: parent; text: "NEW"; color: Theme.surface; font.family: Theme.font; font.pixelSize: 9; font.weight: Font.Bold }
+            }
             Rectangle {
                 visible: tc.active
                 anchors { top: parent.top; right: parent.right; rightMargin: 6; topMargin: mock.atBottom ? 6 : 18 }

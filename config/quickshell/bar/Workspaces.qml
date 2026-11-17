@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Widgets
 import qs.services
 import QtQuick
 
@@ -31,6 +32,19 @@ Item {
         for (let i = 1; i <= n; i++)
             if (Settings.s.wsShowEmpty || i === activeId || occupied.includes(i)) list.push(i);
         return list;
+    }
+
+    // wsIndicator: pill / block / outline / underline / glow; wsColor: primary / tertiary / secondary; wsIcons: app icon of each busy workspace
+    readonly property string indicator: Settings.s.wsIndicator
+    readonly property color indColor: Settings.s.wsColor === "tertiary" ? Theme.tertiary : Settings.s.wsColor === "secondary" ? Theme.secondary : Theme.primary
+    readonly property color onInd: Settings.s.wsColor === "primary" ? Theme.textOnPrimary : Theme.surface
+    readonly property bool solid: indicator === "pill" || indicator === "block"
+    function appIcon(id) {
+        const w = Hyprland.workspaces.values.find(x => x.id === id);
+        const cls = w?.toplevels?.values?.[0]?.lastIpcObject?.class ?? "";
+        if (!cls) return "";
+        const entry = DesktopEntries.byId(cls) ?? DesktopEntries.byId(cls.toLowerCase());
+        return Quickshell.iconPath(entry?.icon ?? cls.toLowerCase(), true);
     }
 
     readonly property int cell: style === "dots" ? 16 : 22
@@ -72,13 +86,27 @@ Item {
     Behavior on edgeL { NumberAnimation { id: leftAnim; easing.type: Easing.OutCubic } }
     Behavior on edgeR { NumberAnimation { id: rightAnim; easing.type: Easing.OutCubic } }
 
+    Repeater {   // glow: soft halo rings behind the indicator
+        model: root.indicator === "glow" ? 3 : 0
+        Rectangle {
+            required property int index
+            x: root.edgeL - (1 + index * 2); width: root.edgeR - root.edgeL + (1 + index * 2) * 2
+            height: 22 + (1 + index * 2) * 2
+            anchors.verticalCenter: parent.verticalCenter
+            radius: height / 2
+            color: Theme.alpha(root.indColor, 0.16 - index * 0.04)
+        }
+    }
     Rectangle {
-        x: root.edgeL
-        width: root.edgeR - root.edgeL
-        height: root.style === "dots" ? root.cell : 22
-        anchors.verticalCenter: parent.verticalCenter
-        radius: Settings.s.chipShape === "square" ? 3 : height / 2
-        color: Theme.alpha(Theme.primary, Settings.s.wsActiveOpacity)
+        x: root.edgeL + (root.indicator === "underline" ? 3 : 0)
+        width: root.edgeR - root.edgeL - (root.indicator === "underline" ? 6 : 0)
+        height: root.indicator === "underline" ? 3 : root.style === "dots" ? root.cell : 22
+        y: root.indicator === "underline" ? root.implicitHeight - height - 1 : (root.implicitHeight - height) / 2
+        radius: root.indicator === "block" || Settings.s.chipShape === "square" ? 3 : height / 2
+        color: root.indicator === "outline" ? "transparent"
+             : Theme.alpha(root.indColor, root.indicator === "glow" ? Settings.s.wsActiveOpacity * 0.5 : Settings.s.wsActiveOpacity)
+        border.width: root.indicator === "outline" ? 1.6 : 0
+        border.color: Theme.alpha(root.indColor, Settings.s.wsActiveOpacity)
         Behavior on color { ColorAnimation { duration: 400 } }
     }
 
@@ -117,12 +145,21 @@ Item {
             }
 
             // text styles
+            IconImage {   // wsIcons: the workspace's first app
+                id: appImg
+                readonly property string src: Settings.s.wsIcons && root.style !== "dots" ? root.appIcon(cellItem.wsId) : ""
+                visible: src !== ""
+                anchors.centerIn: parent
+                width: 14; height: 14
+                source: src
+                opacity: cellItem.active ? 1 : 0.75
+            }
             Text {
-                visible: root.style !== "dots"
+                visible: root.style !== "dots" && appImg.src === ""
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: cellItem.isOccupied && !cellItem.active ? -1.5 : 0
                 text: root.label(cellItem.wsId)
-                color: cellItem.active ? (Settings.s.wsActiveOpacity < 0.5 ? Theme.textOnPrimaryContainer : Theme.textOnPrimary)
+                color: cellItem.active ? (root.solid && Settings.s.wsActiveOpacity >= 0.5 ? root.onInd : Theme.textOnPrimaryContainer)
                      : cellItem.isOccupied ? Theme.textOnPrimaryContainer
                      : Theme.alpha(Theme.textOnPrimaryContainer, 0.4)
                 font.family: Theme.font

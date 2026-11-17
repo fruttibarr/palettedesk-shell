@@ -3,6 +3,7 @@ import qs.services
 import qs.widgets
 import QtQuick
 import QtQuick.Window
+import QtQuick.Effects
 
 // Live lyrics: the line being sung right now (LRCLIB, see services/Lyrics.qml).
 // Click pulls down the full lyrics viewer (popups/LyricsViewer.qml).
@@ -49,6 +50,15 @@ Chip {
         height: line.implicitHeight
         clip: true
 
+        // soft edges while a long line glides (mask only active when it overflows)
+        layer.enabled: overflow > 0
+        layer.effect: MultiEffect {
+            maskEnabled: true
+            maskSource: fadeMask
+            maskThresholdMin: 0.0
+            maskSpreadAtMin: 0.0
+        }
+
         Text {
             id: line
             color: chip.live ? Theme.text : Theme.subtext
@@ -63,6 +73,23 @@ Chip {
             target: line; property: "x"
             to: -view.overflow
             easing.type: Easing.InOutSine
+        }
+    }
+
+    Item {
+        id: fadeMask
+        visible: false
+        layer.enabled: true
+        width: view.width; height: view.height
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0; color: "#00000000" }
+                GradientStop { position: Math.min(0.2, 10 / Math.max(1, view.width)); color: "#ff000000" }
+                GradientStop { position: 1 - Math.min(0.2, 10 / Math.max(1, view.width)); color: "#ff000000" }
+                GradientStop { position: 1; color: "#00000000" }
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import Quickshell.Services.SystemTray
 import qs.services
 import qs.widgets
 import QtQuick
+import QtQuick.Effects
 
 // Left click = activate, right click = menu, middle = secondary, scroll = scroll.
 Item {
@@ -11,13 +12,26 @@ Item {
     required property SystemTrayItem modelData
     property var barWindow
 
-    implicitWidth: 18
-    implicitHeight: 18
+    implicitWidth: Settings.s.trayIconSize
+    implicitHeight: Settings.s.trayIconSize
 
+    // trayTint: none / grey / mono (text colour) / accent
+    readonly property string tint: Settings.s.trayTint
     IconImage {
+        id: img
         anchors.fill: parent
         source: root.modelData.icon
         asynchronous: true
+        visible: root.tint === "none"
+    }
+    MultiEffect {
+        visible: root.tint !== "none"
+        anchors.fill: parent
+        source: img
+        saturation: root.tint === "grey" ? -1 : 0
+        colorization: root.tint === "mono" || root.tint === "accent" ? 1 : 0
+        colorizationColor: root.tint === "accent" ? Theme.primary : Theme.text
+        opacity: root.tint === "grey" ? 0.85 : 1
     }
 
     MouseArea {

@@ -16,12 +16,18 @@ Rectangle {
     signal clicked()
     signal expandClicked()
 
-    implicitHeight: 62
-    radius: 16
+    // look: ccTileHeight, ccTileRadius, ccActiveStyle (container | accent | outline), ccIconShape (circle | rounded | square | none)
+    readonly property string activeStyle: Settings.s.ccActiveStyle
+    readonly property bool solid: active && activeStyle === "accent"
+    readonly property color fg: solid ? Theme.textOnPrimary : active && activeStyle === "container" ? Theme.textOnPrimaryContainer : Theme.text
+    implicitHeight: Settings.s.ccTileHeight
+    radius: Math.min(Settings.s.ccTileRadius, implicitHeight / 2)
     opacity: enabled ? 1 : 0.5
-    color: active ? Theme.alpha(Theme.primaryContainer, mouse.containsMouse ? 1 : 0.85)
+    color: solid ? Theme.alpha(Theme.primary, mouse.containsMouse ? 1 : 0.9)
+         : active && activeStyle === "outline" ? Theme.alpha(Theme.primary, mouse.containsMouse ? 0.16 : 0.08)
+         : active ? Theme.alpha(Theme.primaryContainer, mouse.containsMouse ? 1 : 0.85)
                   : Theme.alpha(Theme.surfaceContainerHigh, mouse.containsMouse ? 0.85 : 0.55)
-    border.width: expanded ? 2 : 0
+    border.width: expanded || (active && activeStyle === "outline") ? 2 : 0
     border.color: Theme.primary
     Behavior on color { ColorAnimation { duration: 200 } }
 
@@ -41,15 +47,16 @@ Rectangle {
         spacing: tile.expandable ? 9 : 12
 
         Rectangle {
-            implicitWidth: 36
-            implicitHeight: 36
-            radius: 18
-            color: tile.active ? Theme.primary : Theme.alpha(Theme.outline, 0.25)
+            readonly property string shape: Settings.s.ccIconShape
+            implicitWidth: shape === "none" ? 26 : 36
+            implicitHeight: shape === "none" ? 26 : 36
+            radius: shape === "square" ? 4 : shape === "rounded" ? 11 : width / 2
+            color: shape === "none" ? "transparent" : tile.solid ? Theme.alpha(Theme.textOnPrimary, 0.2) : tile.active ? Theme.primary : Theme.alpha(Theme.outline, 0.25)
             Behavior on color { ColorAnimation { duration: 200 } }
             Text {
                 anchors.centerIn: parent
                 text: tile.icon
-                color: tile.active ? Theme.textOnPrimary : Theme.text
+                color: tile.solid ? Theme.textOnPrimary : tile.active ? (parent.shape === "none" ? Theme.primary : Theme.textOnPrimary) : Theme.text
                 font.family: Theme.font
                 font.pixelSize: 17
             }
@@ -62,7 +69,7 @@ Rectangle {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 text: tile.title
-                color: tile.active ? Theme.textOnPrimaryContainer : Theme.text
+                color: tile.fg
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize
                 font.weight: Font.Bold
@@ -71,7 +78,7 @@ Rectangle {
                 Layout.fillWidth: true
                 text: tile.subtitle
                 elide: Text.ElideRight
-                color: tile.active ? Theme.alpha(Theme.textOnPrimaryContainer, 0.8) : Theme.subtext
+                color: tile.active ? Theme.alpha(tile.fg, 0.8) : Theme.subtext
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize - 2
             }
@@ -94,7 +101,7 @@ Rectangle {
                 text: "󰅀"
                 rotation: tile.expanded ? 180 : 0
                 Behavior on rotation { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-                color: tile.active ? Theme.textOnPrimaryContainer : Theme.text
+                color: tile.fg
                 font.family: Theme.font
                 font.pixelSize: 15
             }

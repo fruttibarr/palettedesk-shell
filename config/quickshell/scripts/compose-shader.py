@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build a full-screen shader that applies colour adjustments, optionally on top of one of the shipped effects.
 
-  compose-shader.py OUT.frag EFFECT|- brightness contrast saturation vibrance gamma hue red green blue blacklight black
+  compose-shader.py OUT.frag EFFECT|- brightness contrast saturation vibrance gamma hue red green blue blacklight black vignette grain sharpen
 
 The output name is chosen by the shell (it contains a hash of the settings, so Hyprland always loads fresh content).
 Values are clamped here; nothing user-provided is pasted into the shader as text. Standard library only."""
@@ -12,7 +12,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHADERS = os.path.join(os.path.expanduser("~"), ".config", "hypr", "shaders")
-LIMITS = [(-0.5, 0.5), (0.3, 2.0), (0.0, 3.0), (0.0, 1.0), (0.3, 3.0), (-180, 180), (0.3, 2.0), (0.3, 2.0), (0.3, 2.0), (0.0, 1.0), (-0.15, 0.4)]
+LIMITS = [(-0.5, 0.5), (0.3, 2.0), (0.0, 3.0), (0.0, 1.0), (0.3, 3.0), (-180, 180), (0.3, 2.0), (0.3, 2.0), (0.3, 2.0), (0.0, 1.0), (-0.15, 0.4), (0.0, 1.0), (0.0, 1.0), (0.0, 1.0)]
 
 HEAD = """#version 300 es
 precision highp float;
@@ -24,8 +24,8 @@ BASE = "void presetMain() { fragColor = texture(tex, v_texcoord); }\n"
 
 
 def main():
-    if len(sys.argv) != 14:
-        sys.exit("usage: compose-shader.py OUT EFFECT|- 11 numbers")
+    if len(sys.argv) != 17:
+        sys.exit("usage: compose-shader.py OUT EFFECT|- 14 numbers")
     out, effect = sys.argv[1], sys.argv[2]
     vals = []
     for raw, (lo, hi) in zip(sys.argv[3:], LIMITS):
@@ -33,7 +33,7 @@ def main():
         if not math.isfinite(v):
             sys.exit("bad number")
         vals.append(min(hi, max(lo, v)))
-    br, ct, sat, vib, gam, hue, r, g, b, bl, blk = vals
+    br, ct, sat, vib, gam, hue, r, g, b, bl, blk, vg, gr, sh = vals
     body = BASE
     if effect != "-":
         if not re.fullmatch(r"[A-Za-z0-9_-]+", effect):
@@ -80,6 +80,18 @@ void main() {{
     c = mix(c, c * uv * 1.5, {bl:.5f} * 0.75);
     c = mix(c, c * 1.0 + vec3(0.10, 0.02, 0.22) * glow, {bl:.5f});
     c *= 1.0 - 0.38 * {bl:.5f};
+    // sharpen: unsharp mask against a 4-tap blur of the untouched screen
+    vec2 px = 1.0 / vec2(textureSize(tex, 0));
+    vec3 here = texture(tex, v_texcoord).rgb;
+    vec3 around = 0.25 * (texture(tex, v_texcoord + vec2(px.x, 0.0)).rgb + texture(tex, v_texcoord - vec2(px.x, 0.0)).rgb
+                        + texture(tex, v_texcoord + vec2(0.0, px.y)).rgb + texture(tex, v_texcoord - vec2(0.0, px.y)).rgb);
+    c += (here - around) * {sh:.5f} * 1.6;
+    // vignette: darken towards the corners
+    vec2 vd = v_texcoord - 0.5;
+    c *= 1.0 - {vg:.5f} * smoothstep(0.25, 0.85, length(vd * vec2(1.0, 0.8)) * 1.45);
+    // film grain: static per-pixel noise, strongest in the midtones
+    float n = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+    c += n * {gr:.5f} * 0.22 * (1.0 - abs(dot(c, vec3(0.3333)) - 0.5));
     fragColor = vec4(clamp(c, 0.0, 1.0), fragColor.a);
 }}
 """

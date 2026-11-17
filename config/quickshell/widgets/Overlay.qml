@@ -36,6 +36,14 @@ PanelWindow {
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
 
+    // optional backdrop dimming (popupDim setting)
+    Rectangle {
+        anchors.fill: parent
+        visible: Settings.s.popupDim > 0.001
+        color: Theme.alpha(Theme.background, Settings.s.popupDim)
+        opacity: holder.opacity
+    }
+
     MouseArea { anchors.fill: parent; onClicked: win.closeRequested() }
 
     FocusScope {
@@ -51,20 +59,33 @@ PanelWindow {
         }
 
         // zoom: overshoots slightly when opening, quick shrink when closing
-        transform: Scale {
-            origin.x: win.origin.x
-            origin.y: win.origin.y
-            xScale: zoom.value
-            yScale: zoom.value
-        }
+        transform: [
+            Scale {
+                origin.x: win.origin.x
+                origin.y: win.origin.y
+                xScale: zoom.value
+                yScale: zoom.value
+            },
+            Translate { y: zoom.shift }
+        ]
         QtObject {
             id: zoom
-            property real value: win.open || !Settings.s.popupZoom || !win.zoom ? 1 : 0.92
+            // popupEntrance: zoom (default, honours popupZoom) | bounce | slide | drop | fade
+            readonly property string mode: win.slideMode ? "zoom" : Settings.s.popupEntrance
+            readonly property bool scaled: mode === "bounce" || (mode === "zoom" && Settings.s.popupZoom && win.zoom)
+            property real value: win.open || !scaled ? 1 : (mode === "bounce" ? 0.7 : 0.92)
+            property real shift: win.open || (mode !== "slide" && mode !== "drop") ? 0 : (mode === "slide" ? 44 : -44)
             Behavior on value {
                 NumberAnimation {
-                    duration: (win.open ? 380 : 160) * win.animScale
+                    duration: (win.open ? (zoom.mode === "bounce" ? 520 : 380) : 160) * win.animScale
                     easing.type: win.open ? Easing.OutBack : Easing.InCubic
-                    easing.overshoot: 1.3
+                    easing.overshoot: zoom.mode === "bounce" ? 2.6 : 1.3
+                }
+            }
+            Behavior on shift {
+                NumberAnimation {
+                    duration: (win.open ? 360 : 160) * win.animScale
+                    easing.type: win.open ? Easing.OutCubic : Easing.InCubic
                 }
             }
         }

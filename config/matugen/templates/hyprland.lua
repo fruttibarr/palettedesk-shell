@@ -5,4 +5,14 @@ return {
     -- shadows tinted with the wallpaper's darkest tone
     shadow         = "rgba({{colors.surface_container_lowest.default.hex_stripped}}dd)",
     shadowInactive = "rgba({{colors.surface_container_lowest.default.hex_stripped}}88)",
+    -- raw palette for the settings panel (Windows page: border / shadow / glow / group colours)
+    palette = {
+        primary   = "#{{colors.primary.default.hex_stripped}}",
+        secondary = "#{{colors.secondary.default.hex_stripped}}",
+        tertiary  = "#{{colors.tertiary.default.hex_stripped}}",
+        container = "#{{colors.primary_container.default.hex_stripped}}",
+        outline   = "#{{colors.outline.default.hex_stripped}}",
+        outlineVariant = "#{{colors.outline_variant.default.hex_stripped}}",
+        shadow    = "#{{colors.surface_container_lowest.default.hex_stripped}}",
+    },
 }

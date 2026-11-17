@@ -5,6 +5,8 @@ import Quickshell.Services.UPower
 import qs.services
 import qs.widgets
 import QtQuick
+import QtQuick.Effects
+import QtQuick.Shapes
 
 // Desktop wallpaper: images, GIFs and videos, with workspace parallax
 // (the wallpaper slides a little as you move between workspaces) and a
@@ -54,8 +56,51 @@ PanelWindow {
         Behavior on x { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
         Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
 
+        // wallpaper effects (Wallpaper & Colors → Effects). Only rendered offscreen while one is switched on.
+        readonly property var cfg: Settings.s
+        readonly property bool tinted: cfg.wallTintAmount > 0.001 && /^#[0-9a-fA-F]{6}$/.test(cfg.wallTint)
+        layer.enabled: cfg.wallBlur > 0.001 || Math.abs(cfg.wallBrightness) > 0.001 || Math.abs(cfg.wallSaturation) > 0.001 || Math.abs(cfg.wallContrast) > 0.001 || tinted
+        layer.effect: MultiEffect {
+            blurEnabled: scene.cfg.wallBlur > 0.001
+            blurMax: 64
+            blur: scene.cfg.wallBlur
+            brightness: scene.cfg.wallBrightness
+            saturation: scene.cfg.wallSaturation
+            contrast: scene.cfg.wallContrast
+            colorization: scene.tinted ? scene.cfg.wallTintAmount : 0
+            colorizationColor: scene.tinted ? scene.cfg.wallTint : "white"
+        }
+
         WallLayer { id: layerA; anchors.fill: parent; playing: win.playing && win.front === layerA; still: Theme.wallpaperStill }
         WallLayer { id: layerB; anchors.fill: parent; playing: win.playing && win.front === layerB; still: Theme.wallpaperStill; opacity: 0 }
+    }
+
+    // vignette and grain sit over the wallpaper but under the album visualizer
+    Shape {
+        anchors.fill: parent
+        visible: Settings.s.wallVignette > 0.001
+        ShapePath {
+            strokeWidth: -1
+            fillGradient: RadialGradient {
+                centerX: win.width / 2; centerY: win.height / 2
+                centerRadius: Math.hypot(win.width, win.height) * 0.55
+                focalX: centerX; focalY: centerY
+                GradientStop { position: 0.45; color: "transparent" }
+                GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, Math.min(1, Settings.s.wallVignette)) }
+            }
+            startX: 0; startY: 0
+            PathLine { x: win.width; y: 0 }
+            PathLine { x: win.width; y: win.height }
+            PathLine { x: 0; y: win.height }
+            PathLine { x: 0; y: 0 }
+        }
+    }
+    Image {
+        anchors.fill: parent
+        visible: Settings.s.wallGrain > 0.001
+        source: Qt.resolvedUrl("widgets/grain.png")
+        fillMode: Image.Tile
+        opacity: Settings.s.wallGrain * 0.18
     }
 
     // ---- crossfade between layers ----

@@ -22,7 +22,7 @@ Item {
         id: label
         icon: root.muted ? "󰝟" : root.pct > 60 ? "󰕾" : root.pct > 25 ? "󰖀" : "󰕿"
         label: Settings.s.statusPercent ? root.pct + "%" : ""
-        iconColor: root.muted ? Theme.outline : Theme.primary
+        iconColor: root.muted ? (Settings.s.statusStateColors ? Theme.error : Theme.outline) : Theme.primary
         labelColor: root.muted ? Theme.outline : Theme.text
     }
 

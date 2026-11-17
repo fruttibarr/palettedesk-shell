@@ -29,7 +29,12 @@ for a in $enabled; do
     gtk)       command -v gsettings >/dev/null && gsettings set org.gnome.desktop.interface color-scheme prefer-dark ;;
   esac
 done
-grep -q '^\[templates' "$cfg" && matugen image "$img" --config "$cfg" --mode dark --type "$scheme" --source-color-index 0 >/dev/null
+mapfile -t opt < <(python3 -I "$(dirname "$0")/matugen-opts.py" 2>/dev/null || printf 'dark\n0.00\n\n0\n')
+if grep -q '^\[templates' "$cfg"; then
+  if [ -n "${opt[2]:-}" ]; then matugen color hex "${opt[2]}" --config "$cfg" --mode "${opt[0]:-dark}" --type "$scheme" --contrast "${opt[1]:-0.00}" >/dev/null
+  else matugen image "$img" --config "$cfg" --mode "${opt[0]:-dark}" --type "$scheme" --contrast "${opt[1]:-0.00}" --source-color-index "${opt[3]:-0}" >/dev/null \
+    || matugen image "$img" --config "$cfg" --mode "${opt[0]:-dark}" --type "$scheme" --contrast "${opt[1]:-0.00}" --source-color-index 0 >/dev/null; fi
+fi
 # Spicetify also gets a blurred copy of the wallpaper as its backdrop (slow: runs in the background).
 case " $enabled " in *" spicetify "*) command -v spicetify >/dev/null && setsid "$(dirname "$0")/spicetify-wallpaper.sh" "$img" >/dev/null 2>&1 & ;; esac
 exit 0

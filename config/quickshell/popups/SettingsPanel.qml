@@ -33,6 +33,7 @@ Scope {
         { icon: "󰒲", name: "Idle & Lock",         component: idlePage },
         { icon: "󰂚", name: "Notifications & OSD", component: notifPage },
         { icon: "󰑊", name: "Screen Recording",    component: recordingPage },
+        { icon: "󰏆", name: "Popups & Panels",     component: panelsPage },
     ]
 
     IpcHandler {
@@ -165,9 +166,35 @@ Scope {
             property bool bundleWall: false
             property string rights: ""
             property string shareMsg: ""
+            property string rollStyle: ""
             PageHeader {
                 title: "Themes"
                 subtitle: "One click changes the wallpaper, colors, bar, window style and layout together. Tweak anything on the other pages afterwards; input, keybinds and display scale are never touched."
+            }
+            SettingSection {
+                title: "Random theme"
+                SettingRow {
+                    label: "Surprise me"; keywords: "random theme randomize shuffle roll dice generate surprise"
+                    description: Presets.rolling ? "Rolling…"
+                               : Presets.lastRoll !== "" ? "Rolled: " + Presets.lastRoll + ". Like it? Save it below. Not keen? Roll again, or use “Previous look” to go back."
+                               : "Builds a whole new look that is designed to work: a style, matching colours, and a wallpaper that suits it. Never touches input, keybinds or display scale."
+                    ActionButton {
+                        primary: true
+                        text: Presets.rolling ? "󰑓  Rolling…" : "󰐱  Roll a random theme"
+                        onClicked: if (!Presets.rolling) Presets.random(themes.rollStyle)
+                    }
+                }
+                SettingRow {
+                    label: "Style"; keywords: "random theme style glass neon soft minimal brutalist synth"
+                    description: "Pin the kind of look to roll, or leave it on Any."
+                    Segmented {
+                        current: themes.rollStyle
+                        onPicked: v => themes.rollStyle = v
+                        options: [{ label: "Any", value: "" }, { label: "Glass", value: "glass" }, { label: "Neon", value: "neon" },
+                                  { label: "Soft", value: "soft" }, { label: "Minimal", value: "minimal" },
+                                  { label: "Brutalist", value: "brutal" }, { label: "Synth", value: "synth" }]
+                    }
+                }
             }
             SettingSection {
                 title: "Built-in themes"
@@ -286,7 +313,7 @@ Scope {
             PageHeader {
                 title: "Color & Display"
                 subtitle: "Adjust how the whole screen looks, like a monitor's picture menu. Applies live to everything, including games and videos."
-                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "adjBlack", "screenShader", "nightLight", "nightTemp"]
+                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "adjBlack", "adjVignette", "adjGrain", "adjSharpen", "screenShader", "nightLight", "nightTemp"]
             }
             SettingSection {
                 title: "Picture"
@@ -326,6 +353,7 @@ Scope {
                     ValueSlider { from: -180; to: 180; stepSize: 5; suffix: "°"; value: root.cfg.adjHue; onMoved: v => Settings.set("adjHue", v) }
                 }
             }
+            ScreenFinishSection {}
             SettingSection {
                 title: "Black light"
                 SettingRow {
@@ -394,7 +422,7 @@ Scope {
             PageHeader {
                 title: "Appearance"
                 subtitle: "Display scale and how the shell's glass panels look. Blur strength is on the Blur page."
-                keys: ["monitorScale", "barOpacity", "panelOpacity", "terminalOpacity", "shellRadius", "fontSize", "fontFamily", "popupZoom", "shellAnimScale", "animLauncher", "animControlCenter", "animNotifs", "animPopups"]
+                keys: ["monitorScale", "barOpacity", "panelOpacity", "terminalOpacity", "shellRadius", "fontSize", "fontFamily", "popupZoom", "shellAnimScale", "animLauncher", "animControlCenter", "animNotifs", "animPopups", "glassGrain", "glassInner", "lookCursorSize", "lookCursorTheme"]
             }
             SettingSection {
                 title: "Display"
@@ -445,6 +473,7 @@ Scope {
                     SettingText { text: root.cfg.fontFamily; placeholder: "JetBrainsMono Nerd Font"; onSubmitted: t => Settings.set("fontFamily", t.trim() || "JetBrainsMono Nerd Font") }
                 }
             }
+            GlassCursorSections { Layout.fillWidth: true }
             SettingSection {
                 title: "Popup motion"
                 SettingRow {
@@ -495,7 +524,7 @@ Scope {
             PageHeader {
                 title: "Wallpaper & Colors"
                 subtitle: "The whole desktop is themed from the wallpaper with Material You colors."
-                keys: ["colorScheme", "parallaxEnabled", "parallaxStrength", "animatedWallpapers", "pauseOnBattery", "pauseWhenFullscreen", "wallCrispPixels", "albumWallpaper", "albumWallStyle", "albumWallKeepPaused", "albumVisualizer", "albumVizStyle", "albumVizColor", "albumVizBars", "albumVizOpacity", "albumVizHeight"]
+                keys: ["colorScheme", "colorMode", "colorContrast", "colorSeed", "colorSourceIndex", "lookSaturation", "lookLightness", "lookHueShift", "lookTint", "lookTintAmount", "lookAccent", "wallBlur", "wallBrightness", "wallSaturation", "wallContrast", "wallTint", "wallTintAmount", "wallVignette", "wallGrain", "parallaxEnabled", "parallaxStrength", "animatedWallpapers", "pauseOnBattery", "pauseWhenFullscreen", "wallCrispPixels", "albumWallpaper", "albumWallStyle", "albumWallKeepPaused", "albumVisualizer", "albumVizStyle", "albumVizColor", "albumVizBars", "albumVizOpacity", "albumVizHeight"]
             }
             SettingSection {
                 title: "Current wallpaper"
@@ -702,6 +731,7 @@ Scope {
                     ]
                 }
             }
+            ColorLookSections { Layout.fillWidth: true }
         }
     }
 
@@ -713,7 +743,7 @@ Scope {
                 title: "Blur"
                 subtitle: "Frosted glass behind the bar, popups, menus and translucent windows."
                 keys: ["blurEnabled", "blurSize", "blurPasses", "blurBrightness", "blurVibrancy", "blurNoise", "blurPopups", "blurXray",
-                       "blurContrast", "blurVibrancyDarkness", "blurSpecial"]
+                       "blurContrast", "blurVibrancyDarkness", "blurSpecial", "blurNewOptimizations", "blurIgnoreOpacity", "blurPopupsAlpha", "blurInputMethods"]
             }
             SettingSection {
                 title: "Strength"
@@ -776,6 +806,7 @@ Scope {
                     Toggle { checked: root.cfg.blurSpecial; onToggled: v => Settings.set("blurSpecial", v) }
                 }
             }
+            BlurExtraSection { Layout.fillWidth: true }
         }
     }
 
@@ -787,7 +818,10 @@ Scope {
                 title: "Windows"
                 subtitle: "Spacing, borders, snapping and window effects. The tiling layout is on the Layouts page."
                 keys: ["gapsIn", "gapsOut", "borderSize", "rounding", "activeOpacity", "inactiveOpacity", "dimInactive", "dimStrength", "shadowEnabled", "shadowRange", "drawTerminal", "drawTerminalCommand",
-                       "roundingPower", "fullscreenOpacity", "dimSpecial", "shadowRenderPower", "shadowOffsetY", "resizeOnBorder", "borderGrabArea", "snapEnabled", "snapGap", "groupbarEnabled"]
+                       "roundingPower", "fullscreenOpacity", "dimSpecial", "shadowRenderPower", "shadowOffsetY", "resizeOnBorder", "borderGrabArea", "snapEnabled", "snapGap", "groupbarEnabled",
+                       "borderStyle", "borderAngle", "borderCustomA", "borderCustomB", "borderOpacity", "borderInactiveStyle", "borderPartOfWindow", "shadowColorMode", "shadowOpacity", "shadowSharp", "shadowScale",
+                       "glowEnabled", "glowRange", "glowPower", "glowColorMode", "glowCustom", "glowOpacity", "gapsWorkspaces", "floatGaps", "groupbarAccent", "groupbarHeight", "groupbarFontSize",
+                       "groupbarRounding", "groupbarGradients", "groupbarTitles", "groupbarIndicator", "groupbarGaps", "groupbarBlur"]
             }
             SettingSection {
                 title: "Draw a terminal"
@@ -841,6 +875,7 @@ Scope {
                     ValueSlider { from: 0; to: 40; stepSize: 1; suffix: " px"; value: root.cfg.borderGrabArea; onMoved: v => Settings.set("borderGrabArea", v) }
                 }
             }
+            WinLookSections { Layout.fillWidth: true }
             SettingSection {
                 title: "Floating windows"
                 SettingRow {
@@ -1014,7 +1049,7 @@ Scope {
             PageHeader {
                 title: "Animations"
                 subtitle: "Window, workspace and border motion. Popup motion is on the Appearance page."
-                keys: ["animationsEnabled", "rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animateResizes", "animateDrag", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces"]
+                keys: ["animationsEnabled", "rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animateResizes", "animateDrag", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "animCurve", "animBorderSpeed", "animLayerStyle", "animLayerSpeed", "animWsWrap"]
             }
             SettingSection {
                 title: "Motion"
@@ -1063,6 +1098,7 @@ Scope {
                     ValueSlider { from: 0.3; to: 3; stepSize: 0.1; decimals: 1; suffix: "×"; value: root.cfg.animWorkspaces; onMoved: v => Settings.set("animWorkspaces", v) }
                 }
             }
+            AnimFeelSections { Layout.fillWidth: true }
             SettingSection {
                 visible: root.cfg.animationsEnabled
                 title: "Styles"
@@ -1160,7 +1196,10 @@ Scope {
                        "barBorder", "barShadow", "barSheen", "chipStyle", "chipShape", "barLayout",
                        "wsCount", "wsStyle", "wsShowEmpty", "wsOpacity", "wsActiveOpacity", "clock24h", "clockSeconds", "showDate", "dateFormat", "clockIcon",
                        "statusBell", "statusNetwork", "statusBluetooth", "statusVolume", "statusBattery", "statusPercent",
-                       "statsStyle", "mediaMaxWidth", "mediaBars", "lyricsMaxWidth", "lyricsOffset", "titleMaxWidth"]
+                       "statsStyle", "mediaMaxWidth", "mediaBars", "lyricsMaxWidth", "lyricsOffset", "titleMaxWidth",
+                       "chipEffect", "chipGlow", "chipAccent", "chipHover", "chipEntrance", "barDensity", "barEdge", "barEdgeWidth", "barDivider", "barFill", "barFlares",
+                       "wsIndicator", "wsIcons", "wsColor", "clockLayout", "clockDisplay", "barIconSize", "barIconColor", "batteryStyle", "statsLabels", "statsHeat", "statsWarn",
+                       "statusStateColors", "titleStyle", "titleIcon", "trayTint", "trayIconSize"]
             }
 
             SettingSection {
@@ -1232,6 +1271,116 @@ Scope {
                     current: root.cfg.chipShape
                     onPicked: v => Settings.set("chipShape", v)
                     options: [{ label: "Pill", value: "pill" }, { label: "Rounded", value: "rounded" }, { label: "Square", value: "square" }]
+                }
+            }
+
+            SettingSection {
+                title: "Bar surface"
+                SettingRow {
+                    label: "Density"; keywords: "compact comfortable spacious padding spacing tight roomy size"
+                    description: "Padding inside modules and the gaps between them"
+                }
+                Segmented {
+                    current: root.cfg.barDensity
+                    onPicked: v => Settings.set("barDensity", v)
+                    options: [{ label: "Compact", value: "compact" }, { label: "Comfortable", value: "comfortable" }, { label: "Spacious", value: "spacious" }]
+                }
+                SettingRow {
+                    label: "Background fill"; keywords: "gradient fade wash transparent ends bar background"
+                    description: "Solid · Gradient: accent wash toward the screen edge · Fade: opaque in the middle, see-through at the ends"
+                }
+                Segmented {
+                    current: root.cfg.barFill
+                    onPicked: v => Settings.set("barFill", v)
+                    options: [{ label: "Solid", value: "solid" }, { label: "Gradient", value: "gradient" }, { label: "Fade", value: "fade" }]
+                }
+                SettingRow {
+                    label: "Accent edge"; keywords: "line glow animated border underline strip rgb flowing neon bar"
+                    description: "A colored line along the bar's inner edge. Animated flows between your two accent colors. Not shown for Islands."
+                }
+                Segmented {
+                    current: root.cfg.barEdge
+                    onPicked: v => Settings.set("barEdge", v)
+                    options: [{ label: "None", value: "none" }, { label: "Line", value: "line" }, { label: "Glow", value: "glow" }, { label: "Animated", value: "animated" }]
+                }
+                SettingRow {
+                    visible: root.cfg.barEdge !== "none"
+                    label: "Edge thickness"
+                    ValueSlider { from: 1; to: 5; stepSize: 1; suffix: " px"; value: root.cfg.barEdgeWidth; onMoved: v => Settings.set("barEdgeWidth", v) }
+                }
+                SettingRow {
+                    label: "Dock flares"; keywords: "inverse corner dock curve notch attached edge to edge"
+                    description: "Curved flares where an Attached bar meets the screen sides"
+                    Toggle { checked: root.cfg.barFlares; onToggled: v => Settings.set("barFlares", v) }
+                }
+                SettingRow {
+                    label: "Module separators"; keywords: "divider dot line slash diamond between"
+                    description: "A small mark between modules in each zone"
+                }
+                Segmented {
+                    current: root.cfg.barDivider
+                    onPicked: v => Settings.set("barDivider", v)
+                    options: [{ label: "None", value: "none" }, { label: "● Dot", value: "dot" }, { label: "│ Line", value: "line" },
+                              { label: "/ Slash", value: "slash" }, { label: "◆ Diamond", value: "diamond" }]
+                }
+            }
+
+            SettingSection {
+                title: "Module effects"
+                SettingRow {
+                    label: "Effect"; keywords: "glass frosted gradient neon outline underline neumorphic soft bracket chip capsule module"
+                    description: "Glass: frosted · Gradient: accent fill · Neon: glowing outline · Underline · Soft: raised · Bracket: [ ]"
+                }
+                Segmented {
+                    current: root.cfg.chipEffect
+                    onPicked: v => Settings.set("chipEffect", v)
+                    options: [{ label: "None", value: "none" }, { label: "Glass", value: "glass" }, { label: "Gradient", value: "gradient" }, { label: "Neon", value: "neon" },
+                              { label: "Underline", value: "underline" }, { label: "Soft", value: "soft" }, { label: "Bracket", value: "bracket" }]
+                }
+                SettingRow {
+                    label: "Accent colors"; keywords: "rainbow gradient tertiary color mode borders glow per module"
+                    description: "Colors borders, effects and glow. Rainbow and Gradient spread across the bar from left to right."
+                }
+                Segmented {
+                    current: root.cfg.chipAccent
+                    onPicked: v => Settings.set("chipAccent", v)
+                    options: [{ label: "Primary", value: "none" }, { label: "Tertiary", value: "tertiary" }, { label: "Gradient", value: "gradient" }, { label: "Rainbow", value: "rainbow" }]
+                }
+                SettingRow {
+                    label: "Glow"; keywords: "halo shadow accent glow chip module"
+                    description: "A soft accent halo around every module"
+                    ValueSlider { from: 0; to: 1; stepSize: 0.05; displayScale: 100; suffix: "%"; value: root.cfg.chipGlow; onMoved: v => Settings.set("chipGlow", v) }
+                }
+                SettingRow {
+                    label: "Hover animation"; keywords: "lift pulse bounce press hover chip module"
+                }
+                Segmented {
+                    current: root.cfg.chipHover
+                    onPicked: v => Settings.set("chipHover", v)
+                    options: [{ label: "Lift", value: "lift" }, { label: "Pulse", value: "pulse" }, { label: "Bounce", value: "bounce" }, { label: "None", value: "none" }]
+                }
+                SettingRow {
+                    label: "Entrance animation"; keywords: "appear intro startup rise fade pop slide chip module"
+                    description: "How modules appear when the bar loads"
+                }
+                Segmented {
+                    current: root.cfg.chipEntrance
+                    onPicked: v => Settings.set("chipEntrance", v)
+                    options: [{ label: "Rise", value: "rise" }, { label: "Pop", value: "pop" }, { label: "Slide", value: "slide" }, { label: "None", value: "none" }]
+                }
+                SettingRow {
+                    label: "Icon size"; keywords: "icons bigger smaller glyph status bar"
+                    description: "Adjusts all bar icons relative to the default"
+                    ValueSlider { from: -3; to: 5; stepSize: 1; suffix: " px"; value: root.cfg.barIconSize; onMoved: v => Settings.set("barIconSize", v) }
+                }
+                SettingRow {
+                    label: "Icon colors"; keywords: "mono monochrome status icons tint"
+                    description: "Errors and muted states keep their warning colors"
+                }
+                Segmented {
+                    current: root.cfg.barIconColor
+                    onPicked: v => Settings.set("barIconColor", v)
+                    options: [{ label: "Accent", value: "accent" }, { label: "Tertiary", value: "tertiary" }, { label: "Monochrome", value: "mono" }]
                 }
             }
 
@@ -1320,6 +1469,27 @@ Scope {
                     options: [{ label: "1 2 3", value: "numbers" }, { label: "● ○ ○", value: "dots" },
                               { label: "I II III", value: "roman" }, { label: "一 二 三", value: "kanji" }]
                 }
+                SettingRow {
+                    label: "Active indicator"; keywords: "workspace highlight pill underline outline glow block"
+                    description: "How the current workspace is marked"
+                }
+                Segmented {
+                    current: root.cfg.wsIndicator
+                    onPicked: v => Settings.set("wsIndicator", v)
+                    options: [{ label: "Pill", value: "pill" }, { label: "Block", value: "block" }, { label: "Outline", value: "outline" },
+                              { label: "Underline", value: "underline" }, { label: "Glow", value: "glow" }]
+                }
+                SettingRow { label: "Indicator color"; keywords: "workspace accent tertiary secondary" }
+                Segmented {
+                    current: root.cfg.wsColor
+                    onPicked: v => Settings.set("wsColor", v)
+                    options: [{ label: "Primary", value: "primary" }, { label: "Secondary", value: "secondary" }, { label: "Tertiary", value: "tertiary" }]
+                }
+                SettingRow {
+                    label: "App icons"; keywords: "workspace icon application window program"
+                    description: "Show the first app's icon on workspaces that have windows"
+                    Toggle { checked: root.cfg.wsIcons; onToggled: v => Settings.set("wsIcons", v) }
+                }
             }
 
             SettingSection {
@@ -1347,6 +1517,18 @@ Scope {
                     onPicked: v => Settings.set("dateFormat", v)
                     options: [{ label: "Mon 16 Nov", value: "short" }, { label: "Monday, 16 November", value: "long" },
                               { label: "16/11/2026", value: "numeric" }, { label: "2026-11-16", value: "iso" }]
+                }
+                SettingRow { label: "Layout"; keywords: "clock stacked two line vertical time date" ; description: "Inline, or time over date" }
+                Segmented {
+                    current: root.cfg.clockLayout
+                    onPicked: v => Settings.set("clockLayout", v)
+                    options: [{ label: "Inline", value: "inline" }, { label: "Stacked", value: "stacked" }]
+                }
+                SettingRow { label: "Time display"; keywords: "clock kanji japanese words fuzzy text digital"; description: "Digital · Kanji (十三時四十分) · Words (quarter past two)" }
+                Segmented {
+                    current: root.cfg.clockDisplay
+                    onPicked: v => Settings.set("clockDisplay", v)
+                    options: [{ label: "Digital", value: "digital" }, { label: "漢字 Kanji", value: "kanji" }, { label: "Words", value: "fuzzy" }]
                 }
             }
 
@@ -1377,6 +1559,17 @@ Scope {
                     description: "Off = icons only"
                     Toggle { checked: root.cfg.statusPercent; onToggled: v => Settings.set("statusPercent", v) }
                 }
+                SettingRow {
+                    label: "Color by state"; keywords: "status icons red warning muted offline do not disturb battery level"
+                    description: "Offline network and muted sound turn red, Do Not Disturb turns secondary, battery color follows its charge"
+                    Toggle { checked: root.cfg.statusStateColors; onToggled: v => Settings.set("statusStateColors", v) }
+                }
+                SettingRow { label: "Battery style"; keywords: "battery ring bar gauge meter icon" }
+                Segmented {
+                    current: root.cfg.batteryStyle
+                    onPicked: v => Settings.set("batteryStyle", v)
+                    options: [{ label: "󰁹 Icon", value: "icon" }, { label: "◔ Ring", value: "ring" }, { label: "▭ Bar", value: "bar" }]
+                }
             }
 
             SettingSection {
@@ -1385,7 +1578,41 @@ Scope {
                 Segmented {
                     current: root.cfg.statsStyle
                     onPicked: v => Settings.set("statsStyle", v)
-                    options: [{ label: "◔ Rings", value: "rings" }, { label: "󰍛 Icons", value: "text" }]
+                    options: [{ label: "◔ Rings", value: "rings" }, { label: "󰍛 Icons", value: "text" }, { label: "▬ Bars", value: "bars" }, { label: "▂▄▆ Ticks", value: "ticks" }]
+                }
+                SettingRow {
+                    label: "CPU & RAM labels"; keywords: "stats cpu ram text label name"
+                    Toggle { checked: root.cfg.statsLabels; onToggled: v => Settings.set("statsLabels", v) }
+                }
+                SettingRow {
+                    label: "Heat colors"; keywords: "stats cpu ram load color gradient red"
+                    description: "Colors shift toward red as load climbs"
+                    Toggle { checked: root.cfg.statsHeat; onToggled: v => Settings.set("statsHeat", v) }
+                }
+                SettingRow {
+                    label: "Warning level"; keywords: "stats cpu ram threshold red"
+                    description: "Load above this turns red"
+                    ValueSlider { from: 0.5; to: 1; stepSize: 0.05; displayScale: 100; suffix: "%"; value: root.cfg.statsWarn; onMoved: v => Settings.set("statsWarn", v) }
+                }
+                SettingRow { label: "Tray icon tint"; keywords: "system tray greyscale grayscale monochrome accent color icons"; description: "Recolor tray icons to match the bar" }
+                Segmented {
+                    current: root.cfg.trayTint
+                    onPicked: v => Settings.set("trayTint", v)
+                    options: [{ label: "None", value: "none" }, { label: "Grayscale", value: "grey" }, { label: "Mono", value: "mono" }, { label: "Accent", value: "accent" }]
+                }
+                SettingRow {
+                    label: "Tray icon size"; keywords: "system tray"
+                    ValueSlider { from: 14; to: 26; stepSize: 1; suffix: " px"; value: root.cfg.trayIconSize; onMoved: v => Settings.set("trayIconSize", v) }
+                }
+                SettingRow { label: "Window title style"; keywords: "title bold italic caps uppercase" }
+                Segmented {
+                    current: root.cfg.titleStyle
+                    onPicked: v => Settings.set("titleStyle", v)
+                    options: [{ label: "Normal", value: "normal" }, { label: "Bold", value: "bold" }, { label: "Italic", value: "italic" }, { label: "CAPS", value: "caps" }]
+                }
+                SettingRow {
+                    label: "Window title: app icon"; keywords: "title icon"
+                    Toggle { checked: root.cfg.titleIcon; onToggled: v => Settings.set("titleIcon", v) }
                 }
                 SettingRow {
                     label: "Now playing: max title width"
@@ -2182,6 +2409,11 @@ Scope {
     }
 
     Component {
+        id: panelsPage
+        PanelsPage { }
+    }
+
+    Component {
         id: recordingPage
         ColumnLayout {
             spacing: 16
@@ -2559,7 +2791,7 @@ Scope {
                 // Sidebar
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 230
+                    Layout.preferredWidth: Settings.s.uiSidebarWidth
                     color: Theme.alpha(Theme.surfaceContainer, 0.45)
                     radius: panel.radius
                     // square off the right edge
@@ -2567,6 +2799,41 @@ Scope {
                         anchors.right: parent.right
                         width: parent.radius; height: parent.height
                         color: parent.color
+                    }
+
+                    // "more pages below" hint over the nav list
+                    Rectangle {
+                        id: navMore
+                        readonly property bool needed: root.q === "" && navFlick.contentHeight > navFlick.height
+                                                       && navFlick.contentY + navFlick.height < navFlick.contentHeight - 4
+                        width: 26; height: 26; radius: 13
+                        x: navFlick.parent.x + navFlick.x + navFlick.width - width - 4
+                        y: navFlick.parent.y + navFlick.y + navFlick.height - height - 2
+                        z: 5
+                        opacity: needed ? 1 : 0
+                        visible: opacity > 0
+                        color: Theme.alpha(Theme.primaryContainer, 0.92)
+                        border.width: 1
+                        border.color: Theme.alpha(Theme.primary, 0.45)
+                        Behavior on opacity { NumberAnimation { duration: 180 } }
+                        Text {
+                            id: chev
+                            anchors.centerIn: parent
+                            text: "󰅀"
+                            color: Theme.textOnPrimaryContainer
+                            font.family: Theme.font
+                            font.pixelSize: 15
+                            SequentialAnimation on anchors.verticalCenterOffset {
+                                loops: Animation.Infinite; running: navMore.needed
+                                NumberAnimation { to: 2; duration: 700; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: -1; duration: 700; easing.type: Easing.InOutSine }
+                            }
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: navFlick.contentY = Math.min(navFlick.contentHeight - navFlick.height, navFlick.contentY + 180)
+                        }
                     }
 
                     ColumnLayout {
@@ -2696,7 +2963,16 @@ Scope {
                                 height: 34
                                 radius: 12
                                 y: root.page * (34 + navCol.spacing)
-                                color: Theme.alpha(Theme.primary, root.q !== "" ? 0.35 : 0.9)
+                                readonly property string look: Settings.s.uiSidebarStyle   // pill | soft | outline | rail
+                                color: look === "pill" ? Theme.alpha(Theme.primary, root.q !== "" ? 0.35 : 0.9)
+                                     : look === "outline" ? "transparent" : Theme.alpha(Theme.primary, root.q !== "" ? 0.08 : 0.18)
+                                border.width: look === "outline" ? 2 : 0
+                                border.color: Theme.alpha(Theme.primary, root.q !== "" ? 0.4 : 1)
+                                Rectangle {
+                                    visible: parent.look === "rail"
+                                    x: 0; y: 7; width: 3; height: parent.height - 14; radius: 2
+                                    color: Theme.primary
+                                }
                                 Behavior on y { NumberAnimation { duration: 320; easing.type: Easing.OutBack; easing.overshoot: 1.1 } }
                             }
 
@@ -2726,16 +3002,20 @@ Scope {
                                             anchors.left: parent.left
                                             anchors.leftMargin: 12
                                             spacing: 12
-                                            Text {
-                                                text: nav.modelData.icon
-                                                color: nav.current ? Theme.textOnPrimary : Theme.primary
-                                                font.family: Theme.font
-                                                font.pixelSize: 16
-                                                Behavior on color { ColorAnimation { duration: 200 } }
+                                            Item {   // fixed slot so every label starts at the same x
+                                                width: 20; height: 20
+                                                Text {
+                                                    anchors.centerIn: parent
+                                                    text: nav.modelData.icon
+                                                    color: nav.current && Settings.s.uiSidebarStyle === "pill" ? Theme.textOnPrimary : Theme.primary
+                                                    font.family: Theme.font
+                                                    font.pixelSize: 16
+                                                    Behavior on color { ColorAnimation { duration: 200 } }
+                                                }
                                             }
                                             Text {
                                                 text: nav.modelData.name
-                                                color: nav.current ? Theme.textOnPrimary : Theme.text
+                                                color: nav.current ? (Settings.s.uiSidebarStyle === "pill" ? Theme.textOnPrimary : Theme.primary) : Theme.text
                                                 font.family: Theme.font
                                                 font.pixelSize: Theme.fontSize - 1
                                                 font.weight: nav.current ? Font.Bold : Font.Normal
@@ -2754,13 +3034,23 @@ Scope {
                             }
                         }
 
-                        Text {
-                            Layout.fillWidth: true
-                            Layout.leftMargin: 6
-                            text: "󰄬  Changes apply instantly\n     and save automatically"
-                            color: Theme.outline
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontSize - 3
+                        Row {
+                            Layout.leftMargin: 8
+                            spacing: 8
+                            Text {
+                                text: "󰄬"
+                                color: Theme.primary
+                                opacity: 0.8
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize - 2
+                            }
+                            Text {
+                                text: "Changes apply instantly\nand save automatically"
+                                color: Theme.outline
+                                font.family: Theme.font
+                                font.pixelSize: Theme.fontSize - 3
+                                lineHeight: 1.1
+                            }
                         }
                     }
                 }
@@ -2808,8 +3098,9 @@ Scope {
                             }
                             ParallelAnimation {
                                 id: pageIn
-                                NumberAnimation { target: pageLoader; property: "opacity"; from: 0; to: 1; duration: 260; easing.type: Easing.OutCubic }
-                                NumberAnimation { target: pageShift; property: "y"; from: 14; to: 0; duration: 380; easing.type: Easing.OutCubic }
+                                NumberAnimation { target: pageLoader; property: "opacity"; from: Settings.s.uiPageTransition === "none" ? 1 : 0; to: 1; duration: 260 * Theme.anim; easing.type: Easing.OutCubic }
+                                NumberAnimation { target: pageShift; property: "y"; from: Settings.s.uiPageTransition === "slide" ? 14 : Settings.s.uiPageTransition === "rise" ? 40 : 0; to: 0; duration: 380 * Theme.anim; easing.type: Easing.OutCubic }
+                                NumberAnimation { target: pageShift; property: "x"; from: Settings.s.uiPageTransition === "side" ? 36 : 0; to: 0; duration: 380 * Theme.anim; easing.type: Easing.OutCubic }
                             }
                         }
                     }

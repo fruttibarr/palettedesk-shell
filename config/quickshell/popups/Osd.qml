@@ -68,7 +68,7 @@ Scope {
         // keep clear of the bar when it's on the same edge
         margins.bottom: Theme.barTop ? 50 : Theme.barReserved + 10
         margins.top: Theme.barTop ? Theme.barReserved + 10 : 50
-        implicitWidth: 360
+        implicitWidth: Settings.s.osdWidth + 40
         implicitHeight: 108
         color: "transparent"
         mask: Region {}   // click-through
@@ -80,7 +80,7 @@ Scope {
 
         Rectangle {
             id: card
-            width: 320
+            width: Settings.s.osdWidth
             height: 76
             anchors.horizontalCenter: parent.horizontalCenter
             // slide in from the screen edge with a little overshoot
@@ -103,7 +103,7 @@ Scope {
                 }
             }
 
-            radius: 26
+            radius: Math.min(Settings.s.osdRadius, height / 2)
             color: Theme.alpha(Theme.surface, Math.min(0.9, Theme.panelOpacity))
             border.width: 1
             border.color: Theme.alpha(win.accA, 0.45)
@@ -244,7 +244,7 @@ Scope {
                     }
                     // quarter notches
                     Repeater {
-                        model: [0.25, 0.5, 0.75]
+                        model: Settings.s.osdNotches ? [0.25, 0.5, 0.75] : []
                         Rectangle {
                             required property real modelData
                             x: bar.width * modelData - 0.5

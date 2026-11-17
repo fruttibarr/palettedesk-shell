@@ -65,7 +65,15 @@ case "${file,,}" in
     fi ;;
 esac
 
-matugen image "${source:-$still}" --mode dark --type "$scheme" --source-color-index 0
+# mode / contrast / seed colour / which dominant colour of the image (Wallpaper & Colors page)
+mapfile -t opt < <(python3 -I "$(dirname "$0")/matugen-opts.py" 2>/dev/null || printf 'dark\n0.00\n\n0\n')
+cmode="${opt[0]:-dark}"; ccontrast="${opt[1]:-0.00}"; cseed="${opt[2]:-}"; cidx="${opt[3]:-0}"
+if [ -n "$cseed" ]; then
+  matugen color hex "$cseed" --mode "$cmode" --type "$scheme" --contrast "$ccontrast"
+else
+  matugen image "${source:-$still}" --mode "$cmode" --type "$scheme" --contrast "$ccontrast" --source-color-index "$cidx" \
+    || matugen image "${source:-$still}" --mode "$cmode" --type "$scheme" --contrast "$ccontrast" --source-color-index 0
+fi
 "$(dirname "$0")/app-themes.sh" "${source:-$still}" || true
 
 # colors.json names the image the colors came from; point it at the real files.

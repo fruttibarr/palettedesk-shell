@@ -90,6 +90,33 @@ Singleton {
         "statusBattery": true,
         "statusPercent": true,
         "statsStyle": "rings",
+        "chipEffect": "none",
+        "chipGlow": 0,
+        "chipAccent": "none",
+        "chipHover": "lift",
+        "chipEntrance": "rise",
+        "barDensity": "comfortable",
+        "barEdge": "none",
+        "barEdgeWidth": 2,
+        "barDivider": "none",
+        "barFill": "solid",
+        "barFlares": false,
+        "wsIndicator": "pill",
+        "wsIcons": false,
+        "wsColor": "primary",
+        "clockLayout": "inline",
+        "clockDisplay": "digital",
+        "barIconSize": 0,
+        "barIconColor": "accent",
+        "batteryStyle": "icon",
+        "statsLabels": false,
+        "statsHeat": false,
+        "statsWarn": 0.85,
+        "statusStateColors": false,
+        "titleStyle": "normal",
+        "titleIcon": true,
+        "trayTint": "none",
+        "trayIconSize": 18,
         "mediaMaxWidth": 200,
         "mediaBars": true,
         "lyricsMaxWidth": 220,
@@ -136,6 +163,68 @@ Singleton {
         "albumVizOpacity": 0.75,
         "albumVizHeight": 0.28,
         "roundingPower": 2.0,
+        "borderStyle": "wallpaper",
+        "borderAngle": 45,
+        "borderCustomA": "#cebdfe",
+        "borderCustomB": "#f0b8c5",
+        "borderOpacity": 0.933,
+        "borderInactiveStyle": "default",
+        "borderPartOfWindow": true,
+        "shadowColorMode": "wallpaper",
+        "shadowOpacity": 0.867,
+        "shadowSharp": false,
+        "shadowScale": 1.0,
+        "glowEnabled": false,
+        "glowRange": 10,
+        "glowPower": 3,
+        "glowColorMode": "accent",
+        "glowCustom": "#33ccff",
+        "glowOpacity": 0.8,
+        "gapsWorkspaces": 0,
+        "floatGaps": 0,
+        "groupbarHeight": 14,
+        "groupbarFontSize": 8,
+        "groupbarRounding": 1,
+        "groupbarGradients": false,
+        "groupbarTitles": true,
+        "groupbarIndicator": 3,
+        "groupbarGaps": 2,
+        "groupbarBlur": false,
+        "groupbarAccent": false,
+        "blurNewOptimizations": true,
+        "blurIgnoreOpacity": true,
+        "blurPopupsAlpha": 0.2,
+        "blurInputMethods": false,
+        "animCurve": "default",
+        "animBorderSpeed": 1.0,
+        "animLayerStyle": "slide",
+        "animLayerSpeed": 1.0,
+        "animWsWrap": false,
+        "lookCursorSize": 24,
+        "lookCursorTheme": "",
+        "lookSaturation": 1.0,
+        "lookLightness": 0.0,
+        "lookHueShift": 0,
+        "lookTint": "",
+        "lookTintAmount": 0.0,
+        "lookAccent": "",
+        "colorMode": "dark",
+        "colorContrast": 0.0,
+        "colorSeed": "",
+        "colorSourceIndex": 0,
+        "glassGrain": 0.0,
+        "glassInner": 0.0,
+        "wallBlur": 0.0,
+        "wallBrightness": 0.0,
+        "wallSaturation": 0.0,
+        "wallContrast": 0.0,
+        "wallTint": "",
+        "wallTintAmount": 0.0,
+        "wallVignette": 0.0,
+        "wallGrain": 0.0,
+        "adjVignette": 0.0,
+        "adjGrain": 0.0,
+        "adjSharpen": 0.0,
         "fullscreenOpacity": 1.0,
         "dimSpecial": 0.2,
         "shadowRenderPower": 3,
@@ -200,6 +289,37 @@ Singleton {
         "xwaylandZeroScaling": false,
         "fontFamily": "JetBrainsMono Nerd Font",
         "popupZoom": true,
+        "panelBorderWidth": 1,
+        "panelBorderMode": "accent",
+        "panelRadiusExtra": 6,
+        "panelGlow": 0.0,
+        "panelShadow": 0.0,
+        "panelGloss": 0.0,
+        "panelVibrancy": 0.0,
+        "panelAccentEdge": "none",
+        "popupEntrance": "zoom",
+        "popupDim": 0.0,
+        "uiToggleStyle": "pill",
+        "uiSliderStyle": "round",
+        "uiSegmentStyle": "pill",
+        "uiCardStyle": "filled",
+        "uiCardRadius": 14,
+        "uiSectionTitle": "caps",
+        "uiDensity": "normal",
+        "uiRowDividers": false,
+        "uiSidebarStyle": "pill",
+        "uiSidebarWidth": 230,
+        "uiPageTransition": "slide",
+        "ccTileRadius": 16,
+        "ccTileHeight": 62,
+        "ccActiveStyle": "container",
+        "ccIconShape": "circle",
+        "notifRadius": 16,
+        "notifAccent": "left",
+        "notifProgress": false,
+        "osdRadius": 26,
+        "osdWidth": 320,
+        "osdNotches": true,
         "shellAnimScale": 1.0,
         "animLauncher": 1.0,
         "animControlCenter": 1.0,
@@ -268,7 +388,8 @@ Singleton {
     readonly property var shaderList: [
         { id: "", label: "None" }, { id: "grayscale", label: "Grayscale" }, { id: "sepia", label: "Sepia" },
         { id: "vibrant", label: "Vibrant" }, { id: "crt", label: "Retro CRT" }, { id: "invert", label: "Invert" },
-        { id: "colorblind", label: "Color-blind aid" }
+        { id: "colorblind", label: "Color-blind aid" }, { id: "bloom", label: "Bloom" }, { id: "aberration", label: "Lens fringe" },
+        { id: "duotone", label: "Duotone" }, { id: "posterize", label: "Posterize" }, { id: "pixelate", label: "Pixelate" }
     ]
 
     // setting key -> Hyprland option path
@@ -302,6 +423,27 @@ Singleton {
             "disableWhileTyping": "input.touchpad.disable_while_typing",
             "scrollFactor": "input.touchpad.scroll_factor",
             "roundingPower": "decoration.rounding_power",
+            "borderPartOfWindow": "decoration.border_part_of_window",
+            "shadowSharp": "decoration.shadow.sharp",
+            "shadowScale": "decoration.shadow.scale",
+            "glowEnabled": "decoration.glow.enabled",
+            "glowRange": "decoration.glow.range",
+            "glowPower": "decoration.glow.render_power",
+            "gapsWorkspaces": "general.gaps_workspaces",
+            "floatGaps": "general.float_gaps",
+            "groupbarHeight": "group.groupbar.height",
+            "groupbarFontSize": "group.groupbar.font_size",
+            "groupbarRounding": "group.groupbar.rounding",
+            "groupbarGradients": "group.groupbar.gradients",
+            "groupbarTitles": "group.groupbar.render_titles",
+            "groupbarIndicator": "group.groupbar.indicator_height",
+            "groupbarGaps": "group.groupbar.gaps_in",
+            "groupbarBlur": "group.groupbar.blur",
+            "blurNewOptimizations": "decoration.blur.new_optimizations",
+            "blurIgnoreOpacity": "decoration.blur.ignore_opacity",
+            "blurPopupsAlpha": "decoration.blur.popups_ignorealpha",
+            "blurInputMethods": "decoration.blur.input_methods",
+            "animWsWrap": "animations.workspace_wraparound",
             "fullscreenOpacity": "decoration.fullscreen_opacity",
             "dimSpecial": "decoration.dim_special",
             "shadowRenderPower": "decoration.shadow.render_power",
@@ -364,7 +506,7 @@ Singleton {
     })
 
     // keys that aren't plain options but still regenerate the Lua file
-    readonly property var hyprExtraKeys: ["rotatingBorder", "animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "monitorScale", "middleAsRight", "infiniteDesktop", "infiniteFloat", "keybinds", "monitors", "windowRules", "workspaceRules", "autostart"]
+    readonly property var hyprExtraKeys: ["borderStyle", "borderAngle", "borderCustomA", "borderCustomB", "borderOpacity", "borderInactiveStyle", "shadowColorMode", "shadowOpacity", "glowColorMode", "glowCustom", "glowOpacity", "groupbarAccent", "animCurve", "animBorderSpeed", "animLayerStyle", "animLayerSpeed", "lookCursorSize", "lookCursorTheme", "rotatingBorder","animScale", "windowAnimStyle", "wsAnimStyle", "borderRotateSpeed", "animWinIn", "animWinOut", "animWinMove", "animFade", "animWorkspaces", "monitorScale", "middleAsRight", "infiniteDesktop", "infiniteFloat", "keybinds", "monitors", "windowRules", "workspaceRules", "autostart"]
 
     // settings stored as bool/number that Hyprland wants in another shape
     readonly property var hyprTransform: ({
@@ -373,6 +515,7 @@ Singleton {
             "wsBackAndForth": v => v ? 1 : 0,
             "cursorWarpOnWs": v => v ? 1 : 0,
             "exitRetainsFullscreen": v => v ? 1 : 0,
+            "floatGaps": v => String(Math.round(v)),
             "accelProfile": v => v === "flat" ? "flat" : "adaptive"
     })
     // one setting that drives several options
@@ -381,7 +524,7 @@ Singleton {
     })
 
     // ---- screen colour adjustments (Color & Display page): composed into one generated shader ----
-    readonly property var adjKeys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "adjBlack"]
+    readonly property var adjKeys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "adjBlack", "adjVignette", "adjGrain", "adjSharpen"]
     readonly property bool adjusting: adjKeys.some(k => Math.abs(adapter[k] - defaults[k]) > 0.0001)
     readonly property string adjSig: adjKeys.map(k => Number(adapter[k]).toFixed(3)).join(" ") + "|" + adapter.screenShader
     function sigHash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
@@ -418,6 +561,13 @@ Singleton {
         if (key === "colorScheme") {
             Quickshell.execDetached([Quickshell.shellDir + "/scripts/set-wallpaper.sh", Theme.wallpaper, value]);
         }
+        // mode / contrast / seed colour / dominant-colour pick are read by the script from settings.json, so wait for the save
+        if (key === "colorMode" || key === "colorContrast" || key === "colorSeed" || key === "colorSourceIndex") rethemeTimer.restart();
+    }
+    Timer {
+        id: rethemeTimer
+        interval: 900
+        onTriggered: Quickshell.execDetached([Quickshell.shellDir + "/scripts/set-wallpaper.sh", Theme.wallpaper, adapter.colorScheme])
     }
 
     // Apply a whole theme at once (see Presets.qml): many settings plus a wallpaper,
@@ -441,9 +591,19 @@ Singleton {
         saveTimer.restart();
         if (hypr) recomposeThenApply();
         if (kitty) kittyTimer.restart();
-        // a theme whose wallpaper file is gone keeps the current wallpaper
-        Quickshell.execDetached(["sh", "-c", '[ -f "$1" ] || set -- "$3" "$2"; exec "$0" "$1" "$2"',
-            Quickshell.shellDir + "/scripts/set-wallpaper.sh", wallpaper || Theme.wallpaper, adapter.colorScheme, Theme.wallpaper]);
+        // a theme whose wallpaper file is gone keeps the current wallpaper.
+        // Delayed until settings.json is written: set-wallpaper.sh reads colour mode / seed / contrast from it.
+        lookWall = wallpaper || Theme.wallpaper;
+        lookWallFallback = Theme.wallpaper;
+        lookWallTimer.restart();
+    }
+    property string lookWall: ""
+    property string lookWallFallback: ""
+    Timer {
+        id: lookWallTimer
+        interval: 650
+        onTriggered: Quickshell.execDetached(["sh", "-c", '[ -f "$1" ] || set -- "$3" "$2"; exec "$0" "$1" "$2"',
+            Quickshell.shellDir + "/scripts/set-wallpaper.sh", root.lookWall, adapter.colorScheme, root.lookWallFallback])
     }
 
     function reset(keys) {
@@ -484,6 +644,7 @@ Singleton {
              + "hl.config(" + luaTable(tree, 0) + ")\n\n"
              + `hl.animation({ leaf = "borderangle", enabled = ${adapter.rotatingBorder}, speed = ${Math.max(1, Math.min(100, Math.round(adapter.borderRotateSpeed)))}, bezier = "linear", style = "loop" })\n`
              + animationLua()
+             + lookLua()
              + monitorLua()
              + rulesLua()
              + middleClickLua()
@@ -494,10 +655,12 @@ Singleton {
     // Middle button sends a right click through ydotool (Input page).
     // Unbind first so re-applying never stacks duplicate binds.
     function middleClickLua() {
-        let out = '\n-- middle click acts as right click (Input page)\npcall(hl.unbind, "mouse:274")\n';
+        let out = '\n-- middle click acts as right click (Input page)\npcall(hl.unbind, "mouse:274")\npcall(hl.unbind, "SUPER + mouse:274")\n';
         if (adapter.middleAsRight && !adapter.infiniteDesktop)
             out += 'hl.bind("mouse:274", hl.dsp.exec_cmd("ydotool click 0x41"))\n'
-                 + 'hl.bind("mouse:274", hl.dsp.exec_cmd("ydotool click 0x81"), { release = true })\n';
+                 + 'hl.bind("mouse:274", hl.dsp.exec_cmd("ydotool click 0x81"), { release = true })\n'
+                 // Super + middle-drag resizes like Super + right-drag (the plain bind above ignores held modifiers)
+                 + 'hl.bind("SUPER + mouse:274", hl.dsp.window.resize(), { mouse = true })\n';
         return out;
     }
 
@@ -511,7 +674,8 @@ Singleton {
                  + `hl.bind("mouse:274", hl.dsp.exec_cmd("${py}start"))\n`
                  + `hl.bind("mouse:274", hl.dsp.exec_cmd("${py}stop"), { release = true })\n`;
         // ThinkPad trackpoints turn "middle held + move" into scrolling and swallow the button
-        const sm = adapter.infiniteDesktop ? "no_scroll" : "on_button_down";
+        // (on_button_down also delays the press until release, so hold-to-drag never sees the button)
+        const sm = (adapter.infiniteDesktop || adapter.middleAsRight) ? "no_scroll" : "on_button_down";
         for (const n of ["tpps/2-elan-trackpoint", "tpps/2-ibm-trackpoint", "tpps/2-synaptics-trackpoint", "trackpoint"])
             out += `pcall(hl.device, { name = "${n}", scroll_method = "${sm}" })\n`;
         const floatOn = adapter.infiniteDesktop && adapter.infiniteFloat;
@@ -721,9 +885,72 @@ Singleton {
             ["fadeOut", 1.6, 'bezier = "md3Accel"', "", m("animFade")],
             ["workspaces", 4, 'bezier = "md3Decel"', ws, m("animWorkspaces")],
         ];
-        return "\n-- animations (Animations page)\n" + rows.map(([leaf, speed, curve, style, mult]) =>
-            `hl.animation({ leaf = "${leaf}", enabled = true, speed = ${Number((speed * k * mult).toFixed(2))}, ${curve}${style ? `, style = "${style}"` : ""} })`
-        ).join("\n") + "\n";
+        // curve preset (Animations page → Feel): swaps the easing of every window / fade / workspace animation
+        const pr = curvePresets[adapter.animCurve];
+        const curveOf = (leaf, curve) => !pr ? curve : (leaf === "windowsOut" || leaf === "fadeOut" ? pr.out : pr.main);
+        const pk = pr ? pr.speed : 1;
+        const sp = (v, lo) => Math.max(lo, Math.min(200, v));
+        const bs = Math.max(0.2, Math.min(4, Number(adapter.animBorderSpeed) || 1)), ls = Math.max(0.2, Math.min(4, Number(adapter.animLayerSpeed) || 1));
+        const lst = ["slide", "popin 80%", "fade"].includes(adapter.animLayerStyle) ? adapter.animLayerStyle : "slide";
+        const curveDefs = Object.keys(curveLua).map(n => `hl.curve("${n}", ${curveLua[n]})`).join("\n");
+        return "\n-- animations (Animations page)\n" + curveDefs + "\n" + rows.map(([leaf, speed, curve, style, mult]) =>
+            `hl.animation({ leaf = "${leaf}", enabled = true, speed = ${sp(Number((speed * k * mult * pk).toFixed(2)), 0.1)}, ${curveOf(leaf, curve)}${style ? `, style = "${style}"` : ""} })`
+        ).join("\n") + "\n"
+        + `hl.animation({ leaf = "border", enabled = true, speed = ${sp(Number((5.39 * bs).toFixed(2)), 0.1)}, bezier = "easeOutQuint" })\n`
+        + `hl.animation({ leaf = "layersIn", enabled = true, speed = ${sp(Number((4 * ls).toFixed(2)), 0.1)}, bezier = "md3Decel", style = "${lst}" })\n`
+        + `hl.animation({ leaf = "layersOut", enabled = true, speed = ${sp(Number((1.8 * ls).toFixed(2)), 0.1)}, bezier = "md3Accel", style = "${lst}" })\n`;
+    }
+    // Animations page → Feel. Curves are defined here (names prefixed "rice") so hyprland.lua stays untouched.
+    readonly property var curveLua: ({
+        riceSnap: '{ type = "bezier", points = { {0.2, 0.9}, {0.1, 1} } }',
+        riceSnapOut: '{ type = "bezier", points = { {0.4, 0}, {0.9, 0.5} } }',
+        riceSmooth: '{ type = "bezier", points = { {0.45, 0}, {0.15, 1} } }',
+        riceSmoothOut: '{ type = "bezier", points = { {0.4, 0}, {1, 1} } }',
+        riceOvershoot: '{ type = "bezier", points = { {0.34, 1.56}, {0.64, 1} } }',
+        riceBounce: '{ type = "spring", mass = 1, stiffness = 300, damping = 11 }',
+        riceLinear: '{ type = "bezier", points = { {0, 0}, {1, 1} } }'
+    })
+    readonly property var curvePresets: ({
+        snappy: { main: 'bezier = "riceSnap"', out: 'bezier = "riceSnapOut"', speed: 0.7 },
+        smooth: { main: 'bezier = "riceSmooth"', out: 'bezier = "riceSmoothOut"', speed: 1.15 },
+        linear: { main: 'bezier = "riceLinear"', out: 'bezier = "riceLinear"', speed: 1 },
+        overshoot: { main: 'bezier = "riceOvershoot"', out: 'bezier = "md3Accel"', speed: 1 },
+        bouncy: { main: 'spring = "riceBounce"', out: 'bezier = "md3Accel"', speed: 1 }
+    })
+
+    // ---- Windows page: border / shadow / glow / group-tab colours and the cursor ----
+    // Palette colours come from ~/.config/hypr/colors.lua (matugen), read when the Lua runs, so a wallpaper change
+    // (which reloads Hyprland) re-colours these too. Everything is written explicitly, so each style can be switched back.
+    function hexOr(v, fallback) { return /^#[0-9a-fA-F]{6}$/.test(String(v).trim()) ? String(v).trim().toLowerCase() : fallback; }
+    function lookLua() {
+        const a = adapter, al = v => Math.max(0, Math.min(255, Math.round(Number(v) * 255)));
+        const ang = Math.round(((Number(a.borderAngle) % 360) + 360) % 360);
+        const borderCols = {
+            wallpaper: "{ PAL.primary, PAL.tertiary }", solid: "{ PAL.primary }", triad: "{ PAL.primary, PAL.secondary, PAL.tertiary }",
+            custom: `{ "${hexOr(a.borderCustomA, "#cebdfe")}", "${hexOr(a.borderCustomB, "#f0b8c5")}" }`
+        };
+        const bc = borderCols[a.borderStyle] || borderCols.wallpaper;
+        const inactive = { default: 'A(PAL.outlineVariant, 0.667)', faint: 'A(PAL.outlineVariant, 0.2)', accent: 'A(PAL.primary, 0.4)', hidden: '"rgba(00000000)"' }[a.borderInactiveStyle] || 'A(PAL.outlineVariant, 0.667)';
+        const shBase = { wallpaper: "PAL.shadow", black: '"#000000"', accent: "PAL.primary", tertiary: "PAL.tertiary" }[a.shadowColorMode] || "PAL.shadow";
+        const so = Math.max(0, Math.min(1, Number(a.shadowOpacity)));
+        const glowBase = { accent: "PAL.primary", secondary: "PAL.secondary", tertiary: "PAL.tertiary", custom: `"${hexOr(a.glowCustom, "#33ccff")}"` }[a.glowColorMode] || "PAL.primary";
+        const sz = Math.max(8, Math.min(96, Math.round(Number(a.lookCursorSize) || 24)));
+        const th = String(a.lookCursorTheme || "").replace(/[^A-Za-z0-9_. -]/g, "");
+        const cursorOn = sz !== 24 || th !== "";
+        return "\n-- look (Windows / Animations pages)\n"
+            + 'local PAL = { primary = "#cebdfe", secondary = "#cbc3dc", tertiary = "#f0b8c5", container = "#4c3e76", outline = "#948f99", outlineVariant = "#49454e", shadow = "#0e0e0e" }\n'
+            + 'do local ok, c = pcall(dofile, os.getenv("HOME") .. "/.config/hypr/colors.lua"); if ok and type(c) == "table" and type(c.palette) == "table" then PAL = c.palette end end\n'
+            + 'local function A(h, a) return string.format("rgba(%s%02x)", (h:gsub("#", "")), math.floor(a * 255 + 0.5)) end\n'
+            + "hl.config({\n"
+            + `    general = { col = { active_border = { colors = (function() local t = {} for _, h in ipairs(${bc}) do t[#t + 1] = A(h, ${al(a.borderOpacity) / 255}) end return t end)(), angle = ${ang} }, inactive_border = ${inactive} } },\n`
+            + `    decoration = {\n        shadow = { color = A(${shBase}, ${so}), color_inactive = A(${shBase}, ${Number((so * 0.6154).toFixed(4))}) },\n`
+            + `        glow = { color = A(${glowBase}, ${Math.max(0, Math.min(1, Number(a.glowOpacity)))}), color_inactive = "rgba(00000000)" },\n    },\n`
+            + (a.groupbarAccent
+                ? '    group = { col = { border_active = A(PAL.primary, 0.93), border_inactive = A(PAL.container, 0.6) }, groupbar = { col = { active = A(PAL.primary, 0.85), inactive = A(PAL.container, 0.55) }, text_color = A(PAL.container, 1) } },\n'
+                : '    group = { col = { border_active = "rgba(66ffff00)", border_inactive = "rgba(66777700)" }, groupbar = { col = { active = "rgba(66ffff00)", inactive = "rgba(66777700)" }, text_color = "rgba(ffffffff)" } },\n')
+            + "})\n"
+            + (cursorOn ? "_G.rice_cursor_changed = true\n" : "")
+            + `if _G.rice_cursor_changed then hl.exec_cmd("sh -c 'hyprctl setcursor \\"` + (th ? th : "$" + "{XCURSOR_THEME:-default}") + `\\" ${sz}'") end\n`;
     }
 
     function applyHyprland() {
@@ -831,6 +1058,33 @@ Singleton {
             property bool statusBattery: true
             property bool statusPercent: true
             property string statsStyle: "rings"
+            property string chipEffect: "none"
+            property real chipGlow: 0
+            property string chipAccent: "none"
+            property string chipHover: "lift"
+            property string chipEntrance: "rise"
+            property string barDensity: "comfortable"
+            property string barEdge: "none"
+            property int barEdgeWidth: 2
+            property string barDivider: "none"
+            property string barFill: "solid"
+            property bool barFlares: false
+            property string wsIndicator: "pill"
+            property bool wsIcons: false
+            property string wsColor: "primary"
+            property string clockLayout: "inline"
+            property string clockDisplay: "digital"
+            property int barIconSize: 0
+            property string barIconColor: "accent"
+            property string batteryStyle: "icon"
+            property bool statsLabels: false
+            property bool statsHeat: false
+            property real statsWarn: 0.85
+            property bool statusStateColors: false
+            property string titleStyle: "normal"
+            property bool titleIcon: true
+            property string trayTint: "none"
+            property int trayIconSize: 18
             property int mediaMaxWidth: 200
             property bool mediaBars: true
             property int lyricsMaxWidth: 220
@@ -877,6 +1131,68 @@ Singleton {
             property real albumVizOpacity: 0.75
             property real albumVizHeight: 0.28
             property real roundingPower: 2.0
+            property string borderStyle: "wallpaper"
+            property int borderAngle: 45
+            property string borderCustomA: "#cebdfe"
+            property string borderCustomB: "#f0b8c5"
+            property real borderOpacity: 0.933
+            property string borderInactiveStyle: "default"
+            property bool borderPartOfWindow: true
+            property string shadowColorMode: "wallpaper"
+            property real shadowOpacity: 0.867
+            property bool shadowSharp: false
+            property real shadowScale: 1.0
+            property bool glowEnabled: false
+            property int glowRange: 10
+            property int glowPower: 3
+            property string glowColorMode: "accent"
+            property string glowCustom: "#33ccff"
+            property real glowOpacity: 0.8
+            property int gapsWorkspaces: 0
+            property int floatGaps: 0
+            property int groupbarHeight: 14
+            property int groupbarFontSize: 8
+            property int groupbarRounding: 1
+            property bool groupbarGradients: false
+            property bool groupbarTitles: true
+            property int groupbarIndicator: 3
+            property int groupbarGaps: 2
+            property bool groupbarBlur: false
+            property bool groupbarAccent: false
+            property bool blurNewOptimizations: true
+            property bool blurIgnoreOpacity: true
+            property real blurPopupsAlpha: 0.2
+            property bool blurInputMethods: false
+            property string animCurve: "default"
+            property real animBorderSpeed: 1.0
+            property string animLayerStyle: "slide"
+            property real animLayerSpeed: 1.0
+            property bool animWsWrap: false
+            property int lookCursorSize: 24
+            property string lookCursorTheme: ""
+            property real lookSaturation: 1.0
+            property real lookLightness: 0.0
+            property int lookHueShift: 0
+            property string lookTint: ""
+            property real lookTintAmount: 0.0
+            property string lookAccent: ""
+            property string colorMode: "dark"
+            property real colorContrast: 0.0
+            property string colorSeed: ""
+            property int colorSourceIndex: 0
+            property real glassGrain: 0.0
+            property real glassInner: 0.0
+            property real wallBlur: 0.0
+            property real wallBrightness: 0.0
+            property real wallSaturation: 0.0
+            property real wallContrast: 0.0
+            property string wallTint: ""
+            property real wallTintAmount: 0.0
+            property real wallVignette: 0.0
+            property real wallGrain: 0.0
+            property real adjVignette: 0.0
+            property real adjGrain: 0.0
+            property real adjSharpen: 0.0
             property real fullscreenOpacity: 1.0
             property real dimSpecial: 0.2
             property int shadowRenderPower: 3
@@ -941,6 +1257,37 @@ Singleton {
             property bool xwaylandZeroScaling: false
             property string fontFamily: "JetBrainsMono Nerd Font"
             property bool popupZoom: true
+            property int panelBorderWidth: 1
+            property string panelBorderMode: "accent"
+            property int panelRadiusExtra: 6
+            property real panelGlow: 0.0
+            property real panelShadow: 0.0
+            property real panelGloss: 0.0
+            property real panelVibrancy: 0.0
+            property string panelAccentEdge: "none"
+            property string popupEntrance: "zoom"
+            property real popupDim: 0.0
+            property string uiToggleStyle: "pill"
+            property string uiSliderStyle: "round"
+            property string uiSegmentStyle: "pill"
+            property string uiCardStyle: "filled"
+            property int uiCardRadius: 14
+            property string uiSectionTitle: "caps"
+            property string uiDensity: "normal"
+            property bool uiRowDividers: false
+            property string uiSidebarStyle: "pill"
+            property int uiSidebarWidth: 230
+            property string uiPageTransition: "slide"
+            property int ccTileRadius: 16
+            property int ccTileHeight: 62
+            property string ccActiveStyle: "container"
+            property string ccIconShape: "circle"
+            property int notifRadius: 16
+            property string notifAccent: "left"
+            property bool notifProgress: false
+            property int osdRadius: 26
+            property int osdWidth: 320
+            property bool osdNotches: true
             property real shellAnimScale: 1.0
             property real animLauncher: 1.0
             property real animControlCenter: 1.0

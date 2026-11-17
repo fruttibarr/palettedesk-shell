@@ -6,6 +6,21 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Random theme** button (Settings > Themes, or `qs ipc call themes random [glass|neon|soft|minimal|brutal|synth]`): rolls a designed look,
+  not random settings. A style fixes combinations known to work together; one corner radius drives every radius; opacities keep a readable
+  floor; always dark; the wallpaper is picked by brightness and saturation to suit the style. The look from before the first roll is kept as "Previous look".
+- **~125 new visual options.** Bar: chip effects (glass, gradient, neon, underline, soft, bracket), glow, rainbow/gradient accents, bar edge lines,
+  dividers, gradient/fade fills, dock flares, five workspace indicators, stacked/kanji/fuzzy clock, battery/stats/tray styles, density.
+  Popups & Panels (new page): panel borders/glow/gloss/shadow, popup entrances, sidebar/card/toggle/slider/segment styles, control-center tiles, notifications, OSD.
+  Global: gradient/triad window borders, shadow and glow colour modes, group tabs, blur extras, animation curve presets, light/dark mode and contrast,
+  seed colour, shell palette tone and accent, wallpaper blur/vignette/grain, five new screen shaders (bloom, aberration, duotone, posterize, pixelate).
+- **10 new built-in themes:** Neon Cyberpunk, Glass Aurora, Paper Light, Terminal Mono, Sakura Zen, Synthwave Sunset, Brutalist, Deep Ocean, Retro CRT, Minimal Dock.
+- Settings sidebar: aligned icons, a "more pages below" hint, and soft edges on long lyric lines.
+
+### Fixed
+- A theme's colour mode, seed and contrast applied one theme late; the wallpaper step now waits until settings are saved.
+- Binding loop in `IconLabel`.
+
 - **Black level** slider on the Color & Display page: crush dark tones to pure black (an OLED look) or lift them.
 - **Black light** strength slider on the Color & Display page: a UV-lamp look with violet shadows and glowing neon colours.
 - **Color & Display** settings page: brightness, contrast, saturation, vibrance, gamma, hue shift and red/green/blue balance for the whole screen, live.

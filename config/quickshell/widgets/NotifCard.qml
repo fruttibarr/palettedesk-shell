@@ -17,7 +17,8 @@ Rectangle {
     signal expired()
 
     implicitHeight: layout.implicitHeight + 24
-    radius: 16
+    radius: Settings.s.notifRadius
+    readonly property string accentMode: Settings.s.notifAccent   // left | top | none
     color: popup ? Theme.alpha(Theme.surface, Math.min(1, Theme.panelOpacity + 0.2)) : Theme.alpha(Theme.surfaceContainerHigh, hover.hovered ? 0.8 : 0.55)
     border.width: popup || critical ? 1 : 0
     border.color: critical ? Theme.error : Theme.alpha(Theme.primary, 0.35)
@@ -43,15 +44,37 @@ Rectangle {
 
     // Accent stripe
     Rectangle {
-        anchors { left: parent.left; top: parent.top; bottom: parent.bottom; margins: 12; leftMargin: 10 }
-        width: 3
+        visible: card.accentMode !== "none"
+        readonly property bool onTop: card.accentMode === "top"
+        x: onTop ? card.radius * 0.7 : 10
+        y: onTop ? 0 : 12
+        width: onTop ? card.width - card.radius * 1.4 : 3
+        height: onTop ? 3 : card.height - 24
         radius: 2
         color: card.critical ? Theme.error : Theme.primary
     }
 
+    // time-left bar (notifProgress), popups only
+    Rectangle {
+        id: prog
+        visible: Settings.s.notifProgress && card.popup && Notifs.timeoutFor(card.notif) > 0
+        anchors { left: parent.left; bottom: parent.bottom; leftMargin: card.radius * 0.6; bottomMargin: 0 }
+        height: 3
+        radius: 2
+        color: Theme.alpha(card.critical ? Theme.error : Theme.primary, 0.7)
+        readonly property real full: card.width - card.radius * 1.2
+        width: full
+        NumberAnimation on width {
+            id: progAnim
+            running: prog.visible && !hover.hovered
+            from: prog.full; to: 0
+            duration: Math.max(1, Notifs.timeoutFor(card.notif))
+        }
+    }
+
     RowLayout {
         id: layout
-        anchors { left: parent.left; right: parent.right; top: parent.top; margins: 12; leftMargin: 22 }
+        anchors { left: parent.left; right: parent.right; top: parent.top; margins: 12; leftMargin: card.accentMode === "left" ? 22 : 14; topMargin: card.accentMode === "top" ? 14 : 12 }
         spacing: 12
 
         ClippingRectangle {

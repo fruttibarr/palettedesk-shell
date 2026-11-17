@@ -77,13 +77,65 @@ Singleton {
         onLoadFailed: root.walls = ({})
     }
 
+    // ---- palette adjustments (Wallpaper & Colors → Shell palette): the matugen colours in `raw`, re-toned for the shell ----
+    // Shell-only: other apps keep the matugen colours. All at their defaults = the colours pass through untouched.
+    function validHex(v) { return /^#[0-9a-fA-F]{6}$/.test(String(v || "").trim()); }
+    function tone(v) {
+        const col = Qt.color(v), S = Settings.s;
+        const sat = S.lookSaturation, lig = S.lookLightness, hs = S.lookHueShift, ta = S.lookTintAmount;
+        if (sat === 1 && lig === 0 && hs === 0 && !(ta > 0 && validHex(S.lookTint))) return col;
+        let h = col.hslHue, s = Math.min(1, col.hslSaturation * sat), l = Math.max(0, Math.min(1, col.hslLightness + lig));
+        if (h >= 0) h = (((h * 360 + hs) % 360) + 360) % 360 / 360;
+        let out = h >= 0 ? Qt.hsla(h, s, l, col.a) : Qt.hsla(0, 0, l, col.a);
+        if (ta > 0 && validHex(S.lookTint)) {
+            const t = Qt.color(S.lookTint);
+            out = Qt.rgba(out.r + (t.r - out.r) * ta, out.g + (t.g - out.g) * ta, out.b + (t.b - out.b) * ta, out.a);
+        }
+        return out;
+    }
+    // custom accent colour: replaces the primary pair; everything else keeps following the wallpaper
+    function accentOr(name, v) {
+        const a = Settings.s.lookAccent;
+        if (!validHex(a)) return tone(v);
+        const base = Qt.color(a), h = Math.max(0, base.hslHue), light = Settings.s.colorMode === "light";
+        switch (name) {
+        case "primary": return base;
+        case "primaryContainer": return Qt.hsla(h, base.hslSaturation * 0.7, light ? 0.88 : 0.28, 1);
+        case "textOnPrimary": return base.hslLightness > 0.58 ? Qt.rgba(0.1, 0.1, 0.12, 1) : Qt.rgba(1, 1, 1, 1);
+        default: return Qt.hsla(h, base.hslSaturation * 0.8, light ? 0.16 : 0.9, 1);   // textOnPrimaryContainer
+        }
+    }
+    QtObject {
+        id: c
+        readonly property string wallpaper: raw.wallpaper
+        readonly property string still: raw.still
+        readonly property string base: raw.base
+        readonly property color background: root.tone(raw.background)
+        readonly property color surface: root.tone(raw.surface)
+        readonly property color surfaceContainer: root.tone(raw.surfaceContainer)
+        readonly property color surfaceContainerHigh: root.tone(raw.surfaceContainerHigh)
+        readonly property color text: root.tone(raw.text)
+        readonly property color subtext: root.tone(raw.subtext)
+        readonly property color primary: root.accentOr("primary", raw.primary)
+        readonly property color textOnPrimary: root.accentOr("textOnPrimary", raw.textOnPrimary)
+        readonly property color secondary: root.tone(raw.secondary)
+        readonly property color tertiary: root.tone(raw.tertiary)
+        readonly property color outline: root.tone(raw.outline)
+        readonly property color outlineVariant: root.tone(raw.outlineVariant)
+        readonly property color error: root.tone(raw.error)
+        readonly property color primaryContainer: root.accentOr("primaryContainer", raw.primaryContainer)
+        readonly property color textOnPrimaryContainer: root.accentOr("textOnPrimaryContainer", raw.textOnPrimaryContainer)
+        readonly property color secondaryContainer: root.tone(raw.secondaryContainer)
+        readonly property color tertiaryContainer: root.tone(raw.tertiaryContainer)
+    }
+
     FileView {
         path: root.stateDir + "/colors.json"
         watchChanges: true
         onFileChanged: reload()
 
         JsonAdapter {
-            id: c
+            id: raw
             property string wallpaper: ""
             property string still: ""
             property string base: ""

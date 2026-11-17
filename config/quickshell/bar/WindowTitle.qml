@@ -31,6 +31,7 @@ Chip {
 
     Item {
         anchors.verticalCenter: parent.verticalCenter
+        visible: Settings.s.titleIcon
         width: 16; height: 16
         IconImage { anchors.fill: parent; source: chip.iconSrc; visible: chip.iconSrc !== "" }
         Text {
@@ -50,5 +51,9 @@ Chip {
         color: chip.active ? Theme.text : Theme.subtext
         font.family: Theme.font
         font.pixelSize: Theme.fontSize - 1
+        font.weight: Settings.s.titleStyle === "bold" ? Font.Bold : Font.Normal
+        font.italic: Settings.s.titleStyle === "italic"
+        font.capitalization: Settings.s.titleStyle === "caps" ? Font.AllUppercase : Font.MixedCase
+        font.letterSpacing: Settings.s.titleStyle === "caps" ? 1 : 0
     }
 }

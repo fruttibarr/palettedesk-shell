@@ -6,8 +6,33 @@ import QtQuick
 // Hover reveals the full date.
 Item {
     id: root
-    implicitWidth: row.implicitWidth
-    implicitHeight: row.implicitHeight
+    implicitWidth: stacked ? col.implicitWidth : row.implicitWidth
+    implicitHeight: stacked ? col.implicitHeight : row.implicitHeight
+
+    // clockLayout: inline / stacked (time over date); clockDisplay: digital / kanji / fuzzy
+    readonly property bool stacked: Settings.s.clockLayout === "stacked"
+    readonly property string display: Settings.s.clockDisplay
+    function kanjiNum(n) {
+        const d = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+        if (n < 10) return d[n];
+        return (n >= 20 ? d[Math.floor(n / 10)] : "") + "十" + (n % 10 ? d[n % 10] : "");
+    }
+    function fuzzy(date) {
+        const hours = ["twelve", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"];
+        const m = Math.round(date.getMinutes() / 5) % 12, extra = Math.round(date.getMinutes() / 5) === 12 ? 1 : 0;
+        const h = (date.getHours() + extra + (m > 6 ? 1 : 0)) % 12;
+        const parts = ["", "five past", "ten past", "quarter past", "twenty past", "twenty-five past", "half past", "twenty-five to", "twenty to", "quarter to", "ten to", "five to"];
+        return m === 0 ? hours[h] + " o'clock" : parts[m] + " " + hours[h];
+    }
+    function timeText(date) {
+        if (display === "kanji") {
+            const h = Settings.s.clock24h ? date.getHours() : (date.getHours() % 12 || 12);
+            const mi = date.getMinutes();
+            return kanjiNum(h) + "時" + (mi ? kanjiNum(mi) + "分" : "") + (root.seconds ? kanjiNum(date.getSeconds()) + "秒" : "");
+        }
+        if (display === "fuzzy") return fuzzy(date);
+        return Qt.formatDateTime(date, root.timeFormat);
+    }
 
     readonly property bool seconds: Settings.s.clockSeconds
     readonly property string timeFormat: Settings.s.clock24h ? (seconds ? "HH:mm:ss" : "HH:mm")
@@ -22,6 +47,7 @@ Item {
 
     Row {
         id: row
+        visible: !root.stacked
         spacing: 8
 
         Text {
@@ -43,7 +69,7 @@ Item {
         Text {
             id: time
             anchors.verticalCenter: parent.verticalCenter
-            text: Qt.formatDateTime(clock.date, root.timeFormat)
+            text: root.timeText(clock.date)
             color: Theme.text
             font.family: Theme.font
             font.pixelSize: Theme.fontSize
@@ -85,6 +111,29 @@ Item {
                 opacity: root.expanded ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: 260 } }
             }
+        }
+    }
+
+    // stacked layout: time on top, date underneath
+    Column {
+        id: col
+        visible: root.stacked
+        spacing: -1
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: root.timeText(clock.date)
+            color: Theme.text
+            font.family: Theme.font
+            font.pixelSize: Theme.fontSize - 1
+            font.weight: Font.Bold
+            font.features: { "tnum": 1 }
+        }
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: Qt.formatDateTime(clock.date, root.expanded ? "dddd, d MMMM" : root.dateFormat)
+            color: Theme.subtext
+            font.family: Theme.font
+            font.pixelSize: Theme.fontSize - 4
         }
     }
 }
