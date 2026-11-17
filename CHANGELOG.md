@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- `tests/soak.sh`: cycles wallpapers and popups while sampling the shell's memory. A 100-iteration run (images,
+  GIFs, MP4, WebM, 300 popup toggles) showed no leak: memory, threads and file handles stayed flat after warm-up.
 - Shell watchdog (`qs-watchdog.sh`, started with Hyprland): warns with a notification and a **Restart shell**
   button when the shell's memory gets very high (default 900 MB; Settings > Behavior > Shell health; 0 = off).
   It never restarts anything by itself.

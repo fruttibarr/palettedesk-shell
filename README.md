@@ -142,9 +142,44 @@ Built on the work of others:
   orangci/walls-catppuccin-mocha, rose-pine/wallpapers, whoisYoges/lwalpapers and elapse-d/foo-Wallpaper-Feh-Gif.
   The screenshots in this README show those wallpapers. If you are an author and want something removed, open an issue.
 
+## Maintenance
+
+The installer puts a `palettedesk` command in `~/.local/bin` (add that folder to your `PATH` if it isn't already):
+
+```sh
+palettedesk version            # installed version and commit
+palettedesk doctor             # checks commands, services, config errors, shell memory
+palettedesk update             # git pull your clone, re-run the installer (settings kept; --check to preview)
+palettedesk mem --watch        # log the shell's memory every minute to ~/.local/state/rice/mem.log
+palettedesk restore            # list the backups the installer made
+```
+
+If the shell ever uses a lot of memory, a notification with a **Restart shell** button appears (limit in
+Settings > Behavior > Shell health, default 900 MB, 0 turns it off). Nothing restarts without you.
+If a wallpaper isn't animating, `qs ipc call shell wallState` says why.
+
 ## Uninstall
 
-Copy your files back from `~/.local/state/rice-install/backup-*/` and delete the rice directories above.
+```sh
+palettedesk uninstall --dry-run   # see exactly what would happen
+palettedesk uninstall             # remove what the installer put down, restore your previous config
+palettedesk uninstall --purge     # ...and also delete your settings, saved themes and caches
+```
+
+Files you edited after installing are moved to a backup instead of being deleted, and your original config is
+restored from the installer's backup. `--system` also undoes the one-time ydotool setup (it prints the sudo
+commands). On NixOS, also remove the `nixos/module.nix` import and rebuild.
+
+## Development
+
+```sh
+python3 tests/lint-settings.py     # settings, theme keys, Hyprland mappings and IPC targets stay in sync
+tests/vm/arch-vm.sh up             # disposable Arch VM (QEMU/KVM); see the script header for push/install/hypr/shot
+tests/soak.sh -n 100 FILE...       # cycle wallpapers and popups and sample the shell's memory
+```
+
+CI runs the lint, shellcheck, Lua/Python syntax checks, an Arch install, uninstall and a NixOS evaluation
+(`.github/workflows/ci.yml`). Run `palettedesk doctor` first when reporting a bug.
 
 ## Layout
 
@@ -154,7 +189,9 @@ LICENSE               MIT
 nixos/                NixOS module, installer and a test VM definition
 packages/             pacman.txt, optional.txt, aur.txt
 config/               files copied into ~/.config
-scripts/              fetch-wallpapers.sh
+scripts/              fetch-wallpapers.sh, palettedesk (the maintenance command)
+tests/                settings lint, VM harness, soak test
+.github/workflows/    CI
 ```
 
 ## License
