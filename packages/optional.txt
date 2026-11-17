@@ -1,0 +1,3 @@
+# Optional packages (official repos). The installer asks before installing these.
+swh-plugins              # real lookahead limiter for the equalizer (otherwise it hard-clips)
+git                      # needed by scripts/fetch-wallpapers.sh

@@ -1,0 +1,33 @@
+# Required packages (official repos). One per line; '#' starts a comment.
+hyprland                 # 0.57+ (the Lua config needs it)
+quickshell
+matugen
+qt6-base
+qt6-declarative
+qt6-multimedia-ffmpeg
+qt6ct
+kitty
+fish
+thunar
+pipewire
+pipewire-pulse
+wireplumber
+networkmanager
+bluez
+bluez-utils
+upower
+power-profiles-daemon
+polkit
+libnotify
+xdg-desktop-portal-hyprland
+wl-clipboard
+cliphist
+grim
+slurp
+wf-recorder
+ffmpeg
+cava
+ydotool
+python
+ttf-jetbrains-mono-nerd
+noto-fonts-emoji

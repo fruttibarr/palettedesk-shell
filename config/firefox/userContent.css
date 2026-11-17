@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Rice — Firefox's own pages (new tab, settings, add-ons, reader view…)
+   follow the wallpaper too. Websites are left alone except for the
+   scrollbar color and blank-page background.
+   ========================================================================== */
+@import url("rice-colors.css");
+
+/* blank tabs / loading pages: no white flash */
+@-moz-document url("about:blank"), url("about:newtab"), url("about:home"), url("about:privatebrowsing") {
+  html, body { background-color: var(--rice-surface) !important; }
+}
+
+/* accent-colored scrollbars on every page */
+:root { scrollbar-color: color-mix(in srgb, var(--rice-primary) 55%, transparent) transparent; }
+
+/* ---------- shared tokens for all about: pages ---------- */
+@-moz-document url-prefix("about:") {
+  :root {
+    --in-content-page-background: var(--rice-surface) !important;
+    --in-content-page-color: var(--rice-text) !important;
+    --in-content-text-color: var(--rice-text) !important;
+    --in-content-deemphasized-text: var(--rice-subtext) !important;
+    --in-content-box-background: var(--rice-surface-mid) !important;
+    --in-content-box-background-odd: var(--rice-surface-low) !important;
+    --in-content-box-border-color: var(--rice-outline-var) !important;
+    --in-content-border-color: var(--rice-outline-var) !important;
+    --in-content-item-hover: color-mix(in srgb, var(--rice-primary) 12%, transparent) !important;
+    --in-content-item-selected: var(--rice-primary) !important;
+    --in-content-item-selected-text: var(--rice-on-primary) !important;
+    --in-content-primary-button-background: var(--rice-primary) !important;
+    --in-content-primary-button-background-hover: color-mix(in srgb, var(--rice-primary) 88%, white) !important;
+    --in-content-primary-button-text-color: var(--rice-on-primary) !important;
+    --in-content-focus-outline-color: var(--rice-primary) !important;
+    --in-content-link-color: var(--rice-primary) !important;
+    --in-content-link-color-hover: var(--rice-tertiary) !important;
+    --in-content-button-background: var(--rice-surface-high) !important;
+    --in-content-button-background-hover: var(--rice-surface-highest) !important;
+    --in-content-table-background: var(--rice-surface-low) !important;
+
+    /* newer design tokens */
+    --background-color-canvas: var(--rice-surface) !important;
+    --background-color-box: var(--rice-surface-mid) !important;
+    --text-color: var(--rice-text) !important;
+    --text-color-deemphasized: var(--rice-subtext) !important;
+    --border-color: var(--rice-outline-var) !important;
+    --border-color-card: var(--rice-outline-var) !important;
+    --color-accent-primary: var(--rice-primary) !important;
+    --color-accent-primary-hover: color-mix(in srgb, var(--rice-primary) 88%, white) !important;
+    --color-accent-primary-active: color-mix(in srgb, var(--rice-primary) 76%, white) !important;
+    --button-background-color: var(--rice-surface-high) !important;
+    --button-background-color-hover: var(--rice-surface-highest) !important;
+    --button-text-color: var(--rice-text) !important;
+    --button-text-color-primary: var(--rice-on-primary) !important;
+    --link-color: var(--rice-primary) !important;
+    --link-color-hover: var(--rice-tertiary) !important;
+    --focus-outline-color: var(--rice-primary) !important;
+    --icon-color: var(--rice-subtext) !important;
+    --card-background-color: var(--rice-surface-mid) !important;
+    --border-radius-medium: 10px !important;
+    --border-radius-large: 14px !important;
+  }
+  ::selection { background: var(--rice-primary); color: var(--rice-on-primary); }
+}
+
+/* ---------- new tab / home ---------- */
+@-moz-document url("about:newtab"), url("about:home") {
+  :root, body {
+    --newtab-background-color: var(--rice-surface) !important;
+    --newtab-background-color-secondary: var(--rice-surface-mid) !important;
+    --newtab-text-primary-color: var(--rice-text) !important;
+    --newtab-text-secondary-color: var(--rice-subtext) !important;
+    --newtab-primary-action-background: var(--rice-primary) !important;
+    --newtab-primary-element-hover-color: color-mix(in srgb, var(--rice-primary) 88%, white) !important;
+    --newtab-element-hover-color: color-mix(in srgb, var(--rice-primary) 12%, transparent) !important;
+    --newtab-element-active-color: color-mix(in srgb, var(--rice-primary) 20%, transparent) !important;
+    --newtab-border-color: var(--rice-outline-var) !important;
+    --newtab-button-background: var(--rice-surface-high) !important;
+    --newtab-button-hover-background: var(--rice-surface-highest) !important;
+    --newtab-wordmark-color: var(--rice-text) !important;
+    background-color: var(--rice-surface) !important;
+  }
+  /* soft glow from the wallpaper's accent behind everything */
+  body {
+    background-image:
+      radial-gradient(ellipse 70% 50% at 50% 0%, color-mix(in srgb, var(--rice-primary) 14%, transparent), transparent 70%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, color-mix(in srgb, var(--rice-tertiary) 9%, transparent), transparent 70%) !important;
+    background-attachment: fixed !important;
+  }
+  .search-handoff-button, .search-inner-wrapper input, .search-wrapper input {
+    background-color: var(--rice-surface-high) !important;
+    color: var(--rice-text) !important;
+    border: 1px solid transparent !important;
+    border-radius: 14px !important;
+  }
+  .search-handoff-button:hover, .search-wrapper input:focus {
+    border-color: var(--rice-primary) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--rice-primary) 22%, transparent) !important;
+  }
+  .top-site-outer .tile, .top-site-outer .top-site-icon {
+    background-color: var(--rice-surface-high) !important;
+    border-radius: 14px !important;
+  }
+  .top-site-outer:is(:hover, :focus-within) .tile {
+    box-shadow: 0 0 0 2px var(--rice-primary) !important;
+  }
+  .card-outer, .ds-card { background-color: var(--rice-surface-mid) !important; border-radius: 14px !important; }
+}
+
+/* ---------- settings / add-ons: cards and sidebar ---------- */
+@-moz-document url-prefix("about:preferences"), url-prefix("about:settings"), url-prefix("about:addons") {
+  .category[selected], .category:hover {
+    border-radius: 10px !important;
+  }
+  .category[selected] { color: var(--rice-primary) !important; background: color-mix(in srgb, var(--rice-primary) 12%, transparent) !important; }
+  addon-card .card, .card { border-radius: 14px !important; }
+}
+
+/* ---------- reader view ---------- */
+@-moz-document url-prefix("about:reader") {
+  body.dark, body.sepia, body.light {
+    --main-background: var(--rice-surface) !important;
+    --main-foreground: var(--rice-text) !important;
+    --link-foreground: var(--rice-primary) !important;
+    --link-visited-foreground: var(--rice-tertiary) !important;
+    --toolbar-bgcolor: var(--rice-surface-low) !important;
+    --popup-bgcolor: var(--rice-surface-mid) !important;
+    --popup-border: var(--rice-outline-var) !important;
+    background-color: var(--rice-surface) !important;
+    color: var(--rice-text) !important;
+  }
+}

@@ -1,0 +1,32 @@
+[config]
+
+[templates.quickshell]
+input_path = "~/.config/matugen/templates/quickshell.json"
+output_path = "~/.local/state/rice/colors.json"
+
+[templates.hyprland]
+input_path = "~/.config/matugen/templates/hyprland.lua"
+output_path = "~/.config/hypr/colors.lua"
+post_hook = "hyprctl reload >/dev/null"
+
+[templates.kitty]
+input_path = "~/.config/matugen/templates/kitty.conf"
+output_path = "~/.config/kitty/colors.conf"
+post_hook = "pkill -USR1 -x kitty || true"
+
+[templates.gtk3]
+input_path = "~/.config/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-3.0/gtk.css"
+
+[templates.gtk4]
+input_path = "~/.config/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-4.0/gtk.css"
+
+[templates.qt6ct]
+input_path = "~/.config/matugen/templates/qt6ct.conf"
+output_path = "~/.config/qt6ct/colors/matugen.conf"
+
+[templates.fish]
+input_path = "~/.config/matugen/templates/fish.fish"
+output_path = "~/.config/fish/conf.d/rice-colors.fish"
+

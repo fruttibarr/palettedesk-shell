@@ -1,0 +1,2 @@
+# Optional AUR packages (needs yay or paru). Only used with --aur.
+qogir-icon-theme         # icon theme named in qt6ct.conf (Qt apps fall back without it)

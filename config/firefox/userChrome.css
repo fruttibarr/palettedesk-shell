@@ -1,0 +1,245 @@
+/* ==========================================================================
+   Rice — Firefox chrome theme that follows the wallpaper.
+   Colors: rice-colors.css (written by matugen on every wallpaper change,
+   template at ~/.config/matugen/templates/firefox-colors.css).
+   Firefox reads this at startup, so new colors show after a restart.
+   ========================================================================== */
+@import url("rice-colors.css");
+
+/* ---------- knobs ---------- */
+:root {
+  --rice-radius: 12px;          /* urlbar, panels, menus */
+  --rice-tab-radius: 10px;
+  --rice-tab-height: 34px;
+  --rice-gap: 6px;
+}
+
+/* ---------- Firefox's own theme variables ---------- */
+:root {
+  /* window / tab strip */
+  --lwt-accent-color: var(--rice-surface) !important;
+  --lwt-accent-color-inactive: var(--rice-surface) !important;
+  --lwt-text-color: var(--rice-text) !important;
+  --toolbox-bgcolor: var(--rice-surface) !important;
+  --toolbox-bgcolor-inactive: var(--rice-surface) !important;
+  --toolbox-textcolor: var(--rice-text) !important;
+  --toolbox-textcolor-inactive: var(--rice-subtext) !important;
+  --tabs-navbar-separator-style: none !important;
+  --tabs-navbar-shadow-size: 0 !important;
+
+  /* toolbars */
+  --toolbar-bgcolor: var(--rice-surface-low) !important;
+  --toolbar-color: var(--rice-text) !important;
+  --toolbar-field-background-color: var(--rice-surface-high) !important;
+  --toolbar-field-color: var(--rice-text) !important;
+  --toolbar-field-border-color: transparent !important;
+  --toolbar-field-focus-background-color: var(--rice-surface-highest) !important;
+  --toolbar-field-focus-color: var(--rice-text) !important;
+  --toolbar-field-focus-border-color: var(--rice-primary) !important;
+  --toolbarbutton-icon-fill: var(--rice-subtext) !important;
+  --toolbarbutton-icon-fill-attention: var(--rice-primary) !important;
+  --toolbarbutton-hover-background: color-mix(in srgb, var(--rice-primary) 14%, transparent) !important;
+  --toolbarbutton-active-background: color-mix(in srgb, var(--rice-primary) 26%, transparent) !important;
+  --toolbarbutton-border-radius: 9px !important;
+  --chrome-content-separator-color: transparent !important;
+
+  /* tabs */
+  --tab-selected-bgcolor: var(--rice-surface-high) !important;
+  --tab-selected-textcolor: var(--rice-text) !important;
+  --tab-hover-background-color: color-mix(in srgb, var(--rice-primary) 9%, transparent) !important;
+  --tab-border-radius: var(--rice-tab-radius) !important;
+  --tab-min-height: var(--rice-tab-height) !important;
+  --tab-loading-fill: var(--rice-primary) !important;
+  --tab-attention-icon-color: var(--rice-primary) !important;
+
+  /* accents (buttons, toggles, focus rings, links in chrome) */
+  --color-accent-primary: var(--rice-primary) !important;
+  --color-accent-primary-hover: color-mix(in srgb, var(--rice-primary) 88%, white) !important;
+  --color-accent-primary-active: color-mix(in srgb, var(--rice-primary) 76%, white) !important;
+  --button-text-color-primary: var(--rice-on-primary) !important;
+  --focus-outline-color: var(--rice-primary) !important;
+  --link-color: var(--rice-primary) !important;
+  --icon-color: var(--rice-subtext) !important;
+  --text-color: var(--rice-text) !important;
+  --text-color-deemphasized: var(--rice-subtext) !important;
+  --border-color: var(--rice-outline-var) !important;
+  --background-color-box: var(--rice-surface-mid) !important;
+  --background-color-canvas: var(--rice-surface) !important;
+
+  /* buttons */
+  --button-background-color: var(--rice-surface-high) !important;
+  --button-background-color-hover: var(--rice-surface-highest) !important;
+  --button-text-color: var(--rice-text) !important;
+
+  /* popups: menus, panels, urlbar dropdown */
+  --arrowpanel-background: var(--rice-surface-mid) !important;
+  --arrowpanel-color: var(--rice-text) !important;
+  --arrowpanel-border-color: var(--rice-outline-var) !important;
+  --arrowpanel-border-radius: var(--rice-radius) !important;
+  --arrowpanel-dimmed: color-mix(in srgb, var(--rice-primary) 10%, transparent) !important;
+  --arrowpanel-dimmed-further: color-mix(in srgb, var(--rice-primary) 18%, transparent) !important;
+  --panel-separator-color: var(--rice-outline-var) !important;
+  --panel-item-hover-bgcolor: color-mix(in srgb, var(--rice-primary) 12%, transparent) !important;
+  --menu-background-color: var(--rice-surface-mid) !important;
+  --menu-color: var(--rice-text) !important;
+  --menu-border-color: var(--rice-outline-var) !important;
+  --menuitem-hover-background-color: color-mix(in srgb, var(--rice-primary) 14%, transparent) !important;
+  --menu-disabled-color: var(--rice-outline) !important;
+  --urlbarView-highlight-background: var(--rice-primary-cont) !important;
+  --urlbarView-highlight-color: var(--rice-on-primary-cont) !important;
+  --urlbarView-hover-background: color-mix(in srgb, var(--rice-primary) 12%, transparent) !important;
+  --urlbarView-separator-color: var(--rice-outline-var) !important;
+  --urlbarView-action-color: var(--rice-primary) !important;
+  --urlbar-box-bgcolor: var(--rice-surface-highest) !important;
+  --urlbar-box-hover-bgcolor: color-mix(in srgb, var(--rice-primary) 18%, var(--rice-surface-highest)) !important;
+  --urlbar-box-text-color: var(--rice-subtext) !important;
+
+  /* sidebar */
+  --sidebar-background-color: var(--rice-surface-low) !important;
+  --sidebar-text-color: var(--rice-text) !important;
+  --sidebar-border-color: transparent !important;
+
+  /* find bar, notifications */
+  --tabpanel-background-color: var(--rice-surface) !important;
+  --in-content-page-background: var(--rice-surface) !important;
+}
+
+/* ---------- window ---------- */
+#navigator-toolbox,
+#titlebar,
+#TabsToolbar {
+  background: var(--rice-surface) !important;
+  color: var(--rice-text) !important;
+  border: none !important;
+}
+
+/* no white flash while pages load */
+#tabbrowser-tabpanels,
+#tabbrowser-tabbox,
+browser[type="content"] {
+  background-color: var(--rice-surface) !important;
+}
+
+/* ---------- tabs: soft pills; the active one gets a glowing accent dot ---------- */
+#tabbrowser-tabs { --tab-block-margin: 5px !important; }
+
+.tabbrowser-tab { padding-inline: 2px !important; }
+.tabbrowser-tab .tab-background {
+  border-radius: var(--rice-tab-radius) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: background-color 160ms ease, box-shadow 200ms ease !important;
+}
+.tabbrowser-tab:not([selected]):not([multiselected]) .tab-label { color: var(--rice-subtext) !important; }
+
+.tabbrowser-tab[selected] .tab-background,
+.tabbrowser-tab[multiselected] .tab-background {
+  background: var(--rice-surface-high) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rice-primary) 30%, transparent),
+              0 2px 8px -2px color-mix(in srgb, black 55%, transparent) !important;
+}
+.tabbrowser-tab[selected] .tab-background::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  translate: -50% 0;
+  width: 18px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--rice-primary);
+  box-shadow: 0 0 8px var(--rice-primary);
+}
+.tabbrowser-tab .tab-background { position: relative !important; }
+
+.tabbrowser-tab[selected] .tab-label { font-weight: 600 !important; }
+.tab-close-button { border-radius: 6px !important; opacity: 0.7; }
+.tab-close-button:hover { opacity: 1; background: color-mix(in srgb, var(--rice-error) 25%, transparent) !important; }
+
+/* audio / container / pinned */
+.tab-icon-overlay { fill: var(--rice-primary) !important; }
+.tab-context-line { border-radius: 2px !important; margin-inline: 8px !important; }
+.tabbrowser-tab[pinned] .tab-background { border-radius: var(--rice-tab-radius) !important; }
+
+/* tab group labels pick up the accent */
+.tab-group-label { border-radius: 8px !important; }
+
+/* ---------- nav bar ---------- */
+#nav-bar {
+  background: var(--rice-surface-low) !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 var(--rice-gap) var(--rice-gap) !important;
+  border-radius: var(--rice-radius) !important;
+  padding-block: 3px !important;
+}
+#PersonalToolbar {
+  background: transparent !important;
+  padding-inline: calc(var(--rice-gap) + 4px) !important;
+  margin-bottom: 4px !important;
+}
+
+/* ---------- urlbar ---------- */
+#urlbar-background {
+  border-radius: var(--rice-radius) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  transition: border-color 160ms ease, background-color 160ms ease !important;
+}
+#urlbar:not([focused]):hover > #urlbar-background {
+  border-color: color-mix(in srgb, var(--rice-primary) 35%, transparent) !important;
+}
+#urlbar[focused] > #urlbar-background,
+#urlbar[open] > #urlbar-background {
+  border-color: var(--rice-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rice-primary) 22%, transparent),
+              0 10px 30px -8px color-mix(in srgb, black 60%, transparent) !important;
+}
+#urlbar-input::selection { background: var(--rice-primary) !important; color: var(--rice-on-primary) !important; }
+#urlbar-input { caret-color: var(--rice-primary) !important; }
+.urlbarView-row { border-radius: 9px !important; }
+.urlbarView-row[selected] .urlbarView-title,
+.urlbarView-row[selected] .urlbarView-url { color: var(--rice-on-primary-cont) !important; }
+.urlbarView-url { color: var(--rice-tertiary) !important; }
+#identity-box[pageproxystate="valid"].verifiedDomain #identity-icon,
+#tracking-protection-icon-box { fill: var(--rice-primary) !important; }
+
+/* ---------- menus & panels ---------- */
+menupopup,
+panel {
+  --panel-border-radius: var(--rice-radius) !important;
+  --panel-background: var(--rice-surface-mid) !important;
+  --panel-color: var(--rice-text) !important;
+  --panel-border-color: var(--rice-outline-var) !important;
+}
+menupopup menuitem,
+menupopup menu { border-radius: 7px !important; }
+menupopup menuitem[_moz-menuactive],
+menupopup menu[_moz-menuactive] {
+  background: color-mix(in srgb, var(--rice-primary) 16%, transparent) !important;
+  color: var(--rice-text) !important;
+}
+.subviewbutton { border-radius: 8px !important; }
+.panel-subview-body, .panel-header { color: var(--rice-text) !important; }
+
+/* primary buttons everywhere in chrome */
+button.primary, .button-primary, .popup-notification-primary-button {
+  background-color: var(--rice-primary) !important;
+  color: var(--rice-on-primary) !important;
+  border-radius: 8px !important;
+}
+
+/* ---------- find bar / notifications / sidebar ---------- */
+findbar {
+  background: var(--rice-surface-low) !important;
+  border-top: 1px solid var(--rice-outline-var) !important;
+}
+.findbar-textbox { border-radius: 8px !important; background: var(--rice-surface-high) !important; color: var(--rice-text) !important; }
+notification-message { --message-bar-background-color: var(--rice-surface-high) !important; --message-bar-text-color: var(--rice-text) !important; border-radius: var(--rice-radius) !important; }
+
+#sidebar-box, #sidebar-main, sidebar-main { background: var(--rice-surface-low) !important; color: var(--rice-text) !important; }
+#sidebar-splitter { border: none !important; background: var(--rice-surface) !important; width: var(--rice-gap) !important; }
+
+/* ---------- scrollbars in the UI, and selection ---------- */
+:root { scrollbar-color: var(--rice-outline) transparent; }
+::selection { background: var(--rice-primary); color: var(--rice-on-primary); }
