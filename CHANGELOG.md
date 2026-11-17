@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Color & Display** settings page: brightness, contrast, saturation, vibrance, gamma, hue shift and red/green/blue balance for the whole screen, live.
+  Combines with the special effects (grayscale, sepia, CRT...). Night light and the effect picker moved here from Behavior and Blur.
 - **Bar vibrancy** slider (Bar page): tints the top bar toward the wallpaper's accent colour. Saved with themes.
 - **Optional SDDM login theme** (`palettedesk sddm install|sync|uninstall|status`): a login screen with your colours and a blurred copy of your wallpaper.
   Colours reach it through a tiny root helper run via pkexec that takes no file paths, validates a fixed-format message and never decodes the image.

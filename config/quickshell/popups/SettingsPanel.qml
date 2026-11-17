@@ -18,6 +18,7 @@ Scope {
         { icon: "󰉼", name: "Appearance",          component: appearancePage },
         { icon: "󰸉", name: "Wallpaper & Colors",  component: wallpaperPage },
         { icon: "󰂵", name: "Blur",                component: blurPage },
+        { icon: "󰔎", name: "Color & Display",     component: colorPage },
         { icon: "󰖲", name: "Windows",             component: windowsPage },
         { icon: "󰕴", name: "Layouts",             component: layoutsPage },
         { icon: "󰕨", name: "Animations",          component: animationsPage },
@@ -272,6 +273,101 @@ Scope {
                     Repeater {
                         model: Math.max(0, 3 - Presets.user.length)
                         Item { Layout.fillWidth: true; Layout.preferredWidth: 10 }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: colorPage
+        ColumnLayout {
+            spacing: 16
+            PageHeader {
+                title: "Color & Display"
+                subtitle: "Adjust how the whole screen looks, like a monitor's picture menu. Applies live to everything, including games and videos."
+                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "screenShader", "nightLight", "nightTemp"]
+            }
+            SettingSection {
+                title: "Picture"
+                SettingRow {
+                    label: "Brightness"; keywords: "brightness light dark exposure"
+                    description: "Lifts or lowers everything on screen."
+                    ValueSlider { from: -0.3; to: 0.3; stepSize: 0.01; displayScale: 100; suffix: ""; value: root.cfg.adjBrightness; onMoved: v => Settings.set("adjBrightness", v) }
+                }
+                SettingRow {
+                    label: "Contrast"; keywords: "contrast punch"
+                    description: "Separates lights from darks."
+                    ValueSlider { from: 0.6; to: 1.6; stepSize: 0.02; displayScale: 100; suffix: "%"; value: root.cfg.adjContrast; onMoved: v => Settings.set("adjContrast", v) }
+                }
+                SettingRow {
+                    label: "Saturation"; keywords: "saturation color colour vivid vibrancy intensity"
+                    description: "0% is black and white, 100% is normal."
+                    ValueSlider { from: 0; to: 2; stepSize: 0.02; displayScale: 100; suffix: "%"; value: root.cfg.adjSaturation; onMoved: v => Settings.set("adjSaturation", v) }
+                }
+                SettingRow {
+                    label: "Vibrance"; keywords: "vibrance vibrant smart saturation"
+                    description: "Boosts dull colors more than already vivid ones, so skin and skies stay natural."
+                    ValueSlider { from: 0; to: 1; stepSize: 0.02; displayScale: 100; suffix: "%"; value: root.cfg.adjVibrance; onMoved: v => Settings.set("adjVibrance", v) }
+                }
+                SettingRow {
+                    label: "Gamma"; keywords: "gamma midtones"
+                    description: "Brightens or darkens the midtones without clipping."
+                    ValueSlider { from: 0.6; to: 1.8; stepSize: 0.02; value: root.cfg.adjGamma; onMoved: v => Settings.set("adjGamma", v) }
+                }
+                SettingRow {
+                    label: "Hue shift"; keywords: "hue rotate tint color wheel"
+                    description: "Rotates every color around the color wheel."
+                    ValueSlider { from: -180; to: 180; stepSize: 5; suffix: "°"; value: root.cfg.adjHue; onMoved: v => Settings.set("adjHue", v) }
+                }
+            }
+            SettingSection {
+                title: "Color balance"
+                SettingRow {
+                    label: "Red balance"; keywords: "color balance white point rgb red channel"
+                    ValueSlider { from: 0.6; to: 1.4; stepSize: 0.02; displayScale: 100; suffix: "%"; value: root.cfg.adjRed; onMoved: v => Settings.set("adjRed", v) }
+                }
+                SettingRow {
+                    label: "Green balance"; keywords: "color balance white point rgb green channel"
+                    ValueSlider { from: 0.6; to: 1.4; stepSize: 0.02; displayScale: 100; suffix: "%"; value: root.cfg.adjGreen; onMoved: v => Settings.set("adjGreen", v) }
+                }
+                SettingRow {
+                    label: "Blue balance"; keywords: "color balance white point rgb blue channel"
+                    ValueSlider { from: 0.6; to: 1.4; stepSize: 0.02; displayScale: 100; suffix: "%"; value: root.cfg.adjBlue; onMoved: v => Settings.set("adjBlue", v) }
+                }
+            }
+            SettingSection {
+                title: "Night light"
+                SettingRow {
+                    label: "Warm the screen"; keywords: "night light blue light filter hyprsunset color temperature"
+                    description: "Needs the hyprsunset package"
+                    Toggle { checked: root.cfg.nightLight; onToggled: v => Settings.set("nightLight", v) }
+                }
+                SettingRow {
+                    label: "Color temperature"
+                    description: "Lower is warmer"
+                    ValueSlider { from: 2000; to: 6500; stepSize: 100; suffix: " K"; value: root.cfg.nightTemp; onMoved: v => Settings.set("nightTemp", v) }
+                }
+            }
+            SettingSection {
+                title: "Special effect"
+                SettingRow {
+                    label: "Effect"; keywords: "shader grayscale sepia crt invert colorblind filter"
+                    description: "Combines with the adjustments above. Uses a little more power and turns off direct scanout (fullscreen games)."
+                    Flow {
+                        width: 440; spacing: 6
+                        Repeater {
+                            model: Settings.shaderList
+                            Rectangle {
+                                required property var modelData
+                                readonly property bool sel: root.cfg.screenShader === modelData.id
+                                width: chipText.implicitWidth + 24; height: 30; radius: 15
+                                color: sel ? Theme.primary : Theme.alpha(Theme.surfaceContainerHigh, 0.7)
+                                Text { id: chipText; anchors.centerIn: parent; text: parent.modelData.label; color: parent.sel ? Theme.textOnPrimary : Theme.text
+                                       font.family: Theme.font; font.pixelSize: Theme.fontSize - 1 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.set("screenShader", parent.modelData.id) }
+                            }
+                        }
                     }
                 }
             }
@@ -604,35 +700,7 @@ Scope {
                 title: "Blur"
                 subtitle: "Frosted glass behind the bar, popups, menus and translucent windows."
                 keys: ["blurEnabled", "blurSize", "blurPasses", "blurBrightness", "blurVibrancy", "blurNoise", "blurPopups", "blurXray",
-                       "blurContrast", "blurVibrancyDarkness", "blurSpecial", "screenShader"]
-            }
-            SettingSection {
-                title: "Screen effect"
-                SettingRow {
-                    label: "Full-screen effect"; keywords: "shader grayscale sepia crt invert colorblind color blind filter vibrance saturation"
-                    description: "Applies to everything on screen. Uses a little more power and turns off direct scanout (fullscreen games)."
-                    Item {
-                        id: shaderWrap
-                        width: 440; height: shaderFlow.height; implicitWidth: 440; implicitHeight: shaderFlow.height
-                        Flow {
-                            id: shaderFlow
-                            width: shaderWrap.width; spacing: 6
-                            Repeater {
-                                model: Settings.shaderList
-                                Rectangle {
-                                    id: shChip
-                                    required property var modelData
-                                    readonly property bool sel: root.cfg.screenShader === modelData.id
-                                    height: 28; width: shLabel.implicitWidth + 22; radius: 14
-                                    color: sel ? Theme.primary : Theme.surfaceContainerHigh
-                                    Text { id: shLabel; anchors.centerIn: parent; text: shChip.modelData.label; color: shChip.sel ? Theme.textOnPrimary : Theme.text
-                                           font.family: Theme.font; font.pixelSize: Theme.fontSize - 2 }
-                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.set("screenShader", shChip.modelData.id) }
-                                }
-                            }
-                        }
-                    }
-                }
+                       "blurContrast", "blurVibrancyDarkness", "blurSpecial"]
             }
             SettingSection {
                 title: "Strength"
@@ -1832,19 +1900,6 @@ Scope {
                     label: "Units"
                     Segmented { current: root.cfg.weatherUnit; onPicked: v => Settings.set("weatherUnit", v)
                                 options: [{ label: "°C  km/h", value: "metric" }, { label: "°F  mph", value: "imperial" }] }
-                }
-            }
-            SettingSection {
-                title: "Night light"
-                SettingRow {
-                    label: "Warm the screen"; keywords: "night light blue light filter hyprsunset color temperature"
-                    description: "Needs the hyprsunset package"
-                    Toggle { checked: root.cfg.nightLight; onToggled: v => Settings.set("nightLight", v) }
-                }
-                SettingRow {
-                    label: "Color temperature"
-                    description: "Lower is warmer"
-                    ValueSlider { from: 2000; to: 6500; stepSize: 100; suffix: " K"; value: root.cfg.nightTemp; onMoved: v => Settings.set("nightTemp", v) }
                 }
             }
             SettingSection {

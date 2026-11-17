@@ -106,6 +106,15 @@ Singleton {
         "autostart": "[]",
         "appThemes": "[]",
         "screenShader": "",
+        "adjBrightness": 0,
+        "adjContrast": 1,
+        "adjSaturation": 1,
+        "adjVibrance": 0,
+        "adjGamma": 1,
+        "adjHue": 0,
+        "adjRed": 1,
+        "adjGreen": 1,
+        "adjBlue": 1,
         "weatherEnabled": false,
         "weatherLat": 0,
         "weatherLon": 0,
@@ -358,7 +367,7 @@ Singleton {
     // settings stored as bool/number that Hyprland wants in another shape
     readonly property var hyprTransform: ({
             "shadowOffsetY": v => "0 " + Math.round(v),
-            "screenShader": v => v ? home + "/.config/hypr/shaders/" + String(v).replace(/[^A-Za-z0-9_-]/g, "") + ".frag" : "",
+            "screenShader": v => adjusting ? composedFile : (v ? home + "/.config/hypr/shaders/" + String(v).replace(/[^A-Za-z0-9_-]/g, "") + ".frag" : ""),
             "wsBackAndForth": v => v ? 1 : 0,
             "cursorWarpOnWs": v => v ? 1 : 0,
             "exitRetainsFullscreen": v => v ? 1 : 0,
@@ -369,10 +378,25 @@ Singleton {
             "snapGap": ["general.snap.monitor_gap"]
     })
 
+    // ---- screen colour adjustments (Color & Display page): composed into one generated shader ----
+    readonly property var adjKeys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue"]
+    readonly property bool adjusting: adjKeys.some(k => Math.abs(adapter[k] - defaults[k]) > 0.0001)
+    readonly property string adjSig: adjKeys.map(k => Number(adapter[k]).toFixed(3)).join(" ") + "|" + adapter.screenShader
+    function sigHash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
+    readonly property string composedFile: home + "/.local/state/rice/shaders/c-" + sigHash(adjSig) + ".frag"
+    function recomposeThenApply() { if (adjusting) composeTimer.restart(); else hyprTimer.restart(); }
+    Timer { id: composeTimer; interval: 200; onTriggered: composeProc.running = true }
+    Process {
+        id: composeProc
+        command: [Quickshell.shellDir + "/scripts/compose-shader.py", root.composedFile, adapter.screenShader || "-"].concat(root.adjKeys.map(k => String(adapter[k])))
+        onExited: hyprTimer.restart()
+    }
+
     function set(key, value) {
         if (adapter[key] === value) return;
         adapter[key] = value;
         saveTimer.restart();
+        if (adjKeys.includes(key) || key === "screenShader") { recomposeThenApply(); return; }
         if (key in hyprMap || hyprExtraKeys.includes(key)) hyprTimer.restart();
         if (key === "terminalOpacity") kittyTimer.restart();
         if (key === "infiniteDesktop" && !value)
@@ -401,7 +425,7 @@ Singleton {
             if (k === "terminalOpacity") kitty = true;
         }
         saveTimer.restart();
-        if (hypr) hyprTimer.restart();
+        if (hypr) recomposeThenApply();
         if (kitty) kittyTimer.restart();
         // a theme whose wallpaper file is gone keeps the current wallpaper
         Quickshell.execDetached(["sh", "-c", '[ -f "$1" ] || set -- "$3" "$2"; exec "$0" "$1" "$2"',
@@ -713,7 +737,7 @@ Singleton {
         path: root.home + "/.config/rice/settings.json"
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: hyprTimer.restart()
+        onLoaded: root.recomposeThenApply()
         onLoadFailed: { writeAdapter(); hyprTimer.restart(); }
 
         JsonAdapter {
@@ -809,6 +833,15 @@ Singleton {
             property string autostart: "[]"
             property string appThemes: "[]"
             property string screenShader: ""
+            property real adjBrightness: 0
+            property real adjContrast: 1
+            property real adjSaturation: 1
+            property real adjVibrance: 0
+            property real adjGamma: 1
+            property real adjHue: 0
+            property real adjRed: 1
+            property real adjGreen: 1
+            property real adjBlue: 1
             property bool weatherEnabled: false
             property real weatherLat: 0
             property real weatherLon: 0
