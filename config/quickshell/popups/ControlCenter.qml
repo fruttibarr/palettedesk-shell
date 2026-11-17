@@ -168,6 +168,15 @@ Scope {
                     Tile {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
+                        icon: Settings.s.nightLight ? "󰖔" : "󰖙"
+                        title: "Night light"
+                        subtitle: Settings.s.nightLight ? Settings.s.nightTemp + " K" : "Off"
+                        active: Settings.s.nightLight
+                        onClicked: Settings.set("nightLight", !Settings.s.nightLight)
+                    }
+                    Tile {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
                         icon: Recorder.active ? "󰻃" : "󰑊"
                         title: "Screen record"
                         subtitle: Recorder.active ? "Recording " + Recorder.clock : "Tap to start"

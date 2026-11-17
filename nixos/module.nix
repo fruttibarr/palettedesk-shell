@@ -36,7 +36,7 @@
   fonts.packages = with pkgs; [ nerd-fonts.jetbrains-mono noto-fonts-color-emoji ];
 
   environment.systemPackages = with pkgs; [
-    quickshell matugen cava cliphist wl-clipboard grim slurp wf-recorder ffmpeg
+    quickshell matugen cava hyprsunset cliphist wl-clipboard grim slurp wf-recorder ffmpeg
     kitty fish xfce.thunar qt6Packages.qt6ct libnotify python3 git curl
     ladspaPlugins   # the equalizer's real limiter (fast lookahead limiter)
     qt6.qtmultimedia

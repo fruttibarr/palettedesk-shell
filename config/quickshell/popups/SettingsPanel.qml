@@ -1665,7 +1665,7 @@ Scope {
                 subtitle: "Focus, workspaces, fullscreen, terminal swallowing and display."
                 keys: ["focusOnActivate", "middleClickPaste", "enableSwallow", "swallowRegex", "closeSpecialOnEmpty", "hideSpecialOnWsChange",
                        "wsBackAndForth", "allowWsCycles", "onFocusUnderFullscreen", "exitRetainsFullscreen", "mouseWakes", "keyWakes",
-                       "vrr", "directScanout", "xwaylandZeroScaling", "watchdogRssMb"]
+                       "vrr", "directScanout", "xwaylandZeroScaling", "watchdogRssMb", "nightLight", "nightTemp"]
             }
             SettingSection {
                 title: "Focus"
@@ -1699,6 +1699,19 @@ Scope {
                 SettingRow {
                     label: "Hide scratchpad when switching workspace"
                     Toggle { checked: root.cfg.hideSpecialOnWsChange; onToggled: v => Settings.set("hideSpecialOnWsChange", v) }
+                }
+            }
+            SettingSection {
+                title: "Night light"
+                SettingRow {
+                    label: "Warm the screen"; keywords: "night light blue light filter hyprsunset color temperature"
+                    description: "Needs the hyprsunset package"
+                    Toggle { checked: root.cfg.nightLight; onToggled: v => Settings.set("nightLight", v) }
+                }
+                SettingRow {
+                    label: "Color temperature"
+                    description: "Lower is warmer"
+                    ValueSlider { from: 2000; to: 6500; stepSize: 100; suffix: " K"; value: root.cfg.nightTemp; onMoved: v => Settings.set("nightTemp", v) }
                 }
             }
             SettingSection {

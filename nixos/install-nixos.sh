@@ -33,7 +33,7 @@ DRY=0; for a in "${PASS[@]:-}"; do [ "$a" = "--dry-run" ] && DRY=1; done
 
 # command -> nixpkgs attribute (what the rice calls, and where it comes from)
 declare -A PKG=(
-  [qs]=quickshell [matugen]=matugen [cava]=cava [cliphist]=cliphist [wl-copy]=wl-clipboard
+  [qs]=quickshell [matugen]=matugen [cava]=cava [hyprsunset]=hyprsunset [cliphist]=cliphist [wl-copy]=wl-clipboard
   [grim]=grim [slurp]=slurp [wf-recorder]=wf-recorder [ffmpeg]=ffmpeg [kitty]=kitty [fish]=fish
   [thunar]=xfce.thunar [qt6ct]=qt6Packages.qt6ct [notify-send]=libnotify [python3]=python3 [git]=git [curl]=curl
 )

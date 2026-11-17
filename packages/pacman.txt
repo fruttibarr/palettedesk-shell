@@ -27,6 +27,7 @@ slurp
 wf-recorder
 ffmpeg
 cava
+hyprsunset
 ydotool
 python
 ttf-jetbrains-mono-nerd

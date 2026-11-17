@@ -100,6 +100,8 @@ Singleton {
         "animatedWallpapers": true,
         "watchdogRssMb": 1500,
         "monitors": "{}",
+        "nightLight": false,
+        "nightTemp": 4000,
         "pauseOnBattery": false,
         "pauseWhenFullscreen": true,
         "albumWallpaper": false,
@@ -725,6 +727,8 @@ Singleton {
             property bool animatedWallpapers: true
             property int watchdogRssMb: 1500
             property string monitors: "{}"
+            property bool nightLight: false
+            property int nightTemp: 4000
             property bool pauseOnBattery: false
             property bool pauseWhenFullscreen: true
             property bool albumWallpaper: false
