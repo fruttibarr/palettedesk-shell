@@ -286,7 +286,7 @@ Scope {
             PageHeader {
                 title: "Color & Display"
                 subtitle: "Adjust how the whole screen looks, like a monitor's picture menu. Applies live to everything, including games and videos."
-                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "screenShader", "nightLight", "nightTemp"]
+                keys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight", "screenShader", "nightLight", "nightTemp"]
             }
             SettingSection {
                 title: "Picture"
@@ -319,6 +319,14 @@ Scope {
                     label: "Hue shift"; keywords: "hue rotate tint color wheel"
                     description: "Rotates every color around the color wheel."
                     ValueSlider { from: -180; to: 180; stepSize: 5; suffix: "°"; value: root.cfg.adjHue; onMoved: v => Settings.set("adjHue", v) }
+                }
+            }
+            SettingSection {
+                title: "Black light"
+                SettingRow {
+                    label: "Black light"; keywords: "blacklight black light uv ultraviolet purple violet neon glow rave dark"
+                    description: "A UV-lamp look: dark violet shadows and glowing neon colors. 0% is off."
+                    ValueSlider { from: 0; to: 1; stepSize: 0.05; displayScale: 100; suffix: "%"; value: root.cfg.adjBlacklight; onMoved: v => Settings.set("adjBlacklight", v) }
                 }
             }
             SettingSection {

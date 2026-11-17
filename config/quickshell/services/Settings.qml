@@ -115,6 +115,7 @@ Singleton {
         "adjRed": 1,
         "adjGreen": 1,
         "adjBlue": 1,
+        "adjBlacklight": 0,
         "weatherEnabled": false,
         "weatherLat": 0,
         "weatherLon": 0,
@@ -379,7 +380,7 @@ Singleton {
     })
 
     // ---- screen colour adjustments (Color & Display page): composed into one generated shader ----
-    readonly property var adjKeys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue"]
+    readonly property var adjKeys: ["adjBrightness", "adjContrast", "adjSaturation", "adjVibrance", "adjGamma", "adjHue", "adjRed", "adjGreen", "adjBlue", "adjBlacklight"]
     readonly property bool adjusting: adjKeys.some(k => Math.abs(adapter[k] - defaults[k]) > 0.0001)
     readonly property string adjSig: adjKeys.map(k => Number(adapter[k]).toFixed(3)).join(" ") + "|" + adapter.screenShader
     function sigHash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
@@ -854,6 +855,7 @@ Singleton {
             property real adjRed: 1
             property real adjGreen: 1
             property real adjBlue: 1
+            property real adjBlacklight: 0
             property bool weatherEnabled: false
             property real weatherLat: 0
             property real weatherLon: 0
