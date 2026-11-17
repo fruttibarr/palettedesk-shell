@@ -7,17 +7,22 @@ Item {
     id: root
     property string source
     property bool playing: true
-    readonly property bool ready: player.mediaStatus === MediaPlayer.LoadedMedia
-                                || player.mediaStatus === MediaPlayer.BufferedMedia
-                                || player.mediaStatus === MediaPlayer.BufferingMedia
-                                || player.mediaStatus === MediaPlayer.EndOfMedia
+    // Plain property, set from the status handler. (A binding on mediaStatus that also reacted to
+    // its own change by calling play() was a binding loop: QML could abort it and leave `ready`
+    // stale, so the new wallpaper was never revealed.)
+    property bool ready: false
 
     MediaPlayer {
         id: player
         source: root.source ? "file://" + root.source : ""
         loops: MediaPlayer.Infinite
         videoOutput: output
-        onMediaStatusChanged: if (root.ready) root.sync()
+        onMediaStatusChanged: {
+            const s = mediaStatus;
+            root.ready = s === MediaPlayer.LoadedMedia || s === MediaPlayer.BufferedMedia
+                      || s === MediaPlayer.BufferingMedia || s === MediaPlayer.EndOfMedia;
+            if (root.ready) root.sync();
+        }
     }
 
     VideoOutput {

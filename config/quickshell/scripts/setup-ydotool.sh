@@ -6,6 +6,11 @@
 #   - loads the uinput module now and at boot
 # Run as root:  pkexec ~/.config/quickshell/scripts/setup-ydotool.sh
 set -e
+if [ -e /etc/NIXOS ]; then
+  echo "NixOS: this can't be done by a script. Import nixos/module.nix (it enables programs.ydotool)" >&2
+  echo "and add your user to the ydotool group: users.users.<name>.extraGroups = [ \"ydotool\" ];" >&2
+  exit 1
+fi
 [ "$(id -u)" = 0 ] || { echo "run with pkexec or sudo" >&2; exit 1; }
 
 pacman -S --needed --noconfirm ydotool

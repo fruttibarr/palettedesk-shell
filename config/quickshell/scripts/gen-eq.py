@@ -21,7 +21,14 @@ import time
 
 BANDS = 32
 Q = 4.32
-LIMITER_SO = "/usr/lib/ladspa/fast_lookahead_limiter_1913.so"
+LIMITER_NAME = "fast_lookahead_limiter_1913.so"
+# Where swh-plugins puts LADSPA plugins: Arch (/usr/lib), NixOS (system profile, user profile), or LADSPA_PATH.
+LADSPA_DIRS = [d for d in os.environ.get("LADSPA_PATH", "").split(":") if d] + [
+    "/usr/lib/ladspa", "/usr/local/lib/ladspa", "/run/current-system/sw/lib/ladspa",
+    os.path.expanduser("~/.nix-profile/lib/ladspa"), "/etc/profiles/per-user/" + os.environ.get("USER", "") + "/lib/ladspa",
+]
+LIMITER_SO = next((os.path.join(d, LIMITER_NAME) for d in LADSPA_DIRS if os.path.exists(os.path.join(d, LIMITER_NAME))),
+                  "/usr/lib/ladspa/" + LIMITER_NAME)
 LIMITER_LABEL = "fastLookaheadLimiter"
 CONF = os.path.expanduser("~/.config/pipewire/pipewire.conf.d/eq32.conf")
 # Low-pass "off": at or above Nyquist the biquad is a straight pass-through.

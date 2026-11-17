@@ -57,6 +57,33 @@ GTK stylesheets and the generated `*colors*` files.
 
 Re-running is safe: identical files are skipped.
 
+## Install on NixOS
+
+NixOS is declarative, so the system part is a module and the per-user part is a script:
+
+1. Import the module in your configuration (it enables the Hyprland session, PipeWire, polkit,
+   NetworkManager, Bluetooth, fonts and every package the rice needs) and rebuild:
+   ```nix
+   imports = [ /path/to/palettedesk-shell/nixos/module.nix ];
+   users.users.<you>.extraGroups = [ "ydotool" ];   # only for "middle click acts as right click"
+   ```
+   ```sh
+   sudo nixos-rebuild switch
+   ```
+2. Log out and back in, then run the installer as your user:
+   ```sh
+   ./nixos/install-nixos.sh --dry-run
+   ./nixos/install-nixos.sh
+   ```
+   It checks the module's pieces are in place, backs up anything it replaces, copies the config and
+   generates the colors and the equalizer config. It never edits `/etc/nixos`.
+   No module? `--profile` installs just the user-level packages with `nix profile add`; Hyprland,
+   PipeWire and the rest still have to come from your system configuration.
+
+The module uses `lib.mkDefault` throughout, so your own settings win. It needs nixpkgs-unstable
+(Hyprland 0.57+ for the Lua config). Qt's multimedia module is added for video wallpapers, which
+nixpkgs' Quickshell does not bundle.
+
 ## After installing
 
 1. Log in to the Hyprland session, or from a TTY run `start-hyprland` (don't launch the bare `Hyprland` binary).
@@ -89,9 +116,11 @@ Nothing is sent anywhere else, and there is no telemetry.
 - Arch Linux in a clean virtual machine (QEMU/KVM, software rendering, 1920x1080) with Hyprland 0.57.2
   and Quickshell 0.3.2: install, a second run, all nine themes, the launcher, control center, equalizer,
   settings, wallpaper picker, lock screen, keybinds, notifications, and the equalizer's limiter.
+- NixOS (unstable) in a clean VM: the module builds, `install-nixos.sh` and its `--profile` option run,
+  Hyprland starts with no config errors, the equalizer runs with its limiter, GIF and video wallpapers animate.
 - Day-to-day on a 14" laptop.
 
-**Not tested:** the `--aur` and `--firefox` options on a real profile; Wi-Fi and Bluetooth tiles with real
+**Not tested:** the `--aur` and `--firefox` options (Arch and NixOS); NixOS on real hardware on a real profile; Wi-Fi and Bluetooth tiles with real
 hardware in a fresh install; screen recording and audio output in the VM; other distributions.
 
 ## Credits
@@ -122,6 +151,7 @@ Copy your files back from `~/.local/state/rice-install/backup-*/` and delete the
 ```
 install.sh            installer
 LICENSE               MIT
+nixos/                NixOS module, installer and a test VM definition
 packages/             pacman.txt, optional.txt, aur.txt
 config/               files copied into ~/.config
 scripts/              fetch-wallpapers.sh
