@@ -213,6 +213,28 @@ Singleton {
         }
     }
 
+    // ---- theme packs (.pdtheme): scripts/theme-pack.py does the work and validates everything ----
+    function expand(path) { return String(path).trim().replace(/^~(?=\/|$)/, Quickshell.env("HOME")); }
+    function pack(args) { Quickshell.execDetached(["python3", "-I", Quickshell.shellDir + "/scripts/theme-pack.py"].concat(args).concat(["--notify"])); }
+    function exportPack(name, path, withWallpaper, rights) {
+        const p = all.find(x => x.name.toLowerCase() === String(name).trim().toLowerCase());
+        if (!p) return "no such theme: " + name;
+        if (!String(path).trim()) return "type where to save it";
+        const args = ["export", "--theme-json", JSON.stringify({ name: p.name, colors: p.colors, values: p.values }), "--out", expand(path)];
+        if (withWallpaper) {
+            if (!String(rights).trim()) return "state that you have the right to share the wallpaper";
+            if (!p.wallpaper) return "this theme has no wallpaper to include";
+            args.push("--wallpaper", p.wallpaper, "--rights", String(rights));
+        }
+        pack(args);
+        return "ok";
+    }
+    function importPack(path) {
+        if (!String(path).trim()) return "type the path of a .pdtheme file";
+        pack(["import", expand(path)]);
+        return "ok";
+    }
+
     IpcHandler {
         target: "themes"
         // e.g.  qs ipc call themes apply "Pixel Den"
@@ -221,5 +243,9 @@ Singleton {
         function remove(name: string): void { root.remove(name); }
         function list(): string { return root.all.map(p => (root.isActive(p) ? "* " : "  ") + p.name).join("\n"); }
         function active(): string { return root.activeName; }
+        // qs ipc call themes exportTheme "Pixel Den" ~/pixel.pdtheme   |   exportWithWallpaper <name> <file> "<rights statement>"   |   import <file>
+        function exportTheme(name: string, path: string): string { return root.exportPack(name, path, false, ""); }
+        function exportWithWallpaper(name: string, path: string, rights: string): string { return root.exportPack(name, path, true, rights); }
+        function importPack(path: string): string { return root.importPack(path); }
     }
 }

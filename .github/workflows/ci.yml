@@ -13,6 +13,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y shellcheck lua5.4
       - name: Settings / theme / IPC consistency
         run: python3 tests/lint-settings.py
+      - name: Theme pack tests
+        run: python3 tests/test-theme-pack.py
       - name: shellcheck
         run: shellcheck -S warning install.sh nixos/install-nixos.sh scripts/*.sh tests/vm/*.sh config/quickshell/scripts/*.sh
       - name: Python syntax

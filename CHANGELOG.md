@@ -6,6 +6,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Theme packs** (`.pdtheme`): export a theme from the Themes page (or `qs ipc call themes exportTheme`) and import others'. Packs carry only
+  visual settings, validated one by one; keybinds, commands and window rules are rejected. A wallpaper is included only if you state you have the right to share it.
+- **Theme other apps** (opt-in, off by default): btop, VS Code, Vesktop, spicetify colour files and a GTK dark-mode switch, regenerated with each wallpaper change.
 - **Alt-Tab window switcher** (`ALT+Tab` / `ALT+SHIFT+Tab`, most recently used first; release Alt or press Enter to switch, Esc to cancel)
   and a **workspace overview** (`SUPER+Tab`) listing every workspace with its windows. IPC: `switcher next|prev|commit|cancel|status`, `overview toggle`.
 - **Settings > Window rules**: per-app rules (float, pin, no blur, no focus on open, open on a workspace, opacity, size) with a

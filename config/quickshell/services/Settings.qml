@@ -103,6 +103,7 @@ Singleton {
         "windowRules": "[]",
         "workspaceRules": "[]",
         "autostart": "[]",
+        "appThemes": "[]",
         "screenShader": "",
         "weatherEnabled": false,
         "weatherLat": 0,
@@ -382,6 +383,14 @@ Singleton {
 
     // Apply a whole theme at once (see Presets.qml): many settings plus a wallpaper,
     // with a single re-theme instead of one per key.
+    // Opt-in colour files for other apps (btop, VS Code, ...): scripts/app-themes.sh renders only the enabled ones.
+    function appThemeOn(n) { try { return JSON.parse(adapter.appThemes).includes(n); } catch (e) { return false; } }
+    function setAppTheme(n, on) {
+        let l; try { l = JSON.parse(adapter.appThemes); } catch (e) { l = []; }
+        l = l.filter(x => x !== n); if (on) l.push(n);
+        adapter.appThemes = JSON.stringify(l); saveTimer.restart();
+        Quickshell.execDetached([Quickshell.shellDir + "/scripts/app-themes.sh"]);
+    }
     function applyLook(values, wallpaper) {
         let hypr = false, kitty = false;
         for (const k in values) {
@@ -796,6 +805,7 @@ Singleton {
             property string windowRules: "[]"
             property string workspaceRules: "[]"
             property string autostart: "[]"
+            property string appThemes: "[]"
             property string screenShader: ""
             property bool weatherEnabled: false
             property real weatherLat: 0

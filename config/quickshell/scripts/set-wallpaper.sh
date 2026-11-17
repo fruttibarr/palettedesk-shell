@@ -66,6 +66,7 @@ case "${file,,}" in
 esac
 
 matugen image "${source:-$still}" --mode dark --type "$scheme" --source-color-index 0
+"$(dirname "$0")/app-themes.sh" "${source:-$still}" || true
 
 # colors.json names the image the colors came from; point it at the real files.
 python3 - "$file" "$still" "$base" <<'PY'

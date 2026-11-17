@@ -160,6 +160,10 @@ Scope {
             id: themes
             spacing: 16
             property string saveMsg: ""
+            property string exportName: ""
+            property bool bundleWall: false
+            property string rights: ""
+            property string shareMsg: ""
             PageHeader {
                 title: "Themes"
                 subtitle: "One click changes the wallpaper, colors, bar, window style and layout together. Tweak anything on the other pages afterwards; input, keybinds and display scale are never touched."
@@ -175,6 +179,69 @@ Scope {
                         model: Presets.builtins
                         ThemeCard {}
                     }
+                }
+            }
+            SettingSection {
+                title: "Share themes"
+                SettingRow {
+                    label: "Import a theme pack"; keywords: "pdtheme import share download theme pack"
+                    description: themes.shareMsg || "Enter the path of a .pdtheme file. Packs can only carry visual settings: never keybinds or commands."
+                    SettingText {
+                        placeholder: "~/Downloads/theme.pdtheme"
+                        onSubmitted: t => { const r = Presets.importPack(t); themes.shareMsg = r === "ok" ? "󰄬 Importing… you'll get a notification" : "Not imported: " + r; }
+                    }
+                }
+                SettingRow {
+                    label: "Export a theme"; keywords: "pdtheme export share save theme pack"
+                    description: "Type the theme's name, then the file to write, and press Enter."
+                    ColumnLayout {
+                        spacing: 6
+                        SettingText { placeholder: "Theme name (e.g. Frosted Glass)"; text: themes.exportName; onSubmitted: t => themes.exportName = t }
+                        SettingText {
+                            placeholder: "~/MyTheme.pdtheme"
+                            onSubmitted: t => { const r = Presets.exportPack(themes.exportName, t, themes.bundleWall, themes.rights);
+                                                themes.shareMsg = r === "ok" ? "󰄬 Exporting… you'll get a notification" : "Not exported: " + r; }
+                        }
+                    }
+                }
+                SettingRow {
+                    label: "Include the wallpaper"
+                    description: "Only if you have the right to share it (your own work, or its license allows it). Otherwise the pack carries settings only, which is the safe default."
+                    Toggle { checked: themes.bundleWall; onToggled: v => themes.bundleWall = v }
+                }
+                SettingRow {
+                    visible: themes.bundleWall
+                    label: "Rights statement"
+                    description: "Recorded in the pack, e.g. “my own render” or “CC0”."
+                    SettingText { placeholder: "I have the right to share this because…"; text: themes.rights; onSubmitted: t => themes.rights = t }
+                }
+            }
+            SettingSection {
+                title: "Theme other apps"
+                SettingRow {
+                    label: "btop"; keywords: "app theme matugen btop"
+                    description: "Off by default. Writes only colour files into the app's own folder: ~/.config/btop/themes/palettedesk.theme (pick it in btop's options)."
+                    Toggle { checked: Settings.appThemeOn("btop") && root.cfg.appThemes !== ""; onToggled: v => Settings.setAppTheme("btop", v) }
+                }
+                SettingRow {
+                    label: "Dark mode for GTK / libadwaita apps"; keywords: "app theme matugen gtk"
+                    description: "Sets the system dark-mode preference (gsettings). Colours themselves already come from GTK CSS."
+                    Toggle { checked: Settings.appThemeOn("gtk") && root.cfg.appThemes !== ""; onToggled: v => Settings.setAppTheme("gtk", v) }
+                }
+                SettingRow {
+                    label: "VS Code"; keywords: "app theme matugen vscode"
+                    description: "Writes a PaletteDesk colour theme into ~/.vscode/extensions; select it once in VS Code."
+                    Toggle { checked: Settings.appThemeOn("vscode") && root.cfg.appThemes !== ""; onToggled: v => Settings.setAppTheme("vscode", v) }
+                }
+                SettingRow {
+                    label: "Vesktop / Discord"; keywords: "app theme matugen vesktop"
+                    description: "Writes ~/.config/vesktop/themes/palettedesk.theme.css; enable it in Vesktop's settings."
+                    Toggle { checked: Settings.appThemeOn("vesktop") && root.cfg.appThemes !== ""; onToggled: v => Settings.setAppTheme("vesktop", v) }
+                }
+                SettingRow {
+                    label: "Spotify (spicetify)"; keywords: "app theme matugen spicetify"
+                    description: "Writes a PaletteDesk colour scheme into spicetify's Themes folder; needs spicetify."
+                    Toggle { checked: Settings.appThemeOn("spicetify") && root.cfg.appThemes !== ""; onToggled: v => Settings.setAppTheme("spicetify", v) }
                 }
             }
             SettingSection {
