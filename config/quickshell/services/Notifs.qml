@@ -51,6 +51,9 @@ Singleton {
 
         onNotification: n => {
             n.tracked = true;
+            // an app repeating itself (e.g. "waiting for your input" x5) replaces its earlier copy instead of piling up
+            for (const o of [...server.trackedNotifications.values])
+                if (o !== n && o.appName === n.appName && o.summary === n.summary && o.body === n.body) o.dismiss();
             n.closed.connect(() => root.hidePopup(n));
             if (root.dnd && n.urgency !== NotificationUrgency.Critical) return;
             root.popups = [n, ...root.popups].slice(0, Math.max(1, Settings.s.notifMaxPopups));

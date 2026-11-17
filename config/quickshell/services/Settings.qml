@@ -141,6 +141,7 @@ Singleton {
         "autostart": "[]",
         "appThemes": "[]",
         "screenShader": "",
+        "themeShaders": true,
         "adjBrightness": 0,
         "adjContrast": 1,
         "adjSaturation": 1,
@@ -1134,6 +1135,7 @@ Singleton {
             property string autostart: "[]"
             property string appThemes: "[]"
             property string screenShader: ""
+            property bool themeShaders: true
             property real adjBrightness: 0
             property real adjContrast: 1
             property real adjSaturation: 1

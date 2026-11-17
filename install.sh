@@ -137,7 +137,7 @@ fi
 WALLS="$HOME/Pictures/Wallpapers"
 if [ "$DRY" = 0 ]; then
   mkdir -p "$WALLS" "$STATE/rice"
-  if [ "$WALLS_FETCH" = 1 ] || { [ "$YES" = 0 ] && ask "download the 9 wallpapers the built-in themes use (about 37 MB, one file each from the authors' GitHub repos)?"; }; then
+  if [ "$WALLS_FETCH" = 1 ] || { [ "$YES" = 0 ] && ask "download the 18 wallpapers the built-in themes use (about 75 MB, one file each from the authors' GitHub repos and wallhaven.cc)?"; }; then
     "$SRC/scripts/fetch-wallpapers.sh" || warn "wallpaper download had errors (see above)"
   fi
   if [ -z "$(find -L "$WALLS" -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' -o -iname '*.mp4' \) -print -quit 2>/dev/null)" ]; then

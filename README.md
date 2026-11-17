@@ -17,7 +17,7 @@ recording. Colors follow the wallpaper through matugen (kitty, GTK, Qt, fish, Hy
 
 ## Themes
 
-Nine built-in themes (Settings → Themes), each a full look: wallpaper, colors, bar style, gaps, blur and animations. You can save your own too.
+28 built-in themes (Settings → Themes), each a full look: wallpaper, colors, bar style, gaps, blur and animations. You can save your own too. The screenshots below show the first nine; newer ones include Shinigami (Death Note), Backrooms, Poolrooms, Dreamcore, Midnight Seance, Tokyo Night, Dracula, Solarized Dark and Kanagawa. A global switch (Themes → Theme options) stops themes from setting a screen shader.
 
 | **Frosted Glass** | **Mocha Islands** | **Gruvbox Workshop** |
 | --- | --- | --- |
@@ -87,7 +87,7 @@ nixpkgs' Quickshell does not bundle.
 ## After installing
 
 1. Log in to the Hyprland session, or from a TTY run `start-hyprland` (don't launch the bare `Hyprland` binary).
-2. Wallpapers: put images in `~/Pictures/Wallpapers`, or run `./install.sh --wallpapers` / `scripts/fetch-wallpapers.sh` to download just the 9 wallpapers the
+2. Wallpapers: put images in `~/Pictures/Wallpapers`, or run `./install.sh --wallpapers` / `scripts/fetch-wallpapers.sh` to download just the 18 wallpapers the
    built-in themes use (about 37 MB, one file each straight from its author's GitHub repo). They belong to their
    authors and are not included in this repository; check each repo's license before reusing them.
 3. Optional: `sudo pacman -S swh-plugins` for the equalizer's real limiter.

@@ -169,6 +169,7 @@ Scope {
             property string rights: ""
             property string shareMsg: ""
             property string rollStyle: ""
+            property string rollColor: ""
             PageHeader {
                 title: "Themes"
                 subtitle: "One click changes the wallpaper, colors, bar, window style and layout together. Tweak anything on the other pages afterwards; input, keybinds and display scale are never touched."
@@ -183,19 +184,38 @@ Scope {
                     ActionButton {
                         primary: true
                         text: Presets.rolling ? "󰑓  Rolling…" : "󰐱  Roll a random theme"
-                        onClicked: if (!Presets.rolling) Presets.random(themes.rollStyle)
+                        onClicked: if (!Presets.rolling) Presets.random(themes.rollStyle, themes.rollColor)
                     }
                 }
                 SettingRow {
                     label: "Style"; keywords: "random theme style glass neon soft minimal brutalist synth"
                     description: "Pin the kind of look to roll, or leave it on Any."
-                    Segmented {
-                        current: themes.rollStyle
-                        onPicked: v => themes.rollStyle = v
-                        options: [{ label: "Any", value: "" }, { label: "Glass", value: "glass" }, { label: "Neon", value: "neon" },
-                                  { label: "Soft", value: "soft" }, { label: "Minimal", value: "minimal" },
-                                  { label: "Brutalist", value: "brutal" }, { label: "Synth", value: "synth" }]
-                    }
+                }
+                Segmented {
+                    current: themes.rollStyle
+                    onPicked: v => themes.rollStyle = v
+                    options: [{ label: "Any", value: "" }, { label: "Glass", value: "glass" }, { label: "Neon", value: "neon" },
+                              { label: "Soft", value: "soft" }, { label: "Minimal", value: "minimal" },
+                              { label: "Brutalist", value: "brutal" }, { label: "Synth", value: "synth" }]
+                }
+                SettingRow {
+                    label: "Color"; keywords: "random theme color colour hue red orange yellow green teal blue purple pink"
+                    description: "Steer the wallpaper, and so the accent colors, toward one hue, or leave it on Any."
+                }
+                Segmented {
+                    current: themes.rollColor
+                    onPicked: v => themes.rollColor = v
+                    options: [{ label: "Any", value: "" }, { label: "Red", value: "red" }, { label: "Orange", value: "orange" },
+                              { label: "Yellow", value: "yellow" }, { label: "Green", value: "green" }, { label: "Teal", value: "teal" },
+                              { label: "Blue", value: "blue" }, { label: "Purple", value: "purple" }, { label: "Pink", value: "pink" }]
+                }
+            }
+            SettingSection {
+                title: "Theme options"
+                SettingRow {
+                    label: "Let themes set a screen shader"; keywords: "shader screen filter crt bloom duotone aberration themes global"
+                    description: "Off: applying or rolling a theme never changes the screen shader. Whatever shader you chose on the Color & Display page stays."
+                    Toggle { checked: root.cfg.themeShaders; onToggled: v => Settings.set("themeShaders", v) }
                 }
             }
             SettingSection {

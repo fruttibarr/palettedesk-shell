@@ -35,8 +35,7 @@ ColumnLayout {
             description: "Ignore the wallpaper and build the whole palette from one hex color, e.g. #ff5599. Leave empty to follow the wallpaper."
             RowLayout {
                 spacing: 8
-                SettingText { text: pg.cfg.colorSeed; placeholder: "#rrggbb or empty"; onSubmitted: t => { const v = t.trim().toLowerCase(); if (v === "" || Theme.validHex(v)) Settings.set("colorSeed", v); } }
-                Rectangle { visible: Theme.validHex(pg.cfg.colorSeed); width: 22; height: 22; radius: 11; color: Theme.validHex(pg.cfg.colorSeed) ? pg.cfg.colorSeed : "transparent"; border.width: 1; border.color: Theme.outline }
+                ColorField { value: pg.cfg.colorSeed; placeholder: "#ff5599"; allowEmpty: true; onPicked: h => Settings.set("colorSeed", h) }
             }
         }
     }
@@ -64,8 +63,7 @@ ColumnLayout {
             description: "Mixes a color into every shell color. Hex like #ffaa66, empty for none."
             RowLayout {
                 spacing: 8
-                SettingText { text: pg.cfg.lookTint; placeholder: "#ffaa66 or empty"; onSubmitted: t => { const v = t.trim().toLowerCase(); if (v === "" || Theme.validHex(v)) Settings.set("lookTint", v); } }
-                Rectangle { visible: Theme.validHex(pg.cfg.lookTint); width: 22; height: 22; radius: 11; color: Theme.validHex(pg.cfg.lookTint) ? pg.cfg.lookTint : "transparent"; border.width: 1; border.color: Theme.outline }
+                ColorField { value: pg.cfg.lookTint; placeholder: "#ffaa66"; allowEmpty: true; onPicked: h => Settings.set("lookTint", h) }
             }
         }
         SettingRow {
@@ -78,8 +76,7 @@ ColumnLayout {
             description: "Use your own accent in the shell (bar highlights, toggles, borders on panels) instead of the wallpaper's. Hex, or empty."
             RowLayout {
                 spacing: 8
-                SettingText { text: pg.cfg.lookAccent; placeholder: "#ff5599 or empty"; onSubmitted: t => { const v = t.trim().toLowerCase(); if (v === "" || Theme.validHex(v)) Settings.set("lookAccent", v); } }
-                Rectangle { visible: Theme.validHex(pg.cfg.lookAccent); width: 22; height: 22; radius: 11; color: Theme.validHex(pg.cfg.lookAccent) ? pg.cfg.lookAccent : "transparent"; border.width: 1; border.color: Theme.outline }
+                ColorField { value: pg.cfg.lookAccent; placeholder: "#ff5599"; allowEmpty: true; onPicked: h => Settings.set("lookAccent", h) }
             }
         }
     }
@@ -109,8 +106,7 @@ ColumnLayout {
             description: "Washes the wallpaper in one color. Hex like #3355aa, empty for none."
             RowLayout {
                 spacing: 8
-                SettingText { text: pg.cfg.wallTint; placeholder: "#3355aa or empty"; onSubmitted: t => { const v = t.trim().toLowerCase(); if (v === "" || Theme.validHex(v)) Settings.set("wallTint", v); } }
-                Rectangle { visible: Theme.validHex(pg.cfg.wallTint); width: 22; height: 22; radius: 11; color: Theme.validHex(pg.cfg.wallTint) ? pg.cfg.wallTint : "transparent"; border.width: 1; border.color: Theme.outline }
+                ColorField { value: pg.cfg.wallTint; placeholder: "#3355aa"; allowEmpty: true; onPicked: h => Settings.set("wallTint", h) }
             }
         }
         SettingRow {

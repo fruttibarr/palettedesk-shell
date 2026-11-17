@@ -250,6 +250,144 @@ Singleton {
                    animCurve: "linear", animScale: 0.5, windowAnimStyle: "slide", wsAnimStyle: "slide", popupEntrance: "slide", launcherOrbs: false, parallaxEnabled: false, launcherPosition: "center" }
         },
         {
+            name: "Shinigami", icon: "󰯈", isNew: true,
+            description: "Death Note: blood red on black. Bar at the bottom, square corners, no blur, a hard red edge on everything",
+            wallpaper: "wallhaven-deathnote/wallhaven-9d1qzw.png",
+            colors: ["#c8102e", "#1a0507", "#f2e9e9"],
+            set: { colorScheme: "scheme-fidelity", colorSeed: "#c8102e", lookAccent: "#e01b34", colorMode: "dark", barPosition: "bottom", barStyle: "attached", barHeight: 34, barOpacity: 0.96, barSheen: false,
+                   barShadow: false, barEdge: "line", barEdgeWidth: 2, chipStyle: "outlined", chipShape: "square", chipEffect: "underline", chipHover: "none", barDivider: "line",
+                   titleStyle: "caps", wsIndicator: "underline", wsStyle: "roman", wsOpacity: 0.9, statsStyle: "text", statsLabels: true, barIconColor: "accent",
+                   rounding: 0, shellRadius: 0, gapsIn: 3, gapsOut: 0, borderSize: 2, rotatingBorder: false, borderStyle: "solid", borderOpacity: 1, borderInactiveStyle: "faint",
+                   blurEnabled: false, shadowEnabled: true, shadowSharp: true, shadowRange: 3, shadowColorMode: "accent", shadowOpacity: 0.9,
+                   glowEnabled: true, glowRange: 10, glowPower: 3, glowColorMode: "accent", glowOpacity: 0.55,
+                   panelOpacity: 0.97, terminalOpacity: 0.92, panelBorderMode: "accent", panelBorderWidth: 2, panelShadow: 1, panelRadiusExtra: 0, panelGloss: 0,
+                   uiCardStyle: "outlined", uiCardRadius: 0, uiSectionTitle: "caps", uiToggleStyle: "square", uiSliderStyle: "thin", uiSegmentStyle: "underline", uiSidebarStyle: "outline", uiPageTransition: "fade",
+                   ccTileRadius: 0, ccIconShape: "square", ccActiveStyle: "outline", notifRadius: 0, notifAccent: "left", notifProgress: true, osdRadius: 0, osdNotches: false,
+                   animCurve: "snappy", animScale: 0.8, windowAnimStyle: "slide", wsAnimStyle: "slide", popupEntrance: "fade", launcherOrbs: false, parallaxEnabled: false,
+                   launcherPosition: "center", wallVignette: 0.35 }
+        },
+        {
+            name: "Tokyo Night", icon: "󰖔", isNew: true,
+            description: "Indigo night city: floating bar, soft rounded windows, calm blue and violet accents",
+            wallpaper: "dharmx-walls/digital/a_car_parked_in_a_field_with_trees_and_a_crescent_moon_in_the_sky.png",
+            colors: ["#1a1b26", "#7aa2f7", "#bb9af7"],
+            set: { colorScheme: "scheme-tonal-spot", colorSeed: "#7aa2f7", lookAccent: "#7aa2f7", colorMode: "dark",
+                   barStyle: "floating", barHeight: 38, barOpacity: 0.55, chipShape: "rounded", chipStyle: "filled", wsIndicator: "pill",
+                   rounding: 10, shellRadius: 10, gapsIn: 5, gapsOut: 10, rotatingBorder: false, borderStyle: "solid", borderSize: 2,
+                   panelOpacity: 0.7, terminalOpacity: 0.88, blurSize: 7, blurPasses: 2,
+                   barLayout: { left: ["workspaces", "title"], center: ["clock"], right: ["media", "tray", "stats", "status"] } }
+        },
+        {
+            name: "Dracula", icon: "󰭟", isNew: true,
+            description: "Purple, pink and a dark slate base: rounded outlined chips, bar on top, classic and loud",
+            wallpaper: "saint-13-Linux_Dynamic_Wallpapers/Dynamic_Wallpapers/Monterey/Monterey07.jpg",
+            colors: ["#282a36", "#bd93f9", "#ff79c6"],
+            set: { colorScheme: "scheme-fidelity", colorSeed: "#bd93f9", lookAccent: "#bd93f9", colorMode: "dark",
+                   barStyle: "floating", barHeight: 36, barOpacity: 0.8, chipShape: "rounded", chipStyle: "outlined", wsIndicator: "underline",
+                   rounding: 8, shellRadius: 8, gapsIn: 4, gapsOut: 8, rotatingBorder: false, borderStyle: "solid", borderSize: 2,
+                   panelOpacity: 0.85, terminalOpacity: 0.92, blurSize: 5, blurPasses: 2, shadowColorMode: "accent",
+                   barLayout: { left: ["workspaces", "title"], center: ["clock"], right: ["media", "tray", "stats", "status"] } }
+        },
+        {
+            name: "Solarized Dark", icon: "󰖙", isNew: true,
+            description: "Low-contrast teal and blue: attached flat bar, square-ish corners, text stats, no blur, no fuss",
+            wallpaper: "dharmx-walls/solarized/a_planet_in_space_with_clouds.jpg",
+            colors: ["#002b36", "#268bd2", "#2aa198"],
+            set: { colorScheme: "scheme-fidelity", colorSeed: "#268bd2", lookAccent: "#2aa198", colorMode: "dark",
+                   barStyle: "attached", barHeight: 32, barOpacity: 0.95, chipShape: "rounded", chipStyle: "flat", wsIndicator: "underline", statsStyle: "text",
+                   rounding: 4, shellRadius: 4, gapsIn: 3, gapsOut: 6, rotatingBorder: false, borderStyle: "solid", borderSize: 1,
+                   blurEnabled: false, panelOpacity: 0.95, terminalOpacity: 0.95, launcherOrbs: false, parallaxEnabled: false,
+                   windowAnimStyle: "slide", animScale: 0.8,
+                   barLayout: { left: ["workspaces", "title"], center: ["clock"], right: ["media", "tray", "stats", "status"] } }
+        },
+        {
+            name: "Kanagawa", icon: "󰖌", isNew: true,
+            description: "Ink-wash indigo with warm gold: quiet floating bar at the bottom, generous gaps, unhurried animations",
+            wallpaper: "dharmx-walls/painting/a_bridge_with_a_view_of_a_city.jpg",
+            colors: ["#1f1f28", "#7e9cd8", "#e6c384"],
+            set: { colorScheme: "scheme-content", colorSeed: "#7e9cd8", lookAccent: "#e6c384", colorMode: "dark",
+                   barPosition: "bottom", barStyle: "floating", barHeight: 36, barOpacity: 0.6, chipShape: "pill", chipStyle: "filled", wsIndicator: "pill", wsStyle: "roman",
+                   rounding: 12, shellRadius: 12, gapsIn: 6, gapsOut: 14, rotatingBorder: false, borderStyle: "solid", borderSize: 1,
+                   panelOpacity: 0.75, terminalOpacity: 0.9, blurSize: 8, blurPasses: 3, animScale: 1.3, animCurve: "smooth", launcherPosition: "center",
+                   barLayout: { left: ["workspaces", "media"], center: ["clock"], right: ["lyrics", "tray", "status"] } }
+        },
+        {
+            name: "Backrooms", icon: "󰀙", isNew: true,
+            description: "Fluorescent yellow carpet and damp wallpaper: flat, humming, slightly wrong. Grainy, no animation to speak of",
+            wallpaper: "wallhaven-liminal/wallhaven-mlgzp1.png",
+            colors: ["#d9c45a", "#3a3216", "#efe7b8"],
+            set: { colorScheme: "scheme-content", colorSeed: "#d9c45a", lookAccent: "#e3cf5c", lookSaturation: 0.85, colorMode: "dark",
+                   barPosition: "top", barStyle: "attached", barHeight: 30, barOpacity: 1, barSheen: false, barShadow: false, barEdge: "line", barEdgeWidth: 1,
+                   chipStyle: "flat", chipShape: "square", chipEffect: "none", chipHover: "none", barDivider: "dot", titleStyle: "caps",
+                   wsIndicator: "underline", wsStyle: "numbers", wsOpacity: 0.7, statsStyle: "text", statsLabels: true, barIconColor: "mono",
+                   rounding: 0, shellRadius: 0, gapsIn: 0, gapsOut: 0, borderSize: 1, rotatingBorder: false, borderStyle: "solid", borderOpacity: 0.7, borderInactiveStyle: "faint",
+                   blurEnabled: false, shadowEnabled: false, glowEnabled: false,
+                   panelOpacity: 1, terminalOpacity: 0.95, panelBorderMode: "none", panelRadiusExtra: 0, panelGloss: 0, glassGrain: 0.05,
+                   uiCardStyle: "flat", uiCardRadius: 0, uiRowDividers: true, uiSectionTitle: "plain", uiToggleStyle: "square", uiSliderStyle: "thin", uiSegmentStyle: "square", uiSidebarStyle: "rail", uiPageTransition: "none",
+                   ccTileRadius: 0, ccIconShape: "square", ccActiveStyle: "accent", notifRadius: 0, notifAccent: "left", osdRadius: 0, osdNotches: false,
+                   animCurve: "linear", animScale: 0.35, windowAnimStyle: "popin", wsAnimStyle: "fade", popupEntrance: "fade", launcherOrbs: false, parallaxEnabled: false,
+                   launcherPosition: "center", wallVignette: 0.45, wallGrain: 0.08, adjVignette: 0.3, adjGrain: 0.06, wallSaturation: -0.1 }
+        },
+        {
+            name: "Poolrooms", icon: "󰖌", isNew: true,
+            description: "Endless tiled pools in aqua: glassy floating islands, slow water-like motion, cold teal glow",
+            wallpaper: "wallhaven-liminal/wallhaven-gpgop3.png",
+            colors: ["#3fb8b0", "#06201f", "#c9f2ee"],
+            set: { colorScheme: "scheme-tonal-spot", colorSeed: "#2fb5ad", lookAccent: "#45d0c6", colorMode: "dark",
+                   barPosition: "bottom", barStyle: "islands", barHeight: 40, barOpacity: 0.3, barVibrancy: 0.5, barDensity: "spacious", barMargin: 10,
+                   chipStyle: "filled", chipShape: "pill", chipEffect: "glass", chipGlow: 0.25, chipHover: "lift", titleStyle: "normal",
+                   wsIndicator: "glow", wsStyle: "dots", statsStyle: "rings", barIconColor: "accent",
+                   rounding: 24, shellRadius: 22, uiCardRadius: 26, ccTileRadius: 28, notifRadius: 26, osdRadius: 36, panelRadiusExtra: 12, roundingPower: 3,
+                   gapsIn: 8, gapsOut: 18, borderSize: 1, rotatingBorder: false, borderStyle: "wallpaper", borderOpacity: 0.7,
+                   blurEnabled: true, blurSize: 14, blurPasses: 4, blurVibrancy: 0.8, blurBrightness: 0.9, blurNoise: 0.02,
+                   shadowEnabled: true, shadowColorMode: "accent", shadowOpacity: 0.45, shadowRange: 34,
+                   glowEnabled: true, glowRange: 18, glowPower: 3, glowColorMode: "accent", glowOpacity: 0.35,
+                   panelOpacity: 0.32, panelVibrancy: 0.6, panelGloss: 0.45, panelBorderMode: "gradient", panelGlow: 0.25, glassGrain: 0.02, glassInner: 0.4, terminalOpacity: 0.62,
+                   uiCardStyle: "glass", uiToggleStyle: "ios", uiSliderStyle: "round", uiSegmentStyle: "soft", uiSidebarStyle: "pill", uiPageTransition: "fade",
+                   ccIconShape: "circle", ccActiveStyle: "accent", notifAccent: "none",
+                   animCurve: "smooth", animScale: 1.6, windowAnimStyle: "popin", popupEntrance: "zoom", launcherPosition: "bottom", wallBlur: 0.0, wallVignette: 0.2,
+                   screenShader: "aberration" }
+        },
+        {
+            name: "Dreamcore", icon: "󰮯", isNew: true,
+            description: "Pastel nostalgia: pink and lavender haze, huge bubbly corners, bloom, bouncy everything",
+            wallpaper: "wallhaven-dreamcore/wallhaven-ym2k6k.jpg",
+            colors: ["#e68fd0", "#f9e1ee", "#b79af0"],
+            set: { colorScheme: "scheme-fruit-salad", colorSeed: "#e68fd0", lookAccent: "#f08fd6", lookTint: "#ffd1ee", lookTintAmount: 0.1, colorMode: "dark",
+                   barPosition: "top", barStyle: "floating", barHeight: 44, barOpacity: 0.32, barVibrancy: 0.4, barDensity: "spacious", barMargin: 12, barFill: "gradient",
+                   chipStyle: "filled", chipShape: "pill", chipEffect: "soft", chipAccent: "rainbow", chipGlow: 0.3, chipHover: "bounce", titleStyle: "normal",
+                   wsIndicator: "pill", wsStyle: "dots", statsStyle: "rings", barIconColor: "accent",
+                   rounding: 30, shellRadius: 22, uiCardRadius: 28, ccTileRadius: 32, notifRadius: 30, osdRadius: 38, panelRadiusExtra: 12, roundingPower: 2.5,
+                   gapsIn: 10, gapsOut: 20, borderSize: 3, borderStyle: "triad", rotatingBorder: true, borderRotateSpeed: 20, borderOpacity: 0.9,
+                   blurEnabled: true, blurSize: 12, blurPasses: 3, blurVibrancy: 0.9, blurBrightness: 1.0, blurNoise: 0.03,
+                   shadowEnabled: true, shadowColorMode: "accent", shadowOpacity: 0.5, shadowRange: 36,
+                   glowEnabled: true, glowRange: 20, glowPower: 3, glowColorMode: "secondary", glowOpacity: 0.45,
+                   panelOpacity: 0.4, panelVibrancy: 0.7, panelGloss: 0.5, panelBorderMode: "gradient", panelGlow: 0.35, glassGrain: 0.05, glassInner: 0.5, terminalOpacity: 0.6,
+                   uiCardStyle: "glass", uiDensity: "roomy", uiToggleStyle: "ios", uiSliderStyle: "round", uiSegmentStyle: "soft", uiSidebarStyle: "pill", uiPageTransition: "fade",
+                   ccIconShape: "circle", ccActiveStyle: "accent", notifAccent: "left",
+                   animCurve: "bouncy", animScale: 1.3, windowAnimStyle: "popin", popupEntrance: "bounce", launcherPosition: "upper",
+                   wallVignette: 0.0, wallBrightness: 0.05, wallGrain: 0.1, screenShader: "bloom", adjGrain: 0.04 }
+        },
+        {
+            name: "Midnight Seance", icon: "󱓞", isNew: true,
+            description: "Ultraviolet on pitch black: tall sharp bar, thin violet outlines, neon glow, rotating border, fast and hard",
+            wallpaper: "wallhaven-dreamcore/wallhaven-l8kw5p.png",
+            colors: ["#a526d6", "#05000a", "#e97ff5"],
+            set: { colorScheme: "scheme-vibrant", colorSeed: "#8a1fd1", lookAccent: "#c04cff", colorMode: "dark",
+                   barPosition: "top", barStyle: "attached", barHeight: 44, barOpacity: 0.85, barSheen: false, barEdge: "animated", barEdgeWidth: 2,
+                   chipStyle: "outlined", chipShape: "rounded", chipEffect: "neon", chipGlow: 0.6, chipAccent: "gradient", chipHover: "pulse", barDivider: "none", titleStyle: "caps",
+                   wsIndicator: "outline", wsStyle: "numbers", statsStyle: "ticks", statsHeat: true, barIconColor: "accent",
+                   rounding: 3, shellRadius: 3, uiCardRadius: 3, ccTileRadius: 3, notifRadius: 3, osdRadius: 3, panelRadiusExtra: 0, roundingPower: 4,
+                   gapsIn: 3, gapsOut: 6, borderSize: 2, borderStyle: "triad", rotatingBorder: true, borderRotateSpeed: 50, borderOpacity: 1,
+                   blurEnabled: true, blurSize: 6, blurPasses: 2, blurVibrancy: 1.0, blurBrightness: 0.6,
+                   shadowEnabled: true, shadowColorMode: "accent", shadowOpacity: 0.8, shadowRange: 20,
+                   glowEnabled: true, glowRange: 22, glowPower: 3, glowColorMode: "accent", glowOpacity: 0.9,
+                   panelOpacity: 0.55, panelBorderMode: "gradient", panelBorderWidth: 1, panelGlow: 0.6, panelAccentEdge: "top", panelGloss: 0.1, terminalOpacity: 0.75,
+                   uiCardStyle: "outlined", uiToggleStyle: "square", uiSliderStyle: "glow", uiSegmentStyle: "underline", uiSidebarStyle: "outline", uiPageTransition: "fade",
+                   ccIconShape: "square", ccActiveStyle: "outline", notifAccent: "top", notifProgress: true, osdNotches: true,
+                   animCurve: "snappy", animScale: 0.7, windowAnimStyle: "slide", popupEntrance: "slide", launcherPosition: "center", wallVignette: 0.4, screenShader: "duotone" }
+        },
+        {
             name: "Deep Ocean", icon: "󰖌", isNew: true,
             description: "Calm blues, a faint blue glow and long, slow, unhurried animations",
             wallpaper: "DenverCoder1-minimalistic-wallpaper-collection/images/chilledcow-kupla-kingdom-in-blue.jpg",
@@ -307,7 +445,12 @@ Singleton {
 
     // does the desktop currently look exactly like this theme?
     // a theme saved before a setting existed gets that setting's default
-    function full(p) { return Object.assign({}, base, p.values); }
+    // Themes only carry a screen shader while "Let themes set a screen shader" is on; off = the current shader is left alone.
+    function full(p) {
+        const v = Object.assign({}, base, p.values);
+        if (!Settings.s.themeShaders) delete v.screenShader;
+        return v;
+    }
     function isActive(p) {
         if (!p || p.wallpaper !== Theme.baseWallpaper) return false;
         const v = full(p);
@@ -467,7 +610,7 @@ Singleton {
     ]
 
     // Roll a theme. style = "" (surprise me) or one of the ids above. Result lands in lastRoll.
-    function random(style) {
+    function random(style, color) {
         if (rolling) return "busy";
         let st = rollStyles.find(x => x.id === style);
         if (!st) {
@@ -484,7 +627,7 @@ Singleton {
         lastRollStyle = st.id;
         rolling = true;
         wallPicker.command = ["python3", "-I", Quickshell.shellDir + "/scripts/random-wall.py",
-            "--lmin", String(st.wall.lmin), "--lmax", String(st.wall.lmax), "--smin", String(st.wall.smin), "--avoid", Theme.baseWallpaper];
+            "--lmin", String(st.wall.lmin), "--lmax", String(st.wall.lmax), "--smin", String(st.wall.smin), "--avoid", Theme.baseWallpaper].concat(color ? ["--accents", color] : []);
         wallPicker.running = true;
         return st.name;
     }
@@ -550,7 +693,7 @@ Singleton {
         function remove(name: string): void { root.remove(name); }
         function list(): string { return root.all.map(p => (root.isActive(p) ? "* " : "  ") + p.name).join("\n"); }
         function active(): string { return root.activeName; }
-        function random(style: string): string { return root.random(style); }
+        function random(style: string, color: string): string { return root.random(style, color); }
         // qs ipc call themes exportTheme "Pixel Den" ~/pixel.pdtheme   |   exportWithWallpaper <name> <file> "<rights statement>"   |   import <file>
         function exportTheme(name: string, path: string): string { return root.exportPack(name, path, false, ""); }
         function exportWithWallpaper(name: string, path: string, rights: string): string { return root.exportPack(name, path, true, rights); }

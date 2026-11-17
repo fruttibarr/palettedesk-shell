@@ -6,6 +6,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **9 new built-in themes:** Shinigami (Death Note: blood red, bar at the bottom), Backrooms, Poolrooms, Dreamcore, Midnight Seance, and the classic palettes Tokyo Night, Dracula, Solarized Dark and Kanagawa. `scripts/fetch-wallpapers.sh` now also downloads their wallpapers (from GitHub and wallhaven.cc).
+- **Themes → Theme options → "Let themes set a screen shader"**: off = applying or rolling a theme never changes the screen shader.
+- **Random theme color**: pin the wallpaper (and so accent) hue of a rolled theme (`qs ipc call themes random <style> <color>`).
+- **Color pickers** for every hex color setting (seed, tint, accent override, wallpaper tint, custom border and glow colors).
 - **Drag-and-drop bar layout editor** (Settings > Bar): a mini bar with Left / Center / Right zones and a "Not in bar" tray. Drag modules to move or reorder them, click one to jump to its settings; keyboard works too (arrows, Delete).
 - **Custom bar modules**: show any shell command's output as a bar chip (interval or live stream, optional JSON with icon and colour, click / right / middle / scroll actions, test button, templates). IPC: `qs ipc call custommodule list|refresh <id>`.
 - **Hot corners** (Settings > Behavior): run an action (overview, launcher, control center, dashboard, scratchpad, lock, your own command...) by resting the pointer in a screen corner; delay, size and fullscreen behaviour are configurable.
@@ -25,6 +29,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Settings sidebar: aligned icons, a "more pages below" hint, and soft edges on long lyric lines.
 
 ### Fixed
+- Repeated identical notifications (same app, title and body) replace the earlier one instead of stacking.
+- Wallpaper theming for Spicetify no longer launches Spotify when it is closed.
 - A theme's colour mode, seed and contrast applied one theme late; the wallpaper step now waits until settings are saved.
 - Binding loop in `IconLabel`.
 

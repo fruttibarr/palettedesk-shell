@@ -28,5 +28,7 @@ s = open(css).read()
 s = re.sub(r"\n*/\* PD-WALL-BEGIN \*/.*?/\* PD-WALL-END \*/", "", s, flags=re.S)
 open(css, "w").write(s.rstrip() + "\n\n" + block + "\n")
 PY
-spicetify apply >/dev/null 2>&1 || true
+# -n: plain `apply` launches Spotify even when it was closed. Only restart it if it is already running.
+spicetify -n apply >/dev/null 2>&1 || true
+pgrep -x spotify >/dev/null && spicetify restart >/dev/null 2>&1 || true
 printf '%s\n' "$sum" > "$state"

@@ -110,7 +110,7 @@ Scope {
                     Card {
                         heading: "WEATHER" + (Settings.s.weatherPlace ? "  ·  " + Settings.s.weatherPlace.toUpperCase() : "")
                         Lbl { visible: !Weather.enabled; Layout.fillWidth: true; wrapMode: Text.WordWrap; color: Theme.subtext
-                              text: "Off. Turn it on and enter your location in Settings > Behavior > Weather. Your coordinates are then sent to open-meteo.com." }
+                              text: "Off. Enable it in Settings › Behavior › Weather." }
                         Lbl { visible: Weather.enabled && !Weather.data; text: Weather.error || "Loading…"; color: Theme.subtext }
                         RowLayout {
                             visible: !!Weather.data; spacing: 14

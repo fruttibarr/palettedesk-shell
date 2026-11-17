@@ -24,11 +24,11 @@ ColumnLayout {
         SettingRow {
             visible: pg.cfg.borderStyle === "custom"
             label: "Custom colors"; keywords: "border hex colour custom gradient"
-            description: "Two hex colors, e.g. #ff5599 and #55ddff. Press Enter to apply."
+            description: "Two colors: click a swatch to pick, or type a hex like #ff5599."
             RowLayout {
                 spacing: 8
-                SettingText { text: pg.cfg.borderCustomA; placeholder: "#cebdfe"; onSubmitted: t => { if (Theme.validHex(t)) Settings.set("borderCustomA", t.trim().toLowerCase()); } }
-                SettingText { text: pg.cfg.borderCustomB; placeholder: "#f0b8c5"; onSubmitted: t => { if (Theme.validHex(t)) Settings.set("borderCustomB", t.trim().toLowerCase()); } }
+                ColorField { value: pg.cfg.borderCustomA; placeholder: "#cebdfe"; allowEmpty: false; onPicked: h => Settings.set("borderCustomA", h) }
+                ColorField { value: pg.cfg.borderCustomB; placeholder: "#f0b8c5"; allowEmpty: false; onPicked: h => Settings.set("borderCustomB", h) }
             }
         }
         SettingRow {
@@ -104,8 +104,8 @@ ColumnLayout {
         }
         SettingRow {
             visible: pg.cfg.glowEnabled && pg.cfg.glowColorMode === "custom"
-            label: "Custom glow color"; description: "Hex, e.g. #33ccff. Press Enter to apply."
-            SettingText { text: pg.cfg.glowCustom; placeholder: "#33ccff"; onSubmitted: t => { if (Theme.validHex(t)) Settings.set("glowCustom", t.trim().toLowerCase()); } }
+            label: "Custom glow color"; description: "Click the swatch to pick, or type a hex like #33ccff."
+            ColorField { value: pg.cfg.glowCustom; placeholder: "#33ccff"; allowEmpty: false; onPicked: h => Settings.set("glowCustom", h) }
         }
         SettingRow {
             visible: pg.cfg.glowEnabled
