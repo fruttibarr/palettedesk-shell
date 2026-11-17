@@ -6,6 +6,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Optional SDDM login theme** (`palettedesk sddm install|sync|uninstall|status`): a login screen with your colours and a blurred copy of your wallpaper.
+  Colours reach it through a tiny root helper run via pkexec that takes no file paths, validates a fixed-format message and never decodes the image.
+  Recovery from a TTY: `sudo palettedesk sddm uninstall`.
 - **Theme packs** (`.pdtheme`): export a theme from the Themes page (or `qs ipc call themes exportTheme`) and import others'. Packs carry only
   visual settings, validated one by one; keybinds, commands and window rules are rejected. A wallpaper is included only if you state you have the right to share it.
 - **Theme other apps** (opt-in, off by default): btop, VS Code, Vesktop, spicetify colour files and a GTK dark-mode switch, regenerated with each wallpaper change.

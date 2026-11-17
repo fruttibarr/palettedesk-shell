@@ -457,6 +457,75 @@ def cmd_uninstall(a):
     return 0
 
 
+SDDM_THEME = "/usr/share/sddm/themes/palettedesk"
+SDDM_HELPER = "/usr/libexec/palettedesk-sddm-helper"
+SDDM_POLICY = "/usr/share/polkit-1/actions/org.palettedesk.sddm.policy"
+SDDM_CONF = "/etc/sddm.conf.d/palettedesk.conf"
+
+
+def sddm_sync():
+    """Send the current colours and a small blurred wallpaper to the root helper (via pkexec). The image is
+    pre-processed here, as the user, so the helper never has to decode anything."""
+    if not os.path.exists(SDDM_HELPER):
+        die("the login theme is not installed: run `palettedesk sddm install` first")
+    try:
+        c = json.load(open(os.path.join(STATE, "rice", "colors.json")))
+    except (OSError, ValueError):
+        die("no colours yet: set a wallpaper first")
+    cols = [c.get(k, "") for k in ("surface", "text", "primary", "textOnPrimary", "surfaceContainer")]
+    if not all(isinstance(x, str) and len(x) == 7 and x[0] == "#" for x in cols):
+        die("colors.json has unexpected values")
+    img = b""
+    still = c.get("still", "")
+    if still and os.path.isfile(still) and shutil.which("ffmpeg"):
+        r = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", still, "-vf", "scale=1920:-2,gblur=sigma=6",
+                            "-frames:v", "1", "-q:v", "6", "-f", "mjpeg", "-"], capture_output=True)
+        if r.returncode == 0 and 0 < len(r.stdout) <= 2_000_000:
+            img = r.stdout
+    payload = b"PDSDDM1\n" + " ".join(cols).encode() + b"\n" + str(len(img)).encode() + b"\n" + img
+    r = subprocess.run(["pkexec", SDDM_HELPER], input=payload)
+    if r.returncode:
+        die("the helper refused or was cancelled")
+    say("login screen colours updated")
+    return 0
+
+
+def cmd_sddm(a):
+    repo = a.repo or (load_manifest() or {}).get("repo") or os.getcwd()
+    if a.action == "sync":
+        return sddm_sync()
+    if a.action == "status":
+        print("theme:  ", "installed" if os.path.isdir(SDDM_THEME) else "not installed")
+        print("helper: ", "installed" if os.path.exists(SDDM_HELPER) else "not installed")
+        print("active: ", "yes" if os.path.exists(SDDM_CONF) else "no")
+        return 0
+    if os.geteuid() != 0:
+        os.execvp("sudo", ["sudo", sys.executable, os.path.abspath(__file__), "sddm", a.action] + (["--repo", repo]))
+    if a.action == "install":
+        src = os.path.join(repo, "config", "sddm", "palettedesk")
+        if not os.path.isdir(src) or not os.path.isfile(os.path.join(repo, "sddm", "palettedesk-sddm-helper")):
+            die(f"cannot find the theme in {repo}")
+        shutil.rmtree(SDDM_THEME, ignore_errors=True)
+        shutil.copytree(src, SDDM_THEME)
+        os.makedirs(os.path.dirname(SDDM_HELPER), exist_ok=True)
+        shutil.copy2(os.path.join(repo, "sddm", "palettedesk-sddm-helper"), SDDM_HELPER)
+        os.chown(SDDM_HELPER, 0, 0); os.chmod(SDDM_HELPER, 0o755)
+        shutil.copy2(os.path.join(repo, "sddm", "org.palettedesk.sddm.policy"), SDDM_POLICY)
+        os.makedirs(os.path.dirname(SDDM_CONF), exist_ok=True)
+        open(SDDM_CONF, "w").write("[Theme]\nCurrent=palettedesk\n")
+        say("installed. Run `palettedesk sddm sync` (as yourself) to apply your colours; log out to see it.")
+        say("if the login screen ever misbehaves: from a TTY (Ctrl+Alt+F3) run `sudo palettedesk sddm uninstall`")
+        return 0
+    if a.action == "uninstall":
+        for pth in (SDDM_CONF, SDDM_HELPER, SDDM_POLICY):
+            if os.path.exists(pth):
+                os.remove(pth)
+        shutil.rmtree(SDDM_THEME, ignore_errors=True)
+        say("login theme removed; SDDM uses its default again")
+        return 0
+    die("unknown action")
+
+
 def main():
     ap = argparse.ArgumentParser(prog="palettedesk", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -478,13 +547,16 @@ def main():
     p.add_argument("--log", action="store_true", help="append the sample to ~/.local/state/rice/mem.log")
     p.add_argument("--watch", action="store_true", help="sample forever")
     p.add_argument("--interval", type=int, default=60)
+    p = sub.add_parser("sddm", help="optional login screen theme")
+    p.add_argument("action", choices=["install", "sync", "uninstall", "status"])
+    p.add_argument("--repo", default="")
     p = sub.add_parser("record")   # internal: install.sh
     p.add_argument("--list", required=True)
     p.add_argument("--backup", default="")
     p.add_argument("--repo", required=True)
     a = ap.parse_args()
     sys.exit({"version": cmd_version, "doctor": cmd_doctor, "update": cmd_update, "uninstall": cmd_uninstall,
-              "restore": cmd_restore, "mem": cmd_mem, "record": cmd_record}[a.cmd](a) or 0)
+              "restore": cmd_restore, "mem": cmd_mem, "sddm": cmd_sddm, "record": cmd_record}[a.cmd](a) or 0)
 
 
 if __name__ == "__main__":

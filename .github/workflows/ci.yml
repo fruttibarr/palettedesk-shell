@@ -16,7 +16,7 @@ jobs:
       - name: Theme pack tests
         run: python3 tests/test-theme-pack.py
       - name: shellcheck
-        run: shellcheck -S warning install.sh nixos/install-nixos.sh scripts/*.sh tests/vm/*.sh config/quickshell/scripts/*.sh
+        run: shellcheck -S warning install.sh nixos/install-nixos.sh scripts/*.sh tests/*.sh tests/vm/*.sh config/quickshell/scripts/*.sh
       - name: Python syntax
         run: python3 -m py_compile config/quickshell/scripts/*.py tests/*.py scripts/palettedesk
       - name: Lua syntax

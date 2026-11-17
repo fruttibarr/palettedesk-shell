@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=PaletteDesk
+Description=Login screen that follows your PaletteDesk Shell colours
+Author=PaletteDesk Shell
+Type=sddm-theme
+Version=1.0
+Website=https://github.com/fruttibarr/palettedesk-shell
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=palettedesk
+Theme-API=2.0
+QTVersion=6

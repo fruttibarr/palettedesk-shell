@@ -99,6 +99,15 @@ Super+Space launcher, Super+Enter terminal, Super+A control center, Super+Shift+
 Super+, settings, Super+W wallpapers, Super+V clipboard, Super+L lock, Print/Ctrl+Print screenshot/record.
 All rebindable in Settings → Keybinds.
 
+## Optional extras
+
+- **Window switcher and overview**: `Alt+Tab` (release Alt to switch, Esc to cancel) and `Super+Tab` for a workspace overview.
+- **Theme packs**: export or import a look as a `.pdtheme` file on the Themes page. Packs hold visual settings only (keybinds and commands are rejected);
+  a wallpaper is included only if you state you have the right to share it.
+- **Theme other apps** (off by default): btop, VS Code, Vesktop and spicetify colour files follow your wallpaper.
+- **Login screen (SDDM)**: `palettedesk sddm install`, then `palettedesk sddm sync` to apply your colours and wallpaper (asks for your password via polkit).
+  If it ever misbehaves, switch to a TTY (Ctrl+Alt+F3) and run `sudo palettedesk sddm uninstall`.
+
 ## Network access
 
 The shell works offline, but a few features talk to the internet. All of them are optional:
