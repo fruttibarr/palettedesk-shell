@@ -102,7 +102,7 @@ PanelWindow {
     // ---- Modules ----
     readonly property var modules: ({
         workspaces: workspacesModule, media: mediaModule, lyrics: lyricsModule, record: recordModule, clock: clockModule, title: titleModule,
-        tray: trayModule, stats: statsModule, status: statusModule, launcher: launcherModule, power: powerModule,
+        tray: trayModule, stats: statsModule, status: statusModule, launcher: launcherModule, power: powerModule, kbd: kbdModule,
     })
 
     Component {
@@ -150,6 +150,10 @@ PanelWindow {
     Component {
         id: clockModule
         Chip { Clock {} }
+    }
+    Component {
+        id: kbdModule
+        KbdChip {}
     }
     Component {
         id: titleModule

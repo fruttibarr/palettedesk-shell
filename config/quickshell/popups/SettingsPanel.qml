@@ -942,6 +942,7 @@ Scope {
         { id: "clock",      icon: "󰥔", name: "Clock" },
         { id: "tray",       icon: "󰀻", name: "System tray" },
         { id: "stats",      icon: "󰍛", name: "CPU & RAM" },
+        { id: "kbd",        icon: "󰌌", name: "Keyboard layout (only with several layouts)" },
         { id: "status",     icon: "󰂚", name: "Status (control center)" },
         { id: "launcher",   icon: "󰣇", name: "Launcher button" },
         { id: "power",      icon: "󰐥", name: "Power button" },

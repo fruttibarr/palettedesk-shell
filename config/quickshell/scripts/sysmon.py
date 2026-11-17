@@ -5,7 +5,7 @@
   sysmon.py --once     print a single sample (CPU numbers are 0 for the first sample)
 
 Keys: cpu (total %), cores [%], mem {used,total,swap_used,swap_total} (MB), temps [{label,c}],
-gpu {busy,vram_used,vram_total} (AMD sysfs, when present), disks [{mount,used,total}] (GB),
+gpu {busy,vram_used,vram_total} (AMD sysfs, when present), battery {percent,status,health,cycles,watts,minutes}, disks [{mount,used,total}] (GB),
 net {rx,tx} (bytes/s), procs [{name,cpu,mem}] (cpu = % of one core, mem = MB). Standard library only."""
 import glob
 import json
@@ -68,6 +68,29 @@ def gpu():
             return {"busy": busy, "vram_used": used, "vram_total": total}
         except (OSError, ValueError):
             continue
+    return None
+
+
+def battery():
+    """First laptop battery from sysfs, or None. health = full capacity / design capacity."""
+    for d in sorted(glob.glob("/sys/class/power_supply/BAT*")):
+        def rd(name, cast=int):
+            try:
+                return cast(open(f"{d}/{name}").read().strip())
+            except (OSError, ValueError):
+                return None
+        full = rd("energy_full") or rd("charge_full")
+        design = rd("energy_full_design") or rd("charge_full_design")
+        now = rd("energy_now") or rd("charge_now")
+        rate = rd("power_now") or rd("current_now")
+        status = rd("status", str)
+        out = {"percent": rd("capacity"), "status": status, "cycles": rd("cycle_count"),
+               "health": round(100 * full / design) if full and design else None, "watts": None, "minutes": None}
+        if rd("power_now"):
+            out["watts"] = round(rd("power_now") / 1e6, 1)
+        if rate and now and status == "Discharging":
+            out["minutes"] = int(now / rate * 60)
+        return out
     return None
 
 
@@ -141,7 +164,7 @@ def main():
         procs.sort(key=lambda p: (-p["cpu"], -p["mem"]))
         sample = {
             "cpu": pct("cpu"), "cores": [pct(f"cpu{i}") for i in range(NCPU)], "mem": meminfo(), "temps": temps(),
-            "gpu": gpu(), "disks": disks(),
+            "gpu": gpu(), "battery": battery(), "disks": disks(),
             "net": {"rx": int((now_net[0] - prev_net[0]) / dt), "tx": int((now_net[1] - prev_net[1]) / dt)},
             "procs": procs[:6],
         }

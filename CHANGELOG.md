@@ -6,6 +6,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Keyboard layout chip** (bar module `kbd`, shown when several layouts are set): live layout name, click to switch.
+- **VPN tile** in the control center for NetworkManager VPN/WireGuard profiles; `qs ipc call vpn toggle|status`.
+- **Battery health** (health % of design capacity, cycles, power draw, time left) in the system monitor.
 - **System monitor** (click the CPU/RAM chip in the bar, or `qs ipc call sysmon toggle`): live CPU graph with per-core bars,
   memory, GPU (AMD), network, disks, temperatures and the busiest processes. The sampler only runs while it is open.
 - **Night light** (control center tile, Settings > Behavior, `qs ipc call nightlight on|off|toggle|temp N`) using `hyprsunset`,

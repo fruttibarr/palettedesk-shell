@@ -166,6 +166,16 @@ Scope {
                         onClicked: Globals.keepAwake = !Globals.keepAwake
                     }
                     Tile {
+                        visible: Vpn.available
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        icon: Vpn.activeProfile ? "󰦝" : "󰦞"
+                        title: "VPN"
+                        subtitle: Vpn.activeProfile ? Vpn.activeProfile.name : (Vpn.profiles[0]?.name ?? "Off")
+                        active: !!Vpn.activeProfile
+                        onClicked: Vpn.toggle()
+                    }
+                    Tile {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
                         icon: Settings.s.nightLight ? "󰖔" : "󰖙"

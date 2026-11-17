@@ -108,6 +108,15 @@ Scope {
                                 Label { visible: (root.d?.mem.swap_total ?? 0) > 0; text: "Swap " + root.gb(root.d?.mem.swap_used ?? 0) + " / " + root.gb(root.d?.mem.swap_total ?? 0) + " GB"; color: Theme.subtext }
                             }
                             Card {
+                                visible: !!root.d?.battery; heading: "BATTERY"
+                                Label { text: (root.d?.battery?.percent ?? 0) + "%   ·   " + (root.d?.battery?.status ?? "")
+                                        + (root.d?.battery?.watts ? "   ·   " + root.d.battery.watts + " W" : "")
+                                        + (root.d?.battery?.minutes ? "   ·   " + Math.floor(root.d.battery.minutes / 60) + "h " + (root.d.battery.minutes % 60) + "m left" : "") }
+                                Bar { frac: (root.d?.battery?.percent ?? 0) / 100; tint: Theme.secondary }
+                                Label { visible: root.d?.battery?.health != null; color: Theme.subtext
+                                        text: "Health " + root.d?.battery?.health + "% of design capacity" + (root.d?.battery?.cycles ? "   ·   " + root.d.battery.cycles + " cycles" : "") }
+                            }
+                            Card {
                                 visible: !!root.d?.gpu; heading: "GPU"
                                 Label { text: (root.d?.gpu?.busy ?? 0) + "%   ·   VRAM " + root.gb(root.d?.gpu?.vram_used ?? 0) + " / " + root.gb(root.d?.gpu?.vram_total ?? 0) + " GB" }
                                 Graph { Layout.fillWidth: true; Layout.preferredHeight: 50; values: root.gpuHist; color: Theme.tertiary }
