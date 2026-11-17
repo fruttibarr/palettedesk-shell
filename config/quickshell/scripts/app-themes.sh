@@ -30,3 +30,6 @@ for a in $enabled; do
   esac
 done
 grep -q '^\[templates' "$cfg" && matugen image "$img" --config "$cfg" --mode dark --type "$scheme" --source-color-index 0 >/dev/null
+# Spicetify also gets a blurred copy of the wallpaper as its backdrop (slow: runs in the background).
+case " $enabled " in *" spicetify "*) command -v spicetify >/dev/null && setsid "$(dirname "$0")/spicetify-wallpaper.sh" "$img" >/dev/null 2>&1 & ;; esac
+exit 0

@@ -1,0 +1,75 @@
+/* PaletteDesk — Spicetify theme for the PaletteDesk Shell rice.
+   Colours: color.ini (matugen template apps/spicetify-color.ini, derived from the wallpaper).
+   This file: shape, typography and the blurred-wallpaper backdrop (--pd-wall, written by
+   scripts/spicetify-wallpaper.sh between the PD-WALL markers at the bottom).
+   Selectors use stable hooks (ids, data-testid, tags) — Spotify's own classes are hashed. */
+
+:root {
+  --pd-radius: 14px;
+  --pd-gap: 8px;
+  --pd-font: "JetBrainsMono Nerd Font", "JetBrains Mono", sans-serif;
+  --pd-panel: color-mix(in srgb, var(--spice-main) 68%, transparent);
+  --pd-edge:  color-mix(in srgb, var(--spice-button) 28%, transparent);
+}
+body, .encore-dark-theme { font-family: var(--pd-font); --encore-corner-radius-base: var(--pd-radius); }
+
+/* window backdrop: the wallpaper, blurred, under everything */
+body { background: var(--spice-main) !important; }
+.Root > div:first-child {
+  background: var(--pd-wall, none) center / cover no-repeat, var(--spice-main) !important;
+}
+
+/* top bar floats on the wallpaper */
+#global-nav-bar { background: transparent !important; }
+
+/* panels: rounded, translucent, blurred, accent hairline */
+#Desktop_LeftSidebar_Id,
+#Desktop_LeftSidebar_Id nav > div,
+#main-view,
+.Root__right-sidebar-peek,
+.Root > div > div:has(> aside[data-testid="now-playing-bar"]) {
+  background: var(--pd-panel) !important;
+  backdrop-filter: blur(16px) saturate(1.25);
+  border-radius: var(--pd-radius) !important;
+  box-shadow: inset 0 0 0 1px var(--pd-edge);
+  overflow: hidden;
+}
+#Desktop_LeftSidebar_Id nav > div { box-shadow: none; backdrop-filter: none; background: transparent !important; }
+
+/* pills & scrollbars */
+form[role="search"] input { border-radius: 999px !important; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--spice-highlight-elevated); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--spice-button); }
+::selection { background: var(--spice-tab-active); color: var(--spice-text); }
+
+/* Spotify's own colour tokens (they ignore color.ini) → wallpaper palette */
+html body, html body .encore-dark-theme, html body .encore-dark-theme .encore-dark-theme {
+  --background-base:               var(--spice-main) !important;
+  --background-highlight:          var(--spice-highlight) !important;
+  --background-press:              var(--spice-main-elevated) !important;
+  --background-elevated-base:      var(--spice-card) !important;
+  --background-elevated-highlight: var(--spice-highlight-elevated) !important;
+  --background-elevated-press:     var(--spice-highlight) !important;
+  --background-tinted-base:        color-mix(in srgb, var(--spice-button) 14%, transparent) !important;
+  --background-tinted-highlight:   color-mix(in srgb, var(--spice-button) 22%, transparent) !important;
+  --background-tinted-press:       color-mix(in srgb, var(--spice-button) 8%, transparent) !important;
+  --text-bright-accent:            var(--spice-button) !important;
+  --essential-bright-accent:       var(--spice-button) !important;
+  --text-announcement:             var(--spice-button-active) !important;
+  --essential-announcement:        var(--spice-button) !important;
+  --text-base:                     var(--spice-text) !important;
+  --text-subdued:                  var(--spice-subtext) !important;
+  --essential-subdued:             var(--spice-misc) !important;
+  --decorative-subdued:            var(--spice-tab-active) !important;
+}
+/* inline-styled dynamic colours (album-art tints, lyrics card) */
+[style*="--background-base"]            { --background-base: var(--spice-tab-active) !important; }
+[style*="--lyrics-color-background"]    { --lyrics-color-background: var(--spice-card) !important;
+                                          --lyrics-color-inactive: var(--spice-subtext) !important; }
+html body span[class*="button-primary__inner"] { background-color: var(--spice-button) !important; color: var(--spice-text) !important; }
+[data-testid="control-button-playpause"] { background-color: var(--spice-button) !important; }
+
+/* PD-WALL-BEGIN */
+:root { --pd-wall: linear-gradient(rgba(0,0,0,.30), rgba(0,0,0,.30)), url("data:image/jpeg;base64,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"); }
+/* PD-WALL-END */
