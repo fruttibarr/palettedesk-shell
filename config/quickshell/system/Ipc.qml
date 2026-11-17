@@ -36,4 +36,24 @@ Scope {
         function popupOn(screen: string): void { Globals.popupFrom(screen); }
         function popupScreen(): string { return Globals.popupScreen; }
     }
+
+    // qs ipc call shader set <name> | off | cycle | list     (full-screen effect, see Settings > Blur)
+    IpcHandler {
+        target: "shader"
+        function set(name: string): string {
+            const ok = Settings.shaderList.some(x => x.id === name);
+            if (!ok) return "unknown shader: " + name;
+            Settings.set("screenShader", name);
+            return "ok";
+        }
+        function off(): void { Settings.set("screenShader", ""); }
+        function cycle(): string {
+            const l = Settings.shaderList;
+            const i = l.findIndex(x => x.id === Settings.s.screenShader);
+            const next = l[(i + 1) % l.length];
+            Settings.set("screenShader", next.id);
+            return next.id || "none";
+        }
+        function list(): string { return Settings.shaderList.map(x => x.id || "none").join(" "); }
+    }
 }

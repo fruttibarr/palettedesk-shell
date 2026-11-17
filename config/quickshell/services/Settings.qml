@@ -100,6 +100,7 @@ Singleton {
         "animatedWallpapers": true,
         "watchdogRssMb": 1500,
         "monitors": "{}",
+        "screenShader": "",
         "nightLight": false,
         "nightTemp": 4000,
         "pauseOnBattery": false,
@@ -242,6 +243,13 @@ Singleton {
         "keybinds": "{}"
     })
 
+    // full-screen shaders shipped in config/hypr/shaders (id = file name without .frag)
+    readonly property var shaderList: [
+        { id: "", label: "None" }, { id: "grayscale", label: "Grayscale" }, { id: "sepia", label: "Sepia" },
+        { id: "vibrant", label: "Vibrant" }, { id: "crt", label: "Retro CRT" }, { id: "invert", label: "Invert" },
+        { id: "colorblind", label: "Color-blind aid" }
+    ]
+
     // setting key -> Hyprland option path
     readonly property var hyprMap: ({
             "blurEnabled": "decoration.blur.enabled",
@@ -330,6 +338,7 @@ Singleton {
             "keyWakes": "misc.key_press_enables_dpms",
             "vrr": "misc.vrr",
             "directScanout": "render.direct_scanout",
+            "screenShader": "decoration.screen_shader",
             "xwaylandZeroScaling": "xwayland.force_zero_scaling"
     })
 
@@ -339,6 +348,7 @@ Singleton {
     // settings stored as bool/number that Hyprland wants in another shape
     readonly property var hyprTransform: ({
             "shadowOffsetY": v => "0 " + Math.round(v),
+            "screenShader": v => v ? home + "/.config/hypr/shaders/" + String(v).replace(/[^A-Za-z0-9_-]/g, "") + ".frag" : "",
             "wsBackAndForth": v => v ? 1 : 0,
             "cursorWarpOnWs": v => v ? 1 : 0,
             "exitRetainsFullscreen": v => v ? 1 : 0,
@@ -727,6 +737,7 @@ Singleton {
             property bool animatedWallpapers: true
             property int watchdogRssMb: 1500
             property string monitors: "{}"
+            property string screenShader: ""
             property bool nightLight: false
             property int nightTemp: 4000
             property bool pauseOnBattery: false

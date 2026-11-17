@@ -6,6 +6,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Full-screen effects** (Settings > Blur > Screen effect, `qs ipc call shader set|off|cycle|list`): Grayscale, Sepia, Vibrant, Retro CRT,
+  Invert and a red-green color-blind aid, as Hyprland screen shaders in `~/.config/hypr/shaders`.
 - **Keyboard layout chip** (bar module `kbd`, shown when several layouts are set): live layout name, click to switch.
 - **VPN tile** in the control center for NetworkManager VPN/WireGuard profiles; `qs ipc call vpn toggle|status`.
 - **Battery health** (health % of design capacity, cycles, power draw, time left) in the system monitor.

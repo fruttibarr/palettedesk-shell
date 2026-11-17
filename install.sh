@@ -93,6 +93,7 @@ install_path() {  # install_path <source> <destination> [keep-existing]
 C="$SRC/config"
 install_path "$C/quickshell"                 "$CFG/quickshell"
 install_path "$C/hypr/hyprland.lua"          "$CFG/hypr/hyprland.lua"
+install_path "$C/hypr/shaders"                "$CFG/hypr/shaders"   # full-screen effects (Settings > Blur)
 install_path "$C/matugen/templates"          "$CFG/matugen/templates"
 install_path "$C/matugen/config.toml"        "$CFG/matugen/config.toml"
 install_path "$C/kitty/kitty.conf"           "$CFG/kitty/kitty.conf"

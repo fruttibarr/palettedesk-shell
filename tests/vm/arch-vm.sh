@@ -9,7 +9,8 @@
 #   tests/vm/arch-vm.sh restart-shell kill every shell instance and start exactly one
 #   tests/vm/arch-vm.sh sh 'cmd'      run a command inside the VM's Hyprland session (Wayland env set)
 #   tests/vm/arch-vm.sh ssh 'cmd'     run a plain command in the VM
-#   tests/vm/arch-vm.sh shot out.png  screenshot the VM desktop to a local file
+#   tests/vm/arch-vm.sh shot out.png  screenshot the VM desktop to a local file (before screen shaders/night light)
+#   tests/vm/arch-vm.sh screen out.png  what the VM's display really shows, shaders included (QEMU screendump)
 #   tests/vm/arch-vm.sh down | reset  power off (keep disk) | power off and delete the disk
 #
 # Needs: qemu-desktop, edk2-ovmf, curl, ssh. The VM user is arch/arch, reachable only on 127.0.0.1.
@@ -113,6 +114,10 @@ echo idle disabled" ;;
   shot)
     out="${1:?usage: shot out.png}"
     vmssh "$(env_prefix) mkdir -p ~/s; timeout 25 grim ~/s/x.png" && vmssh 'cat ~/s/x.png' > "$out" && say "saved $out" ;;
+  screen)
+    out="${1:?usage: screen out.png}"; rm -f "$DIR/screen.ppm"
+    qmon "screendump $DIR/screen.ppm" >/dev/null 2>&1; sleep 1
+    ffmpeg -loglevel error -y -i "$DIR/screen.ppm" "$out" && say "saved $out" ;;
   down)  running && { qmon quit >/dev/null 2>&1 || true; sleep 2; }; say "VM stopped" ;;
   reset) "$0" down; rm -f "$DIR/disk.qcow2" "$DIR/vars.fd" "$DIR/qemu.pid"; say "VM disk deleted (the downloaded image is kept)" ;;
   *) sed -n 2,16p "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//' ;;

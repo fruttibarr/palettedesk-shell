@@ -536,7 +536,35 @@ Scope {
                 title: "Blur"
                 subtitle: "Frosted glass behind the bar, popups, menus and translucent windows."
                 keys: ["blurEnabled", "blurSize", "blurPasses", "blurBrightness", "blurVibrancy", "blurNoise", "blurPopups", "blurXray",
-                       "blurContrast", "blurVibrancyDarkness", "blurSpecial"]
+                       "blurContrast", "blurVibrancyDarkness", "blurSpecial", "screenShader"]
+            }
+            SettingSection {
+                title: "Screen effect"
+                SettingRow {
+                    label: "Full-screen effect"; keywords: "shader grayscale sepia crt invert colorblind color blind filter vibrance saturation"
+                    description: "Applies to everything on screen. Uses a little more power and turns off direct scanout (fullscreen games)."
+                    Item {
+                        id: shaderWrap
+                        width: 440; height: shaderFlow.height; implicitWidth: 440; implicitHeight: shaderFlow.height
+                        Flow {
+                            id: shaderFlow
+                            width: shaderWrap.width; spacing: 6
+                            Repeater {
+                                model: Settings.shaderList
+                                Rectangle {
+                                    id: shChip
+                                    required property var modelData
+                                    readonly property bool sel: root.cfg.screenShader === modelData.id
+                                    height: 28; width: shLabel.implicitWidth + 22; radius: 14
+                                    color: sel ? Theme.primary : Theme.surfaceContainerHigh
+                                    Text { id: shLabel; anchors.centerIn: parent; text: shChip.modelData.label; color: shChip.sel ? Theme.textOnPrimary : Theme.text
+                                           font.family: Theme.font; font.pixelSize: Theme.fontSize - 2 }
+                                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.set("screenShader", shChip.modelData.id) }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             SettingSection {
                 title: "Strength"
