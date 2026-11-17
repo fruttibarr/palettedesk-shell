@@ -60,6 +60,7 @@ hl.on("hyprland.start", function ()
     -- First login: pick a random wallpaper so a color scheme exists
     hl.exec_cmd("[ -f ~/.local/state/rice/colors.json ] || ~/.config/quickshell/scripts/set-wallpaper.sh")
     hl.exec_cmd("qs")  -- the whole shell (bar, popups, notifications, lock, ...)
+    hl.exec_cmd("~/.config/quickshell/scripts/qs-watchdog.sh")  -- warns (with a restart button) if the shell grows very large
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
 end)

@@ -98,6 +98,7 @@ Singleton {
         "wallCrispPixels": true,
         "parallaxStrength": 0.12,
         "animatedWallpapers": true,
+        "watchdogRssMb": 900,
         "pauseOnBattery": false,
         "pauseWhenFullscreen": true,
         "albumWallpaper": false,
@@ -698,6 +699,7 @@ Singleton {
             property bool wallCrispPixels: true
             property real parallaxStrength: 0.12
             property bool animatedWallpapers: true
+            property int watchdogRssMb: 900
             property bool pauseOnBattery: false
             property bool pauseWhenFullscreen: true
             property bool albumWallpaper: false

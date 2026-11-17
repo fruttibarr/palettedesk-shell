@@ -1660,7 +1660,7 @@ Scope {
                 subtitle: "Focus, workspaces, fullscreen, terminal swallowing and display."
                 keys: ["focusOnActivate", "middleClickPaste", "enableSwallow", "swallowRegex", "closeSpecialOnEmpty", "hideSpecialOnWsChange",
                        "wsBackAndForth", "allowWsCycles", "onFocusUnderFullscreen", "exitRetainsFullscreen", "mouseWakes", "keyWakes",
-                       "vrr", "directScanout", "xwaylandZeroScaling"]
+                       "vrr", "directScanout", "xwaylandZeroScaling", "watchdogRssMb"]
             }
             SettingSection {
                 title: "Focus"
@@ -1694,6 +1694,14 @@ Scope {
                 SettingRow {
                     label: "Hide scratchpad when switching workspace"
                     Toggle { checked: root.cfg.hideSpecialOnWsChange; onToggled: v => Settings.set("hideSpecialOnWsChange", v) }
+                }
+            }
+            SettingSection {
+                title: "Shell health"
+                SettingRow {
+                    label: "Warn when the shell uses a lot of memory"; keywords: "memory ram leak watchdog restart slow frozen animation"
+                    description: "Shows a notification with a Restart shell button. Never restarts by itself. 0 = off"
+                    ValueSlider { from: 0; to: 3000; stepSize: 100; suffix: " MB"; value: root.cfg.watchdogRssMb; onMoved: v => Settings.set("watchdogRssMb", v) }
                 }
             }
             SettingSection {

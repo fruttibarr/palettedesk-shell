@@ -6,6 +6,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Shell watchdog (`qs-watchdog.sh`, started with Hyprland): warns with a notification and a **Restart shell**
+  button when the shell's memory gets very high (default 900 MB; Settings > Behavior > Shell health; 0 = off).
+  It never restarts anything by itself.
 - `palettedesk` command (installed to `~/.local/bin`): `version`, `doctor`, `update`, `uninstall`, `restore`, `mem`.
   `install.sh` now records a manifest, so `palettedesk uninstall` removes exactly what was installed, keeps files
   you edited, restores your previous config and leaves your home directory as it was (`--purge` also removes settings).
