@@ -2657,9 +2657,25 @@ Scope {
                             }
                         }
 
-                        Item {
+                        Flickable {
+                            id: navFlick
                             Layout.fillWidth: true
-                            implicitHeight: navCol.implicitHeight
+                            Layout.fillHeight: true
+                            Layout.minimumHeight: 120
+                            contentWidth: width
+                            contentHeight: navCol.implicitHeight
+                            clip: true
+                            boundsBehavior: Flickable.StopAtBounds
+                            flickableDirection: Flickable.VerticalFlick
+                            // keep the selected page in view when it changes (search, keyboard, IPC)
+                            Connections {
+                                target: root
+                                function onPageChanged() {
+                                    const top = root.page * 36, bottom = top + 34;
+                                    if (top < navFlick.contentY) navFlick.contentY = top;
+                                    else if (bottom > navFlick.contentY + navFlick.height) navFlick.contentY = bottom - navFlick.height;
+                                }
+                            }
 
                             // sliding selection highlight
                             Rectangle {
@@ -2724,8 +2740,6 @@ Scope {
                                 }
                             }
                         }
-
-                        Item { Layout.fillHeight: true }
 
                         Text {
                             Layout.fillWidth: true
