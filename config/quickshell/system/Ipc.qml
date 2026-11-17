@@ -27,4 +27,10 @@ Scope {
         function stop(): void { Recorder.stop(); }
         function status(): string { return Recorder.active ? "recording " + Recorder.clock + " " + Recorder.file : "idle"; }
     }
+
+    // qs ipc call shell wallState   (JSON: per screen, is the wallpaper animating, and if not, why)
+    IpcHandler {
+        target: "shell"
+        function wallState(): string { return JSON.stringify(Globals.wallWindows.map(w => w.state())); }
+    }
 }

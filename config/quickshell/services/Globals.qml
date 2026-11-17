@@ -12,6 +12,7 @@ Singleton {
     property real lyricsAnchorX: -1   // screen x the lyrics viewer drops from (set by the chip)
     property bool keepAwake: false
     property bool locked: false
+    property var wallWindows: []      // the Wallpaper window of each screen, for `qs ipc call shell wallState`
 
     signal lockRequested()
 

@@ -37,6 +37,15 @@ PanelWindow {
         && !(Settings.s.pauseOnBattery && UPower.onBattery)
         && !(Settings.s.pauseWhenFullscreen && hasFullscreen)
 
+    // Live state for `qs ipc call shell wallState` (see system/Ipc.qml): why is the wallpaper (not) animating?
+    function state() {
+        return {
+            screen: win.screen?.name ?? "?", playing: playing, hasFullscreen: hasFullscreen,
+            animatedSetting: Settings.s.animatedWallpapers, pauseWhenFullscreen: Settings.s.pauseWhenFullscreen,
+            locked: Globals.locked, kind: front?.kind ?? "", file: (front?.path ?? "").split("/").pop(), ready: front?.ready ?? false
+        };
+    }
+
     Item {
         id: scene
         height: parent.height
@@ -55,7 +64,8 @@ PanelWindow {
     readonly property string target: Theme.wallpaper
 
     onTargetChanged: swap()
-    Component.onCompleted: { layerA.path = target; }
+    Component.onCompleted: { layerA.path = target; Globals.wallWindows = Globals.wallWindows.concat([win]); }
+    Component.onDestruction: Globals.wallWindows = Globals.wallWindows.filter(w => w !== win)
 
     function swap() {
         if (!target || target === front.path) return;

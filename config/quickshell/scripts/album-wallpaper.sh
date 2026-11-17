@@ -57,7 +57,7 @@ W=$((W / 2 * 2)); H=$((H / 2 * 2))
 out="$cache/$key-$style-${W}x${H}.jpg"
 if [ ! -s "$out" ]; then
   if [ "$style" = "fill" ]; then
-    graph="[0:v]scale=$W:$H:force_original_aspect_ratio=increase:flags=lanczos,crop=$W:$H[out]"
+    graph="[0:v]scale=$W:$H:force_original_aspect_ratio=increase:flags=lanczos,crop=${W}:${H}[out]"
   else
     short=$(( W < H ? W : H ))
     S=$(( short * 56 / 100 / 2 * 2 ))      # cover edge

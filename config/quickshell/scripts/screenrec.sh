@@ -38,7 +38,8 @@ do_start() {
   enc=$(cfg recEncoder software); audio=$(cfg recAudio none); countdown=$(cfg recCountdown 3)
   dir=$(cfg recDir "$HOME/Videos/Recordings"); dir="${dir/#\~/$HOME}"
   mkdir -p "$dir"
-  local file="$dir/$(date +%Y-%m-%d_%H-%M-%S).$fmt"
+  local file
+  file="$dir/$(date +%Y-%m-%d_%H-%M-%S).$fmt"
 
   # what to record
   local args=()
